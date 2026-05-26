@@ -26,17 +26,17 @@ An interactive reference dashboard and curated library designed to help you mast
 
 The `books/` directory contains highly comprehensive guides covering algorithmic problem-solving, system design, and large-scale data systems architecture:
 
-1. **Coding Interview Patterns: Nail Your Next Coding Interview (ByteByteGo, 2024)**  
-   *By Alex Xu & Shaun Gunawardane* — Explores core algorithmic patterns with visual guides and step-by-step breakdowns.
-2. **Coding Interview Patterns (Bonus)**  
+1. **[Coding Interview Patterns](file:///Users/utkarsh/.gemini/antigravity-ide/scratch/dsa-patterns/books/Alex%20Xu%20%26%20Shaun%20Gunawardane%20-%20Coding%20Interview%20Patterns.pdf)**  
+   *By Alex Xu & Shaun Gunawardane (2024)* — Explores core algorithmic patterns with visual guides and step-by-step breakdowns.
+2. **[Coding Interview Patterns (Bonus)](file:///Users/utkarsh/.gemini/antigravity-ide/scratch/dsa-patterns/books/Alex%20Xu%20%26%20Shaun%20Gunawardane%20-%20Coding%20Interview%20Patterns%20(Bonus).pdf)**  
    *By Alex Xu & Shaun Gunawardane* — Extra patterns and advanced heuristics from ByteByteGo.
-3. **AlgoTutor LeetCode Patterns Guide**  
+3. **[AlgoTutor - LeetCode Patterns](file:///Users/utkarsh/.gemini/antigravity-ide/scratch/dsa-patterns/books/AlgoTutor%20-%20LeetCode%20Patterns.pdf)**  
    *A structured syllabus mapped directly to core patterns and high-frequency LeetCode questions.*
-4. **GAMAM Technical Interview Guide**  
+4. **[GAMAM Technical Interview Guide](file:///Users/utkarsh/.gemini/antigravity-ide/scratch/dsa-patterns/books/GAMAM%20Technical%20Interview%20Guide.pdf)**  
    *High-frequency interview questions, cheatsheets, and preparation roadmaps for top-tier tech companies.*
-5. **System Design Interview – An Insider's Guide: Volume 2 (2022)**  
-   *By Alex Xu & Sahn Lam* — Real-world system design questions with end-to-end architectural designs.
-6. **Designing Data-Intensive Applications**  
+5. **[System Design Interview (Volume 2)](file:///Users/utkarsh/.gemini/antigravity-ide/scratch/dsa-patterns/books/Alex%20Xu%20%26%20Sahn%20Lam%20-%20System%20Design%20Interview%20(Volume%202).pdf)**  
+   *By Alex Xu & Sahn Lam (2022)* — Real-world system design questions with end-to-end architectural designs.
+6. **[Designing Data-Intensive Applications](file:///Users/utkarsh/.gemini/antigravity-ide/scratch/dsa-patterns/books/Martin%20Kleppmann%20-%20Designing%20Data-Intensive%20Applications.pdf)**  
    *By Martin Kleppmann* — The definitive textbook on data systems, consistency models, storage engines, and distributed systems architecture.
 
 ---
