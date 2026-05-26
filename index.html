@@ -1380,6 +1380,16 @@
 
     // GENERATE LIVE LEETCODE PROBLEM URL DYNAMICALLY
     function getLeetCodeUrl(problemName) {
+      // Overrides for problem names whose standard slug does not match LeetCode's actual URL slug
+      const overrides = {
+        "two sum ii": "two-sum-input-array-is-sorted"
+      };
+
+      const normalized = problemName.toLowerCase().trim();
+      if (overrides[normalized]) {
+        return `https://leetcode.com/problems/${overrides[normalized]}/`;
+      }
+
       const slug = problemName
         .toLowerCase()
         .replace(/[^a-z0-9\s-]/g, '') // remove brackets, parentheses, ampersands, commas, etc.
