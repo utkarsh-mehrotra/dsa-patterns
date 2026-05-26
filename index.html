@@ -61,6 +61,27 @@
       --difficulty-hard: #dc2626;
     }
 
+    /* Creamy Theme (Cozy Sepia) Styling Variables */
+    body.creamy-theme {
+      --bg-primary: #faf6ee;
+      --bg-secondary: #f4ebd9;
+      --bg-card: rgba(253, 251, 246, 0.88);
+      --bg-card-hover: rgba(255, 255, 255, 0.98);
+      --border-color: rgba(139, 92, 26, 0.12);
+      --border-glow: rgba(180, 83, 9, 0.3);
+      --text-primary: #432818;
+      --text-secondary: #7f5539;
+      --text-muted: #9c6644;
+      
+      --accent: #b45309;
+      --accent-hover: #92400e;
+      --accent-glow: rgba(180, 83, 9, 0.12);
+      
+      --difficulty-easy: #15803d;
+      --difficulty-medium: #d97706;
+      --difficulty-hard: #b91c1c;
+    }
+
     body {
       font-family: 'Outfit', sans-serif;
       background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
@@ -76,7 +97,7 @@
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg-primary); }
     ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(128, 128, 128, 0.2);
       border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
@@ -1633,21 +1654,37 @@
 
     // TOGGLE THEME FUNCTION
     function toggleTheme() {
-      currentTheme = currentTheme === "dark" ? "light" : "dark";
+      if (currentTheme === "dark") {
+        currentTheme = "light";
+      } else if (currentTheme === "light") {
+        currentTheme = "creamy";
+      } else {
+        currentTheme = "dark";
+      }
       localStorage.setItem("dsa_theme", currentTheme);
       applyTheme();
     }
 
     function applyTheme() {
       const toggleIcon = document.querySelector("#theme-toggle i");
+      
+      // Clean up body classes
+      document.body.classList.remove("light-theme", "creamy-theme");
+      
       if (currentTheme === "light") {
         document.body.classList.add("light-theme");
         if (toggleIcon) {
           toggleIcon.className = "fa-solid fa-sun";
           toggleIcon.style.color = "#f59e0b";
         }
+      } else if (currentTheme === "creamy") {
+        document.body.classList.add("creamy-theme");
+        if (toggleIcon) {
+          toggleIcon.className = "fa-solid fa-mug-hot";
+          toggleIcon.style.color = "#b45309"; // Warm terracotta/brown
+        }
       } else {
-        document.body.classList.remove("light-theme");
+        // Dark theme
         if (toggleIcon) {
           toggleIcon.className = "fa-solid fa-moon";
           toggleIcon.style.color = "";
