@@ -1,311 +1,1564 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>DSA Patterns – Core Ideas, When to Use & Examples</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #ffffff;
-    --bg-secondary: #f5f5f3;
-    --bg-tertiary: #eeede8;
-    --text-primary: #1a1a18;
-    --text-secondary: #5a5a56;
-    --text-tertiary: #9a9a94;
-    --border: rgba(0,0,0,0.12);
-    --border-strong: rgba(0,0,0,0.22);
-    --mark-bg: #faeeda;
-    --mark-color: #854f0b;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-  }
-  @media (prefers-color-scheme: dark) {
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DSA Patterns & Interview Prep Dashboard</title>
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* Reset & CSS Custom Variables */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
     :root {
-      --bg: #1c1c1a;
-      --bg-secondary: #262624;
-      --bg-tertiary: #2e2e2b;
-      --text-primary: #f0efea;
-      --text-secondary: #a8a89f;
-      --text-tertiary: #68685f;
-      --border: rgba(255,255,255,0.1);
-      --border-strong: rgba(255,255,255,0.22);
-      --mark-bg: #412402;
-      --mark-color: #fac775;
+      --bg-primary: #090d16;
+      --bg-secondary: #0f1626;
+      --bg-card: rgba(22, 30, 49, 0.7);
+      --bg-card-hover: rgba(29, 41, 68, 0.85);
+      --border-color: rgba(255, 255, 255, 0.07);
+      --border-glow: rgba(99, 102, 241, 0.3);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.15);
+      
+      --difficulty-easy: #10b981;
+      --difficulty-medium: #f59e0b;
+      --difficulty-hard: #ef4444;
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
-  }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    min-height: 100vh;
-    padding: 2rem 1rem;
-  }
-  .container { max-width: 900px; margin: 0 auto; }
-  h1 {
-    font-size: 22px;
-    font-weight: 500;
-    color: var(--text-primary);
-    margin-bottom: 6px;
-  }
-  .subtitle {
-    font-size: 14px;
-    color: var(--text-secondary);
-    margin-bottom: 24px;
-  }
-  #search {
-    width: 100%;
-    padding: 10px 14px;
-    font-size: 14px;
-    border: 0.5px solid var(--border-strong);
-    border-radius: var(--radius-lg);
-    background: var(--bg);
-    color: var(--text-primary);
-    margin-bottom: 14px;
-    outline: none;
-    font-family: inherit;
-  }
-  #search:focus { border-color: var(--text-secondary); }
-  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
-  .filter-btn {
-    padding: 5px 12px;
-    font-size: 12px;
-    border: 0.5px solid var(--border-strong);
-    border-radius: 20px;
-    background: transparent;
-    color: var(--text-secondary);
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.15s;
-  }
-  .filter-btn:hover, .filter-btn.active {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    border-color: var(--text-tertiary);
-  }
-  .filter-btn.active { font-weight: 500; }
-  .stats-bar { font-size: 12px; color: var(--text-tertiary); margin-bottom: 18px; }
-  .stats-bar b { color: var(--text-secondary); font-weight: 500; }
-  .category-section { margin-bottom: 24px; }
-  .cat-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
-    border-bottom: 0.5px solid var(--border);
-  }
-  .cat-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .cat-title { font-size: 15px; font-weight: 500; color: var(--text-primary); }
-  .cat-count { font-size: 12px; color: var(--text-tertiary); margin-left: auto; }
-  .patterns-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 10px;
-  }
-  .pattern-card {
-    background: var(--bg);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 14px 16px;
-    cursor: pointer;
-    transition: border-color 0.15s;
-  }
-  .pattern-card:hover { border-color: var(--border-strong); }
-  .pattern-card.expanded { border-color: var(--border-strong); }
-  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-  .pattern-name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
-  .expand-icon {
-    font-size: 11px;
-    color: var(--text-tertiary);
-    flex-shrink: 0;
-    margin-top: 2px;
-    transition: transform 0.15s;
-    user-select: none;
-  }
-  .pattern-card.expanded .expand-icon { transform: rotate(180deg); }
-  .pattern-idea { font-size: 13px; color: var(--text-secondary); margin-top: 5px; line-height: 1.5; }
-  .card-details {
-    display: none;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 0.5px solid var(--border);
-  }
-  .pattern-card.expanded .card-details { display: block; }
-  .detail-row { display: flex; gap: 10px; margin-bottom: 8px; align-items: baseline; }
-  .detail-row:last-child { margin-bottom: 0; }
-  .detail-label {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-tertiary);
-    min-width: 60px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    flex-shrink: 0;
-  }
-  .detail-val { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
-  .example-pill {
-    display: inline-block;
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
-    font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 10px;
-    margin: 2px 2px 0 0;
-  }
-  .no-results { text-align: center; padding: 48px 0; color: var(--text-tertiary); font-size: 14px; }
-  mark {
-    background: var(--mark-bg);
-    color: var(--mark-color);
-    border-radius: 2px;
-    padding: 0 1px;
-  }
-</style>
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    .app-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+      width: 100%;
+      flex-grow: 1;
+    }
+
+    /* Glassmorphism Navigation / Header */
+    header {
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .title-area h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .title-area p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    /* Tabs Controller */
+    .tabs-controller {
+      display: flex;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(10px);
+    }
+
+    .tab-btn {
+      padding: 0.6rem 1.4rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: transparent;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    /* Widgets / Stats Panel */
+    .stats-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: var(--accent);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .stat-info {
+      flex-grow: 1;
+    }
+
+    .stat-val {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Live Progress Slider */
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+      margin-top: 0.5rem;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent) 0%, #a855f7 100%);
+      border-radius: 3px;
+      transition: width 0.5s ease-out;
+    }
+
+    /* Search & Filters Panel */
+    .controls-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      backdrop-filter: blur(16px);
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .search-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-wrapper i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    #search {
+      width: 100%;
+      padding: 0.8rem 1rem 0.8rem 2.75rem;
+      font-size: 0.95rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: rgba(0, 0, 0, 0.2);
+      color: var(--text-primary);
+      outline: none;
+      font-family: inherit;
+      transition: var(--transition);
+    }
+
+    #search:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .filters-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .filter-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .filter-btn {
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .filter-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .filter-btn.active {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--text-primary);
+      border-color: var(--accent);
+      box-shadow: inset 0 0 8px rgba(99, 102, 241, 0.1);
+    }
+
+    .filter-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* Views Framework */
+    .view-content {
+      display: none;
+    }
+
+    .view-content.active {
+      display: block;
+    }
+
+    /* Category Section Layout */
+    .category-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .cat-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .cat-dot-large {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      box-shadow: 0 0 10px currentColor;
+    }
+
+    .cat-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .cat-count {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-left: auto;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Patterns Grid */
+    .patterns-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* Premium Pattern Card */
+    .pattern-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+    }
+
+    .pattern-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      transition: var(--transition);
+    }
+
+    .pattern-card:hover {
+      border-color: var(--border-glow);
+      background: var(--bg-card-hover);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2), 0 0 20px var(--accent-glow);
+      transform: translateY(-2px);
+    }
+
+    .pattern-card.completed::before {
+      background: linear-gradient(90deg, var(--difficulty-easy) 0%, #059669 100%);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .pattern-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pattern-checkbox {
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+      border: 1.5px solid var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: transparent;
+      font-size: 0.65rem;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+
+    .pattern-checkbox:hover {
+      border-color: var(--accent);
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    .pattern-checkbox.checked {
+      background: var(--difficulty-easy);
+      border-color: var(--difficulty-easy);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+
+    .pattern-name {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      transition: var(--transition);
+    }
+
+    .pattern-card.completed .pattern-name {
+      color: var(--text-secondary);
+      text-decoration: line-through rgba(255, 255, 255, 0.2);
+    }
+
+    .expand-icon {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .pattern-card:hover .expand-icon {
+      color: var(--text-primary);
+      border-color: var(--text-muted);
+    }
+
+    .pattern-card.expanded .expand-icon {
+      transform: rotate(180deg);
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .pattern-idea {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 0.75rem;
+      flex-grow: 1;
+    }
+
+    /* Meta Badges */
+    .badges-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .badge-easy {
+      background: rgba(16, 185, 129, 0.08);
+      color: var(--difficulty-easy);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+    }
+
+    .badge-medium {
+      background: rgba(245, 158, 11, 0.08);
+      color: var(--difficulty-medium);
+      border: 1px solid rgba(245, 158, 11, 0.15);
+    }
+
+    .badge-hard {
+      background: rgba(239, 68, 68, 0.08);
+      color: var(--difficulty-hard);
+      border: 1px solid rgba(239, 68, 68, 0.15);
+    }
+
+    .badge-complexity {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Card Expandable Details */
+    .card-details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-top: 0px solid var(--border-color);
+      margin-top: 0;
+      padding-top: 0;
+    }
+
+    .pattern-card.expanded .card-details {
+      max-height: 500px;
+      border-top-width: 1px;
+      margin-top: 1rem;
+      padding-top: 1rem;
+    }
+
+    .detail-section {
+      margin-bottom: 0.75rem;
+    }
+
+    .detail-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .detail-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .detail-body {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .example-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .example-pill {
+      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .example-pill i {
+      font-size: 0.65rem;
+      color: var(--accent);
+    }
+
+    .example-pill:hover {
+      background: rgba(99, 102, 241, 0.05);
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+
+    .pro-tip {
+      background: rgba(99, 102, 241, 0.03);
+      border: 1px dashed rgba(99, 102, 241, 0.2);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      margin-top: 0.75rem;
+    }
+
+    .pro-tip-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .pro-tip-body {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* --- library styles --- */
+    .library-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .book-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition);
+      height: 100%;
+      position: relative;
+    }
+
+    .book-card:hover {
+      border-color: var(--border-glow);
+      background: var(--bg-card-hover);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2), 0 0 20px var(--accent-glow);
+      transform: translateY(-2px);
+    }
+
+    .book-cover-mock {
+      height: 140px;
+      border-radius: 8px;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .book-cover-mock::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border-right: 1px solid rgba(0,0,0,0.2);
+    }
+
+    .book-cover-icon {
+      font-size: 2.2rem;
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--border-glow);
+      margin-bottom: 0.5rem;
+    }
+
+    .book-cover-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .book-info {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .book-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .book-author {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .book-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      margin-bottom: 1.25rem;
+      flex-grow: 1;
+    }
+
+    .book-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .book-tag {
+      font-size: 0.7rem;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .book-btn {
+      width: 100%;
+      padding: 0.7rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .book-btn:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    /* Empty states */
+    .no-results {
+      text-align: center;
+      padding: 4.5rem 1.5rem;
+      background: var(--bg-card);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      grid-column: 1 / -1;
+    }
+
+    .no-results i {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+    }
+
+    .no-results h3 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 0.25rem;
+    }
+
+    .no-results p {
+      font-size: 0.85rem;
+    }
+
+    /* Match Highlight Style */
+    mark {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      border-radius: 2px;
+      padding: 0 2px;
+    }
+
+    /* Footer styling */
+    footer {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+      margin-top: 4rem;
+    }
+
+    footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--accent);
+    }
+
+    /* Responsive Scaling */
+    @media (max-width: 768px) {
+      .app-container {
+        padding: 1.5rem 1rem;
+      }
+      .header-content {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .tabs-controller {
+        justify-content: center;
+      }
+      .stat-card {
+        padding: 1rem;
+      }
+      .title-area h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <h1>DSA Patterns</h1>
-  <p class="subtitle">Core ideas, when to use &amp; examples — click any card to expand</p>
 
-  <input id="search" type="text" placeholder="Search patterns, ideas, examples..." autocomplete="off" />
-  <div class="filters" id="filters"></div>
-  <div class="stats-bar">Showing <b id="count">0</b> of <b id="total">0</b> patterns</div>
-  <div id="content"></div>
-</div>
-
-<script>
-const data = [
-  {cat:"Arrays & Strings", color:"#378ADD", patterns:[
-    {name:"Two Pointers",idea:"Move two indices to compare or shrink a range.",when:"Sorted input, pairs/triplets, both ends.",examples:["Two Sum","3Sum"]},
-    {name:"Sliding Window",idea:"Track a moving subarray or substring.",when:"Max or min length/sum of a contiguous segment.",examples:["Min Size Subarray Sum","Longest Substring Without Repeating"]},
-    {name:"Merge Intervals",idea:"Sort intervals then merge or clip overlaps.",when:"Input is [start, end] ranges that must be combined.",examples:["Merge Intervals","Insert Interval"]},
-    {name:"Prefix Sums",idea:"Precompute running sums for O(1) range queries.",when:"Many subarray sums or counts on same array.",examples:["Subarray Sum Equals K","Range Sum Query"]},
-    {name:"Hashmaps",idea:"Store counts or mappings for O(1) lookup.",when:"Frequency, grouping, existence checks.",examples:["Group Anagrams","First Unique Character"]},
-    {name:"Sorting",idea:"Sort first, then scan once.",when:"Order not given and logic becomes easier on sorted data.",examples:["Sort Colors","Meeting Rooms II"]},
-  ]},
-  {cat:"Linked Lists", color:"#1D9E75", patterns:[
-    {name:"Fast and Slow Pointers",idea:"Two speeds to find middle or detect cycles.",when:"\"Find mid\", \"detect cycle\", \"nth from end\".",examples:["Linked List Cycle","Remove Nth Node From End"]},
-    {name:"Dummy Node",idea:"Fake head to simplify insert and delete.",when:"Many head edge cases or complex rewiring.",examples:["Add Two Numbers","Merge Two Sorted Lists"]},
-    {name:"In Place Reversal",idea:"Rewire pointers to reverse segments.",when:"\"Reverse list\", \"reverse k group\".",examples:["Reverse Linked List","Reverse Nodes in k Group"]},
-    {name:"Recursive Tricks",idea:"Solve list by recurring on next part.",when:"\"Swap in pairs\", \"flatten\", clean recursive spec.",examples:["Swap Nodes in Pairs","Flatten Multilevel List"]},
-    {name:"Monotonic Stack",idea:"Keep elements increasing or decreasing order.",when:"\"Next greater/smaller\", \"snaker\", daily temperatures.",examples:["Next Greater Element","Daily Temperatures"]},
-    {name:"Design Using Stack/Queue",idea:"Build custom behavior with stack or queue.",when:"\"Next greater/smaller\", \"daily temperatures\", \"stock span\".",examples:["Implement Queue Using Stacks","Design Circular Queue"]},
-  ]},
-  {cat:"Binary Search", color:"#D85A30", patterns:[
-    {name:"Basic Binary Search",idea:"Halve the search space on sorted data.",when:"Sorted array and direct target lookup.",examples:["Search Insert Position","Find Min in Rotated Array"]},
-    {name:"Binary Search on Answer",idea:"Search on the value of the answer, not the index.",when:"\"Minimum X that works\" or \"maximum X possible\".",examples:["Split Array Largest Sum","Capacity To Ship Packages"]},
-    {name:"Boundary / Count Search",idea:"Find first or last position that meets a condition.",when:"Need lower bound, upper bound, or count in sorted data.",examples:["First and Last Position of Element","Count Negatives in Sorted Matrix"]},
-    {name:"Mountain / Bitonic Search",idea:"Find peak, then search both sorted sides.",when:"Array strictly increases then decreases.",examples:["Find Peak Element","Find in Mountain Array"]},
-  ]},
-  {cat:"Trees", color:"#7F77DD", patterns:[
-    {name:"Tree Traversal",idea:"Visit nodes in preorder, inorder, postorder, level order.",when:"Binary Tree Inorder Traversal, Level Order Traversal.",examples:["Binary Tree Inorder Traversal","Level Order Traversal"]},
-    {name:"Tree Construction",idea:"Rebuild tree from traversals or sorted data.",when:"Build Tree From Preorder and Inorder, Sorted Array to BST.",examples:["Build Tree From Preorder and Inorder","Sorted Array to BST"]},
-    {name:"Path Sum",idea:"Track sums along root to leaf paths.",when:"Path Sum, Binary Tree Maximum Path Sum.",examples:["Path Sum","Binary Tree Maximum Path Sum"]},
-    {name:"LCA and Search",idea:"DFS or BST rules to find nodes and their ancestor.",when:"Lowest Common Ancestor, Search in BST.",examples:["Lowest Common Ancestor","Search in BST"]},
-    {name:"Validation / Properties",idea:"Check if tree meets property.",when:"Validate BST, Diameter of Binary Tree.",examples:["Validate BST","Diameter of Binary Tree"]},
-  ]},
-  {cat:"Stacks & Queues", color:"#BA7517", patterns:[
-    {name:"Monotonic Stack",idea:"Use stack for numbers, operators, or paths.",when:"Evaluate expression, parentheses, RPN, path simplification.",examples:["Basic Calculator","Evaluate Reverse Polish Notation"]},
-    {name:"Expression Stack",idea:"Deque stores candidates for window max or min.",when:"\"Sliding window maximum/minimum\" in O(n).",examples:["Sliding Window Maximum","Moving Average From Data Stream"]},
-    {name:"Sliding Window Deque",idea:"Build custom behavior with stack or queue.",when:"\"Design a stack-queue with X operation\".",examples:["Implement Queue Using Stacks","Design Circular Queue"]},
-  ]},
-  {cat:"Heaps / Priority Queues", color:"#D4537E", patterns:[
-    {name:"Kth Largest / Smallest",idea:"Maintain heap of size k.",when:"Kth Largest Element in Array, K Closest Points.",examples:["Kth Largest Element in Array","K Closest Points"]},
-    {name:"Heap + Hashmap",idea:"Count with hashmap, select with heap.",when:"\"Top K frequent\" or \"sort by frequency\".",examples:["Top K Frequent Elements","Sort Characters By Frequency"]},
-    {name:"Top K Frequent",idea:"\"Top K frequent\" or \"sort by frequency\".",when:"Top K Frequent Elements, Sort Characters By Frequency.",examples:["Top K Frequent Elements","Sort Characters By Frequency"]},
-    {name:"Merge K Sorted",idea:"Heap holds one element from each list.",when:"Merge k Sorted Lists, Smallest Range From K Lists.",examples:["Merge k Sorted Lists","Smallest Range From K Lists"]},
-    {name:"Heap Design / Streams",idea:"Use heap to always pick best candidate.",when:"Task Scheduler, Find Median From Data Stream.",examples:["Task Scheduler","Find Median From Data Stream"]},
-    {name:"Heaps in Graphs",idea:"Priority queue for weighted shortest paths.",when:"Network Delay Time, Cheapest Flights Within K Stops.",examples:["Network Delay Time","Cheapest Flights Within K Stops"]},
-  ]},
-];
-
-let activeFilter = "All";
-let searchTerm = "";
-
-const filtersEl = document.getElementById("filters");
-const contentEl = document.getElementById("content");
-const countEl = document.getElementById("count");
-const totalEl = document.getElementById("total");
-const searchEl = document.getElementById("search");
-
-const total = data.reduce((s, d) => s + d.patterns.length, 0);
-totalEl.textContent = total;
-
-["All", ...data.map(d => d.cat)].forEach(cat => {
-  const b = document.createElement("button");
-  b.className = "filter-btn" + (cat === "All" ? " active" : "");
-  b.textContent = cat;
-  b.onclick = () => {
-    activeFilter = cat;
-    document.querySelectorAll(".filter-btn").forEach(x => x.classList.remove("active"));
-    b.classList.add("active");
-    render();
-  };
-  filtersEl.appendChild(b);
-});
-
-searchEl.oninput = () => { searchTerm = searchEl.value.toLowerCase(); render(); };
-
-function hl(text) {
-  if (!searchTerm) return text;
-  const re = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-  return text.replace(re, '<mark>$1</mark>');
-}
-
-function render() {
-  let shown = 0;
-  let html = "";
-  data.forEach(sec => {
-    if (activeFilter !== "All" && activeFilter !== sec.cat) return;
-    const filtered = sec.patterns.filter(p => {
-      if (!searchTerm) return true;
-      return p.name.toLowerCase().includes(searchTerm) ||
-             p.idea.toLowerCase().includes(searchTerm) ||
-             p.when.toLowerCase().includes(searchTerm) ||
-             p.examples.some(e => e.toLowerCase().includes(searchTerm));
-    });
-    if (!filtered.length) return;
-    shown += filtered.length;
-    html += `<div class="category-section">
-      <div class="cat-header">
-        <div class="cat-dot" style="background:${sec.color}"></div>
-        <span class="cat-title">${sec.cat}</span>
-        <span class="cat-count">${filtered.length} pattern${filtered.length !== 1 ? "s" : ""}</span>
+  <div class="app-container">
+    
+    <!-- Dashboard Header -->
+    <header>
+      <div class="header-content">
+        <div class="title-area">
+          <h1><i class="fa-solid fa-graduation-cap"></i> Prep Dashboard</h1>
+          <p>Master core algorithmic design patterns & technical interview resources</p>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="tabs-controller">
+          <button class="tab-btn active" onclick="switchTab('patterns')">
+            <i class="fa-solid fa-folder-tree"></i> DSA Patterns
+          </button>
+          <button class="tab-btn" onclick="switchTab('library')">
+            <i class="fa-solid fa-book-bookmark"></i> Study Library
+          </button>
+        </div>
       </div>
-      <div class="patterns-grid">`;
-    filtered.forEach((p, i) => {
-      const id = `card-${sec.cat.replace(/[\s/]/g, '-')}-${i}`;
-      html += `<div class="pattern-card" id="${id}" onclick="toggle('${id}')">
-        <div class="card-top">
-          <span class="pattern-name">${hl(p.name)}</span>
-          <span class="expand-icon">▼</span>
-        </div>
-        <div class="pattern-idea">${hl(p.idea)}</div>
-        <div class="card-details">
-          <div class="detail-row">
-            <span class="detail-label">Spot it</span>
-            <span class="detail-val">${hl(p.when)}</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Examples</span>
-            <span class="detail-val">${p.examples.map(e => `<span class="example-pill">${hl(e)}</span>`).join("")}</span>
+    </header>
+
+    <!-- Preparation Stats Widget -->
+    <div class="stats-panel" id="stats-panel">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-percent"></i></div>
+        <div class="stat-info">
+          <div class="stat-val" id="overall-progress-text">0%</div>
+          <div class="stat-label">Total Progress</div>
+          <div class="progress-bar-container">
+            <div class="progress-fill" id="overall-progress-bar"></div>
           </div>
         </div>
-      </div>`;
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-list-check"></i></div>
+        <div class="stat-info">
+          <div class="stat-val" id="completed-count">0 / 0</div>
+          <div class="stat-label">Patterns Complete</div>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-bookmark"></i></div>
+        <div class="stat-info">
+          <div class="stat-val" id="books-count">6</div>
+          <div class="stat-label">Reference Books</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search & Control Panel -->
+    <div class="controls-panel">
+      <div class="search-wrapper">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="search" type="text" placeholder="Search patterns, details, canonical questions or books..." autocomplete="off" />
+      </div>
+      
+      <div class="filters-row" id="filters-row">
+        <span class="filter-label">Categories:</span>
+        <div class="filters" id="category-filters"></div>
+      </div>
+    </div>
+
+    <!-- MAIN VIEW 1: PATTERNS -->
+    <div id="patterns-view" class="view-content active">
+      <div id="patterns-list"></div>
+    </div>
+
+    <!-- MAIN VIEW 2: STUDY LIBRARY -->
+    <div id="library-view" class="view-content">
+      <div class="library-grid" id="library-grid"></div>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>DSA Patterns Dashboard &bull; Local Interview Prep Space &bull; <a href="https://github.com/utkarsh-mehrotra/dsa-patterns" target="_blank"><i class="fa-brands fa-github"></i> Repository</a></p>
+  </footer>
+
+  <script>
+    // RICH DATASETS
+    const patternsData = [
+      {
+        cat: "Arrays & Strings",
+        color: "#38bdf8",
+        patterns: [
+          {
+            name: "Two Pointers",
+            difficulty: "Easy",
+            complexity: "Time: O(N) | Space: O(1)",
+            idea: "Move two indices towards each other or dynamically to scan, compare, or shrink a linear range.",
+            when: "Sorted input array or linked list, looking for pairs/triplets, matching elements at both ends.",
+            examples: ["Two Sum II", "3Sum", "Container With Most Water", "Valid Palindrome"],
+            tip: "If the input array is not sorted, sorting it first takes O(N log N) but often opens up two-pointer access."
+          },
+          {
+            name: "Sliding Window",
+            difficulty: "Medium",
+            complexity: "Time: O(N) | Space: O(1) or O(K)",
+            idea: "Maintain a sub-array or sub-string window that expands or shrinks dynamically as you iterate.",
+            when: "Problems looking for maximum, minimum, or target-matching length/sum of a contiguous subsegment.",
+            examples: ["Minimum Size Subarray Sum", "Longest Substring Without Repeating Characters", "Permutation in String"],
+            tip: "Use a Hashmap or frequency array to store window counts. Keep boundaries dynamic with outer and inner loops."
+          },
+          {
+            name: "Merge Intervals",
+            difficulty: "Medium",
+            complexity: "Time: O(N log N) | Space: O(N) or O(1)",
+            idea: "Sort intervals based on start points, then iterate to combine overlapping ranges or clip segments.",
+            when: "Input consists of ranges, times, or coordinate spans `[start, end]` that overlap or need scheduling.",
+            examples: ["Merge Intervals", "Insert Interval", "Non-overlapping Intervals", "Meeting Rooms II"],
+            tip: "Sorting the intervals by their start time is almost always the required first step. Watch end coordinate overlaps."
+          },
+          {
+            name: "Prefix Sums",
+            difficulty: "Easy",
+            complexity: "Time: O(N) | Space: O(N) or O(1)",
+            idea: "Precompute running sums to fetch subarray sums over any arbitrary range `[i, j]` in O(1) time.",
+            when: "Frequent range sum or range count queries on immutable linear structures.",
+            examples: ["Subarray Sum Equals K", "Range Sum Query - Immutable", "Product of Array Except Self"],
+            tip: "Prefix sums can be offset by 1 element to simplify index bounds and avoid negative subtraction boundaries."
+          },
+          {
+            name: "Hashmaps / Frequency Map",
+            difficulty: "Easy",
+            complexity: "Time: O(N) | Space: O(N)",
+            idea: "Utilize fast constant-time lookup maps to save frequency counts or index mappings.",
+            when: "Grouping elements, counting frequencies, matching targets, or checking structural presence.",
+            examples: ["Group Anagrams", "First Unique Character in a String", "Subarray Sums Divisible by K"],
+            tip: "Combining a Hashmap with Prefix Sum is the standard trick for finding subarrays sum equal to target K."
+          },
+          {
+            name: "Sorting Heuristics",
+            difficulty: "Easy",
+            complexity: "Time: O(N log N) | Space: O(1) or O(N)",
+            idea: "Order data explicitly to establish sorted boundaries, making subsequent scans significantly easier.",
+            when: "Unordered input where sequence relations matter, or sorting isolates specific properties like min/max gaps.",
+            examples: ["Sort Colors", "Meeting Rooms", "Kth Largest Element in an Array"],
+            tip: "Consider quicksort pivot methods or bucket sorting when numbers fall within a highly localized range."
+          }
+        ]
+      },
+      {
+        cat: "Linked Lists",
+        color: "#34d399",
+        patterns: [
+          {
+            name: "Fast and Slow Pointers",
+            difficulty: "Easy",
+            complexity: "Time: O(N) | Space: O(1)",
+            idea: "Advance two pointers at different speeds (usually 1 step and 2 steps) along a list.",
+            when: "Detecting list cycles, finding midpoint/quarter points, finding the Kth node from the tail.",
+            examples: ["Linked List Cycle", "Linked List Cycle II", "Palindrome Linked List", "Remove Nth Node From End of List"],
+            tip: "Ensure `fast` and `fast.next` are not null before moving the fast pointer 2 steps to avoid null pointer exceptions."
+          },
+          {
+            name: "Dummy Node",
+            difficulty: "Easy",
+            complexity: "Time: O(1) | Space: O(1)",
+            idea: "Prepend a temporary auxiliary node at the start of a list to bypass list head mutation edge cases.",
+            when: "Creating new lists, merging lists, or deleting nodes that might match the head node itself.",
+            examples: ["Merge Two Sorted Lists", "Remove Duplicates from Sorted List II", "Partition List"],
+            tip: "Always store `dummy.next` before deleting or returning the list to successfully retrieve your new head node."
+          },
+          {
+            name: "In-Place Reversal",
+            difficulty: "Medium",
+            complexity: "Time: O(N) | Space: O(1)",
+            idea: "Iteratively rewrite pointer directions using three references (`prev`, `curr`, `next`) without allocating extra nodes.",
+            when: "Splicing, reversing elements, or modifying directions of segments inside lists.",
+            examples: ["Reverse Linked List", "Reverse Linked List II", "Reverse Nodes in k-Group"],
+            tip: "Track the boundary nodes strictly: the node preceding the reversal subsegment must link to the new segment head."
+          },
+          {
+            name: "Recursive List Splicing",
+            difficulty: "Medium",
+            complexity: "Time: O(N) | Space: O(N) stack",
+            idea: "Process list segments recursively by defining operations on the current head and recurring on head.next.",
+            when: "Clean, divide-and-conquer style mutations like swapping elements or flattening nested lists.",
+            examples: ["Swap Nodes in Pairs", "Flatten a Multilevel Doubly Linked List", "Reverse Nodes in k-Group"],
+            tip: "Be mindful of call stack sizes. Heavy recursion on very long lists can trigger stack overflows in production."
+          }
+        ]
+      },
+      {
+        cat: "Binary Search",
+        color: "#fb923c",
+        patterns: [
+          {
+            name: "Basic Binary Search",
+            difficulty: "Easy",
+            complexity: "Time: O(log N) | Space: O(1)",
+            idea: "Repeatedly divide search ranges in half on ordered/sorted datasets.",
+            when: "Target searching on sorted arrays or monotonic bounds.",
+            examples: ["Binary Search", "Search in Rotated Sorted Array", "Find Minimum in Rotated Sorted Array"],
+            tip: "Use `mid = left + Math.floor((right - left) / 2)` instead of `(left + right) / 2` to prevent integer overflow."
+          },
+          {
+            name: "Binary Search on Answer",
+            difficulty: "Hard",
+            complexity: "Time: O(N log K) | Space: O(1)",
+            idea: "Binary search across the range of *possible solution values* rather than index positions.",
+            when: "Looking for 'minimum target capacity' or 'maximum threshold values' where a check function is monotonic.",
+            examples: ["Split Array Largest Sum", "Capacity To Ship Packages Within D Days", "Koko Eating Bananas"],
+            tip: "Write a clear, deterministic validation function `isFeasible(mid)` that returns true if value `mid` is valid."
+          },
+          {
+            name: "Boundary / Count Search",
+            difficulty: "Medium",
+            complexity: "Time: O(log N) | Space: O(1)",
+            idea: "Adapt standard binary search to find the lower bound (first occurrence) or upper bound (last occurrence).",
+            when: "Finding start/end coordinates of duplicated elements, counting duplicates, or closest floor/ceil search.",
+            examples: ["Find First and Last Position of Element in Sorted Array", "First Bad Version", "Search Insert Position"],
+            tip: "When searching for boundaries, adjust pointers to converge at `left === right` instead of returning mid immediately."
+          },
+          {
+            name: "Mountain / Bitonic Search",
+            difficulty: "Medium",
+            complexity: "Time: O(log N) | Space: O(1)",
+            idea: "Detect peak or maximum boundary on a non-monotonic increasing-then-decreasing structure, then search sides.",
+            when: "Arrays that scale up monotonically to a single peak, and subsequently drop monotonically.",
+            examples: ["Find Peak Element", "Peak Index in a Mountain Array", "Find in Mountain Array"],
+            tip: "If `arr[mid] < arr[mid + 1]`, peak lies strictly in the right half (`left = mid + 1`). Else, it lies in the left."
+          }
+        ]
+      },
+      {
+        cat: "Trees & BSTs",
+        color: "#c084fc",
+        patterns: [
+          {
+            name: "Tree DFS Traversal",
+            difficulty: "Easy",
+            complexity: "Time: O(N) | Space: O(H)",
+            idea: "Recursively dive deep into left and right branches using pre-order, in-order, or post-order patterns.",
+            when: "Evaluating node relationships, performing deep element searches, or flattening trees.",
+            examples: ["Binary Tree Inorder Traversal", "Invert Binary Tree", "Maximum Depth of Binary Tree"],
+            tip: "In-order traversal of a Binary Search Tree (BST) always outputs values in strictly sorted ascending order."
+          },
+          {
+            name: "Level-Order Traversal (BFS)",
+            difficulty: "Medium",
+            complexity: "Time: O(N) | Space: O(N)",
+            idea: "Traverse tree structures breadth-first, level-by-level, utilizing a FIFO queue.",
+            when: "Tracking horizontal depth, calculating horizontal metrics, or finding shortest distance in unweighted structures.",
+            examples: ["Binary Tree Level Order Traversal", "Binary Tree Zigzag Level Order Traversal", "Populating Next Right Pointers in Each Node"],
+            tip: "Track the size of the queue at the start of each level loop (`const size = queue.length`) to isolate layers."
+          },
+          {
+            name: "Tree Construction",
+            difficulty: "Medium",
+            complexity: "Time: O(N) | Space: O(N)",
+            idea: "Construct original binary tree structures by matching recursive indices from preorder/inorder traversals.",
+            when: "Rebuilding binary trees from serialized arrays, traversal arrays, or sorted list sequences.",
+            examples: ["Construct Binary Tree from Preorder and Inorder Traversal", "Convert Sorted Array to Binary Search Tree"],
+            tip: "Use a Hashmap to map element indices of inorder traversal to achieve O(1) pivot split searches."
+          },
+          {
+            name: "Path Sum Dynamics",
+            difficulty: "Medium",
+            complexity: "Time: O(N) | Space: O(H)",
+            idea: "Track mathematical sums or node sets along active paths from root to leaves.",
+            when: "Problems testing path sums, structural target paths, or any node-to-node maximum paths.",
+            examples: ["Path Sum II", "Binary Tree Maximum Path Sum", "Path Sum III"],
+            tip: "Utilize backtracking techniques to push and pop nodes from your current path collection as you traverse."
+          },
+          {
+            name: "Lowest Common Ancestor",
+            difficulty: "Medium",
+            complexity: "Time: O(N) | Space: O(H)",
+            idea: "Find the lowest mutual parent node of two specified nodes p and q via DFS.",
+            when: "Locating convergence points, routing between nodes, or finding shared paths.",
+            examples: ["Lowest Common Ancestor of a Binary Tree", "Lowest Common Ancestor of a Binary Search Tree"],
+            tip: "For BSTs, the LCA is the first node whose value is mathematically split between the values of p and q."
+          }
+        ]
+      },
+      {
+        cat: "Stacks & Queues",
+        color: "#fb7185",
+        patterns: [
+          {
+            name: "Monotonic Stack",
+            difficulty: "Medium",
+            complexity: "Time: O(N) | Space: O(N)",
+            idea: "Maintain elements in a strictly increasing or decreasing sequence inside a stack.",
+            when: "Finding 'next greater element', 'previous smaller element', daily temperatures, or largest histogram areas.",
+            examples: ["Next Greater Element I", "Daily Temperatures", "Largest Rectangle in Histogram", "Online Stock Span"],
+            tip: "Instead of raw element values, store indices in the stack. This retains distance/interval information."
+          },
+          {
+            name: "Sliding Window Deque",
+            difficulty: "Hard",
+            complexity: "Time: O(N) | Space: O(K)",
+            idea: "Maintain a double-ended queue (deque) containing indices of candidates in a moving window in sorted order.",
+            when: "Calculating running maximum or minimum across every sliding subarray of size K in O(N).",
+            examples: ["Sliding Window Maximum", "Shortest Subarray with Sum at Least K"],
+            tip: "Ensure indices at the rear of the deque are dropped if their associated values are worse than the new incoming element."
+          },
+          {
+            name: "Expression Evaluation",
+            difficulty: "Hard",
+            complexity: "Time: O(N) | Space: O(N)",
+            idea: "Leverage stacks to parse, organize operations, evaluate parenthetical orders, and compute equations.",
+            when: "Parsing standard mathematical expressions, string calculators, nested parentheses, or path simplification.",
+            examples: ["Basic Calculator", "Evaluate Reverse Polish Notation", "Simplify Path", "Valid Parentheses"],
+            tip: "Use two separate stacks (one for operators and one for numbers) or convert the expression to Postfix format."
+          }
+        ]
+      },
+      {
+        cat: "Heaps & Streams",
+        color: "#fbbf24",
+        patterns: [
+          {
+            name: "Kth Largest / Smallest",
+            difficulty: "Medium",
+            complexity: "Time: O(N log K) | Space: O(K)",
+            idea: "Maintain a specialized binary heap capped strictly at size K during iterations.",
+            when: "Extracting largest/smallest K items from large collections or data streams.",
+            examples: ["Kth Largest Element in an Array", "K Closest Points to Origin", "Top K Frequent Elements"],
+            tip: "Use a Min-Heap for 'K-largest' elements (so small values drop off the top), and a Max-Heap for 'K-smallest'."
+          },
+          {
+            name: "Two Heaps / Medians",
+            difficulty: "Hard",
+            complexity: "Time: O(log N) | Space: O(N)",
+            idea: "Divide incoming datasets into two balanced heaps: a Max-Heap for the lower half, a Min-Heap for the upper half.",
+            when: "Continuously calculating median values on dynamic real-time data streams.",
+            examples: ["Find Median from Data Stream", "Sliding Window Median"],
+            tip: "After each insertion, balance sizes so the difference in count between both heaps is at most 1 element."
+          },
+          {
+            name: "Merge K Sorted",
+            difficulty: "Hard",
+            complexity: "Time: O(N log K) | Space: O(K)",
+            idea: "Insert the first element of each of K sorted lists into a Min-Heap, iteratively extracting min and inserting next.",
+            when: "Merging K pre-sorted lists, lists, or matrix rows into one unified sorted array.",
+            examples: ["Merge k Sorted Lists", "Find K Pairs with Smallest Sums", "Smallest Range Covering Elements from K Lists"],
+            tip: "Store the source list index or pointer alongside each element pushed into the heap to step forward."
+          }
+        ]
+      }
+    ];
+
+    const booksData = [
+      {
+        title: "Coding Interview Patterns",
+        author: "Alex Xu & Shaun Gunawardane",
+        tagline: "Nail Your Next Coding Interview (ByteByteGo)",
+        desc: "A highly visual guide that walks you through core algorithmic patterns using intuitive illustrations, dry runs, and practical coding exercises.",
+        path: "books/Alex Xu & Shaun Gunawardane - Coding Interview Patterns.pdf",
+        tags: ["DSA", "LeetCode", "ByteByteGo", "2024 Release"]
+      },
+      {
+        title: "Coding Interview Patterns (Bonus)",
+        author: "Alex Xu & Shaun Gunawardane",
+        tagline: "Advanced Patterns & Heuristics (ByteByteGo)",
+        desc: "A compilation of advanced problem-solving techniques and bonus patterns to tackle highly complex algorithmic puzzles in top-tier interviews.",
+        path: "books/Alex Xu & Shaun Gunawardane - Coding Interview Patterns (Bonus).pdf",
+        tags: ["Advanced", "DSA", "Interview Prep"]
+      },
+      {
+        title: "AlgoTutor - LeetCode Patterns",
+        author: "AlgoTutor",
+        tagline: "Structured Learning Syllabus",
+        desc: "A structured syllabus mapped directly to core patterns and high-frequency LeetCode questions, sorting problems systematically from Easy to Hard.",
+        path: "books/AlgoTutor - LeetCode Patterns.pdf",
+        tags: ["Syllabus", "Curated Problems", "Targeted Prep"]
+      },
+      {
+        title: "System Design Interview (Volume 2)",
+        author: "Alex Xu & Sahn Lam",
+        tagline: "An Insider's Guide (Byte Code)",
+        desc: "Deep-dives into real-world system design questions including distributed caches, search autocompletes, payment systems, and gaming backends.",
+        path: "books/Alex Xu & Sahn Lam - System Design Interview (Volume 2).pdf",
+        tags: ["System Design", "Architecture", "ByteByteGo"]
+      },
+      {
+        title: "Designing Data-Intensive Applications",
+        author: "Martin Kleppmann",
+        tagline: "The Definitive Distributed Systems Guide",
+        desc: "The bible for engineering data systems. Covers storage engines, transactions, partition keys, replication, consensus, and system trade-offs.",
+        path: "books/Martin Kleppmann - Designing Data-Intensive Applications.pdf",
+        tags: ["Systems", "Databases", "Distributed Systems"]
+      },
+      {
+        title: "GAMAM Technical Interview Guide",
+        author: "GAMAM Prep Consortium",
+        tagline: "FAANG Interview Playbook",
+        desc: "Comprehensive cheatsheets, behavioral guidelines, and dynamic problem roadmaps targeted specifically at top-tier FAANG/GAMAM interviews.",
+        path: "books/GAMAM Technical Interview Guide.pdf",
+        tags: ["Interview Cheat Sheet", "Behavioral", "FAANG Guide"]
+      }
+    ];
+
+    // APPLICATION STATE
+    let currentTab = "patterns";
+    let activeCategory = "All";
+    let searchTerm = "";
+    let completedPatterns = {};
+
+    // LOCAL STORAGE SYNC
+    function loadCompletedState() {
+      const stored = localStorage.getItem("dsa_completed_patterns");
+      if (stored) {
+        try {
+          completedPatterns = JSON.parse(stored);
+        } catch(e) {
+          completedPatterns = {};
+        }
+      }
+    }
+
+    function saveCompletedState() {
+      localStorage.setItem("dsa_completed_patterns", JSON.stringify(completedPatterns));
+      updateProgressStats();
+    }
+
+    // DOM ELEMENTS
+    const categoryFiltersEl = document.getElementById("category-filters");
+    const patternsListEl = document.getElementById("patterns-list");
+    const libraryGridEl = document.getElementById("library-grid");
+    const searchEl = document.getElementById("search");
+    
+    const overallProgressText = document.getElementById("overall-progress-text");
+    const overallProgressBar = document.getElementById("overall-progress-bar");
+    const completedCountEl = document.getElementById("completed-count");
+    
+    // TAB SWITCHER
+    function switchTab(tabId) {
+      currentTab = tabId;
+      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+      
+      const targetBtn = Array.from(document.querySelectorAll(".tab-btn")).find(btn => btn.getAttribute("onclick").includes(tabId));
+      if (targetBtn) targetBtn.classList.add("active");
+      
+      document.querySelectorAll(".view-content").forEach(el => el.classList.remove("active"));
+      document.getElementById(`${tabId}-view`).classList.add("active");
+      
+      // Update filters block visibility
+      const filtersRow = document.getElementById("filters-row");
+      if (tabId === "library") {
+        filtersRow.style.display = "none";
+      } else {
+        filtersRow.style.display = "flex";
+      }
+      
+      render();
+    }
+
+    // INITIALIZE FILTERS
+    function initFilters() {
+      categoryFiltersEl.innerHTML = "";
+      
+      // Add 'All' Filter
+      const allBtn = document.createElement("button");
+      allBtn.className = "filter-btn active";
+      allBtn.innerHTML = `All`;
+      allBtn.onclick = () => selectCategory("All", allBtn);
+      categoryFiltersEl.appendChild(allBtn);
+      
+      // Add Specific Category Filters
+      patternsData.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "filter-btn";
+        btn.innerHTML = `<span class="filter-dot" style="background:${cat.color}"></span> ${cat.cat}`;
+        btn.onclick = () => selectCategory(cat.cat, btn);
+        categoryFiltersEl.appendChild(btn);
+      });
+    }
+
+    function selectCategory(category, btnEl) {
+      activeCategory = category;
+      document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+      btnEl.classList.add("active");
+      render();
+    }
+
+    // MATH STATS CALCULATION
+    function updateProgressStats() {
+      let total = 0;
+      let completed = 0;
+      
+      patternsData.forEach(cat => {
+        cat.patterns.forEach(p => {
+          total++;
+          if (completedPatterns[p.name]) {
+            completed++;
+          }
+        });
+      });
+      
+      const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+      
+      overallProgressText.textContent = `${percent}%`;
+      overallProgressBar.style.width = `${percent}%`;
+      completedCountEl.textContent = `${completed} / ${total}`;
+    }
+
+    // TEXT HIGHLIGHTER
+    function highlightText(text) {
+      if (!searchTerm) return text;
+      const escapedQuery = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const re = new RegExp(`(${escapedQuery})`, 'gi');
+      return text.replace(re, '<mark>$1</mark>');
+    }
+
+    // RENDER CONTROLLER
+    function render() {
+      searchTerm = searchEl.value.toLowerCase().trim();
+      
+      if (currentTab === "patterns") {
+        renderPatterns();
+      } else {
+        renderLibrary();
+      }
+    }
+
+    // RENDERING PATTERNS VIEW
+    function renderPatterns() {
+      let html = "";
+      let totalShown = 0;
+      
+      patternsData.forEach(cat => {
+        // Apply category filter
+        if (activeCategory !== "All" && activeCategory !== cat.cat) return;
+        
+        // Apply search filter on patterns
+        const filtered = cat.patterns.filter(p => {
+          if (!searchTerm) return true;
+          return p.name.toLowerCase().includes(searchTerm) ||
+                 p.idea.toLowerCase().includes(searchTerm) ||
+                 p.when.toLowerCase().includes(searchTerm) ||
+                 p.examples.some(e => e.toLowerCase().includes(searchTerm)) ||
+                 (p.tip && p.tip.toLowerCase().includes(searchTerm));
+        });
+        
+        if (filtered.length === 0) return;
+        totalShown += filtered.length;
+        
+        html += `
+          <div class="category-section">
+            <div class="cat-header">
+              <div class="cat-dot-large" style="color: ${cat.color}; background-color: ${cat.color}"></div>
+              <span class="cat-title">${cat.cat}</span>
+              <span class="cat-count">${filtered.length} pattern${filtered.length !== 1 ? 's' : ''}</span>
+            </div>
+            <div class="patterns-grid">
+        `;
+        
+        filtered.forEach((p, idx) => {
+          const isCompleted = !!completedPatterns[p.name];
+          const badgeClass = p.difficulty === "Easy" ? "badge-easy" : p.difficulty === "Medium" ? "badge-medium" : "badge-hard";
+          const cardId = `p-${cat.cat.replace(/[\s&]/g, '-')}-${idx}`;
+          
+          html += `
+            <div class="pattern-card ${isCompleted ? 'completed' : ''}" id="${cardId}" onclick="handleCardClick(event, '${cardId}')">
+              
+              <div class="card-top">
+                <div class="pattern-meta">
+                  <div class="pattern-checkbox ${isCompleted ? 'checked' : ''}" onclick="togglePatternCompleted(event, '${p.name}')">
+                    <i class="fa-solid fa-check"></i>
+                  </div>
+                  <span class="pattern-name">${highlightText(p.name)}</span>
+                </div>
+                <div class="expand-icon"><i class="fa-solid fa-chevron-down"></i></div>
+              </div>
+              
+              <div class="pattern-idea">${highlightText(p.idea)}</div>
+              
+              <div class="badges-row">
+                <span class="badge ${badgeClass}">${p.difficulty}</span>
+                <span class="badge badge-complexity">${p.complexity}</span>
+              </div>
+              
+              <!-- Hidden details inside accordion -->
+              <div class="card-details">
+                <div class="detail-section">
+                  <div class="detail-title"><i class="fa-solid fa-bullseye"></i> Spot it (Heuristics)</div>
+                  <div class="detail-body">${highlightText(p.when)}</div>
+                </div>
+                
+                <div class="detail-section">
+                  <div class="detail-title"><i class="fa-solid fa-code"></i> Canonical Examples</div>
+                  <div class="example-pills">
+                    ${p.examples.map(ex => `
+                      <span class="example-pill">
+                        <i class="fa-solid fa-circle-question"></i> ${highlightText(ex)}
+                      </span>
+                    `).join('')}
+                  </div>
+                </div>
+                
+                ${p.tip ? `
+                  <div class="pro-tip">
+                    <div class="pro-tip-title"><i class="fa-solid fa-lightbulb"></i> Pro-Tip</div>
+                    <div class="pro-tip-body">${highlightText(p.tip)}</div>
+                  </div>
+                ` : ''}
+              </div>
+              
+            </div>
+          `;
+        });
+        
+        html += `</div></div>`;
+      });
+      
+      if (totalShown === 0) {
+        html = `
+          <div class="no-results">
+            <i class="fa-solid fa-face-frown"></i>
+            <h3>No Patterns Match Your Search</h3>
+            <p>Try refining your search keyword or selecting a different category filter.</p>
+          </div>
+        `;
+      }
+      
+      patternsListEl.innerHTML = html;
+    }
+
+    // RENDERING LIBRARY VIEW
+    function renderLibrary() {
+      let html = "";
+      
+      // Filter books based on search
+      const filtered = booksData.filter(b => {
+        if (!searchTerm) return true;
+        return b.title.toLowerCase().includes(searchTerm) ||
+               b.author.toLowerCase().includes(searchTerm) ||
+               b.tagline.toLowerCase().includes(searchTerm) ||
+               b.desc.toLowerCase().includes(searchTerm) ||
+               b.tags.some(t => t.toLowerCase().includes(searchTerm));
+      });
+      
+      if (filtered.length === 0) {
+        html = `
+          <div class="no-results">
+            <i class="fa-solid fa-book-open"></i>
+            <h3>No Reference Books Found</h3>
+            <p>Ensure your search queries match book titles, authors, or categories.</p>
+          </div>
+        `;
+        libraryGridEl.innerHTML = html;
+        return;
+      }
+      
+      filtered.forEach(b => {
+        html += `
+          <div class="book-card">
+            <div class="book-cover-mock">
+              <div class="book-cover-icon"><i class="fa-solid fa-book-open-reader"></i></div>
+              <div class="book-cover-title">${b.title}</div>
+            </div>
+            <div class="book-info">
+              <div class="book-title">${highlightText(b.title)}</div>
+              <div class="book-author"><i class="fa-solid fa-pen-nib"></i> ${highlightText(b.author)}</div>
+              <div class="book-desc">${highlightText(b.desc)}</div>
+              <div class="book-tags">
+                ${b.tags.map(t => `<span class="book-tag">${highlightText(t)}</span>`).join('')}
+              </div>
+              <a href="${b.path}" target="_blank" class="book-btn">
+                <i class="fa-solid fa-file-pdf"></i> Read PDF
+              </a>
+            </div>
+          </div>
+        `;
+      });
+      
+      libraryGridEl.innerHTML = html;
+    }
+
+    // INTERACTION HANDLERS
+    function handleCardClick(event, cardId) {
+      // Prevent accordion toggle when clicking on checkbox or inside a link/pill
+      if (event.target.closest('.pattern-checkbox') || event.target.closest('.example-pill')) {
+        return;
+      }
+      
+      const card = document.getElementById(cardId);
+      if (card) {
+        card.classList.toggle("expanded");
+      }
+    }
+
+    function togglePatternCompleted(event, name) {
+      event.stopPropagation(); // prevent card expand toggle
+      
+      if (completedPatterns[name]) {
+        delete completedPatterns[name];
+      } else {
+        completedPatterns[name] = true;
+      }
+      
+      saveCompletedState();
+      
+      // Fast state refresh
+      render();
+    }
+
+    // SEARCH INPUT LISTENER
+    searchEl.addEventListener("input", render);
+
+    // SYSTEM INIT
+    window.addEventListener("DOMContentLoaded", () => {
+      loadCompletedState();
+      initFilters();
+      updateProgressStats();
+      render();
     });
-    html += `</div></div>`;
-  });
-  if (!shown) html = `<div class="no-results">No patterns match "${searchTerm}"</div>`;
-  countEl.textContent = shown;
-  contentEl.innerHTML = html;
-}
-
-function toggle(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.toggle("expanded");
-}
-
-render();
-</script>
+  </script>
 </body>
 </html>
