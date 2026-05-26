@@ -61,26 +61,7 @@
       --difficulty-hard: #dc2626;
     }
 
-    /* Creamy Theme (Cozy Sepia) Styling Variables */
-    body.creamy-theme {
-      --bg-primary: #faf6ee;
-      --bg-secondary: #f4ebd9;
-      --bg-card: rgba(253, 251, 246, 0.88);
-      --bg-card-hover: rgba(255, 255, 255, 0.98);
-      --border-color: rgba(139, 92, 26, 0.12);
-      --border-glow: rgba(180, 83, 9, 0.3);
-      --text-primary: #432818;
-      --text-secondary: #7f5539;
-      --text-muted: #9c6644;
-      
-      --accent: #b45309;
-      --accent-hover: #92400e;
-      --accent-glow: rgba(180, 83, 9, 0.12);
-      
-      --difficulty-easy: #15803d;
-      --difficulty-medium: #d97706;
-      --difficulty-hard: #b91c1c;
-    }
+
 
     body {
       font-family: 'Outfit', sans-serif;
@@ -892,17 +873,7 @@
       border-color: rgba(0, 0, 0, 0.15);
     }
 
-    body.creamy-theme .book-list-btn.secondary {
-      background: rgba(180, 83, 9, 0.05);
-      color: #b45309;
-      border-color: rgba(180, 83, 9, 0.15);
-    }
 
-    body.creamy-theme .book-list-btn.secondary:hover {
-      background: rgba(180, 83, 9, 0.1);
-      color: #78350f;
-      border-color: #b45309;
-    }
 
     /* Empty states */
     .no-results {
@@ -1605,7 +1576,7 @@
     // THEME CONTROLLER
     function initTheme() {
       const stored = localStorage.getItem("dsa_theme");
-      if (stored) {
+      if (stored && stored !== "creamy") {
         currentTheme = stored;
       } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
         currentTheme = "light";
@@ -1617,8 +1588,6 @@
     function toggleTheme() {
       if (currentTheme === "dark") {
         currentTheme = "light";
-      } else if (currentTheme === "light") {
-        currentTheme = "creamy";
       } else {
         currentTheme = "dark";
       }
@@ -1630,19 +1599,13 @@
       const toggleIcon = document.querySelector("#theme-toggle i");
       
       // Clean up body classes
-      document.body.classList.remove("light-theme", "creamy-theme");
+      document.body.classList.remove("light-theme");
       
       if (currentTheme === "light") {
         document.body.classList.add("light-theme");
         if (toggleIcon) {
           toggleIcon.className = "fa-solid fa-sun";
           toggleIcon.style.color = "#f59e0b";
-        }
-      } else if (currentTheme === "creamy") {
-        document.body.classList.add("creamy-theme");
-        if (toggleIcon) {
-          toggleIcon.className = "fa-solid fa-mug-hot";
-          toggleIcon.style.color = "#b45309"; // Warm terracotta/brown
         }
       } else {
         // Dark theme
