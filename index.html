@@ -773,13 +773,13 @@
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
-      padding: 0.85rem 1.25rem;
+      padding: 1.15rem 1.4rem;
       backdrop-filter: blur(16px);
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       transition: var(--transition);
-      gap: 1rem;
+      gap: 1.25rem;
     }
 
     .book-list-item:hover {
@@ -791,7 +791,7 @@
 
     .book-list-meta {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 1rem;
       flex-grow: 1;
       min-width: 0;
@@ -809,6 +809,7 @@
       align-items: center;
       justify-content: center;
       border: 1px solid rgba(99, 102, 241, 0.15);
+      margin-top: 0.15rem;
     }
 
     .book-list-details {
@@ -816,21 +817,24 @@
     }
 
     .book-list-title {
-      font-size: 1rem;
+      font-size: 1.05rem;
       font-weight: 600;
       color: var(--text-primary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      margin-bottom: 0.15rem;
     }
 
     .book-list-author {
       font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .book-list-desc {
+      font-size: 0.82rem;
       color: var(--text-secondary);
-      margin-top: 0.15rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      margin-top: 0.45rem;
+      line-height: 1.45;
+      opacity: 0.88;
     }
 
     .book-list-actions {
@@ -1936,6 +1940,9 @@
         return;
       }
       
+      // Sort filtered books alphabetically by title
+      filtered.sort((a, b) => a.title.localeCompare(b.title));
+      
       filtered.forEach((b) => {
         const encodedPath = encodeBookPath(b.path);
         
@@ -1947,7 +1954,8 @@
               </div>
               <div class="book-list-details">
                 <div class="book-list-title">${highlightText(b.title)}</div>
-                <div class="book-list-author">${highlightText(b.author)}</div>
+                <div class="book-list-author">by ${highlightText(b.author)}</div>
+                <div class="book-list-desc">${highlightText(b.desc)}</div>
               </div>
             </div>
             <div class="book-list-actions">
