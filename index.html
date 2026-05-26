@@ -630,32 +630,86 @@
 
     .example-pill {
       font-size: 0.75rem;
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--border-color);
       color: var(--text-secondary);
-      padding: 0.2rem 0.6rem;
       border-radius: 6px;
       transition: var(--transition);
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      text-decoration: none; /* Avoid default anchor underlines */
+      padding: 0;
+      overflow: hidden;
+      user-select: none;
     }
 
-    .example-pill i {
+    .example-pill.solved {
+      background: rgba(16, 185, 129, 0.04);
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+
+    .problem-checkbox {
+      padding: 0.25rem 0.4rem 0.25rem 0.5rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      border-right: 1px solid var(--border-color);
+    }
+
+    .problem-checkbox:hover {
+      color: var(--difficulty-easy);
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .problem-checkbox.checked {
+      color: var(--difficulty-easy);
+    }
+
+    .problem-link {
+      padding: 0.25rem 0.5rem 0.25rem 0.4rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: var(--transition);
+    }
+
+    .problem-link:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .example-pill.solved .problem-link {
+      color: #a7f3d0;
+    }
+
+    body.light-theme .example-pill.solved .problem-link {
+      color: #065f46;
+    }
+
+    .problem-link i {
       font-size: 0.65rem;
       color: var(--accent);
       transition: var(--transition);
     }
 
-    .example-pill:hover {
-      background: rgba(99, 102, 241, 0.05);
-      border-color: var(--accent);
-      color: var(--text-primary);
+    .problem-link:hover i {
+      transform: translate(1px, -1px);
     }
 
-    .example-pill:hover i {
-      transform: translate(1px, -1px); /* micro-animation for external link */
+    .badge-solved-count {
+      background: rgba(34, 197, 94, 0.08) !important;
+      border-color: rgba(34, 197, 94, 0.18) !important;
+      color: #4ade80 !important;
+    }
+
+    body.light-theme .badge-solved-count {
+      background: rgba(22, 163, 74, 0.06) !important;
+      border-color: rgba(22, 163, 74, 0.12) !important;
+      color: #15803d !important;
     }
 
     .pro-tip {
@@ -982,7 +1036,7 @@
         <div class="stat-icon"><i class="fa-solid fa-percent"></i></div>
         <div class="stat-info">
           <div class="stat-val" id="overall-progress-text">0%</div>
-          <div class="stat-label">Total Progress</div>
+          <div class="stat-label">Overall Solved</div>
           <div class="progress-bar-container">
             <div class="progress-fill" id="overall-progress-bar"></div>
           </div>
@@ -990,10 +1044,18 @@
       </div>
       
       <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-code"></i></div>
+        <div class="stat-info">
+          <div class="stat-val" id="problems-solved-count">0 / 197</div>
+          <div class="stat-label">Problems Solved</div>
+        </div>
+      </div>
+      
+      <div class="stat-card">
         <div class="stat-icon"><i class="fa-solid fa-list-check"></i></div>
         <div class="stat-info">
-          <div class="stat-val" id="completed-count">0 / 0</div>
-          <div class="stat-label">Patterns Complete</div>
+          <div class="stat-val" id="completed-count">0 / 38</div>
+          <div class="stat-label">Patterns Mastered</div>
         </div>
       </div>
       
@@ -1516,6 +1578,7 @@
     let activeCategory = "All";
     let searchTerm = "";
     let completedPatterns = {};
+    let completedProblems = {};
     let currentTheme = "dark";
 
     // PATH ENCODER FOR PDF RESOLUTION
@@ -1602,11 +1665,21 @@
           completedPatterns = {};
         }
       }
+
+      const storedProblems = localStorage.getItem("dsa_completed_problems");
+      if (storedProblems) {
+        try {
+          completedProblems = JSON.parse(storedProblems);
+        } catch(e) {
+          completedProblems = {};
+        }
+      }
     }
 
     // SAVE STATE COMPLETED IN LOCALSTORAGE
     function saveCompletedState() {
       localStorage.setItem("dsa_completed_patterns", JSON.stringify(completedPatterns));
+      localStorage.setItem("dsa_completed_problems", JSON.stringify(completedProblems));
       updateProgressStats();
     }
 
@@ -1672,23 +1745,40 @@
 
     // MATH STATS CALCULATION
     function updateProgressStats() {
-      let total = 0;
-      let completed = 0;
+      let totalPatterns = 0;
+      let completedPatternsCount = 0;
+      
+      const allProblems = new Set();
+      const solvedProblems = new Set();
       
       patternsData.forEach(cat => {
         cat.patterns.forEach(p => {
-          total++;
+          totalPatterns++;
           if (completedPatterns[p.name]) {
-            completed++;
+            completedPatternsCount++;
           }
+          p.examples.forEach(ex => {
+            allProblems.add(ex);
+            if (completedProblems[ex]) {
+              solvedProblems.add(ex);
+            }
+          });
         });
       });
       
-      const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+      const totalProblemsCount = allProblems.size;
+      const solvedProblemsCount = solvedProblems.size;
+      const percent = totalProblemsCount > 0 ? Math.round((solvedProblemsCount / totalProblemsCount) * 100) : 0;
       
       overallProgressText.textContent = `${percent}%`;
       overallProgressBar.style.width = `${percent}%`;
-      completedCountEl.textContent = `${completed} / ${total}`;
+      
+      const problemsSolvedCountEl = document.getElementById("problems-solved-count");
+      if (problemsSolvedCountEl) {
+        problemsSolvedCountEl.textContent = `${solvedProblemsCount} / ${totalProblemsCount}`;
+      }
+      
+      completedCountEl.textContent = `${completedPatternsCount} / ${totalPatterns}`;
     }
 
     // TEXT HIGHLIGHTER
@@ -1747,6 +1837,10 @@
           const badgeClass = p.difficulty === "Easy" ? "badge-easy" : p.difficulty === "Medium" ? "badge-medium" : "badge-hard";
           const cardId = `p-${cat.cat.replace(/[\s&]/g, '-')}-${idx}`;
           
+          const solvedCount = p.examples.filter(ex => !!completedProblems[ex]).length;
+          const totalCount = p.examples.length;
+          const solvedBadge = solvedCount > 0 ? `<span class="badge badge-solved-count"><i class="fa-solid fa-circle-check"></i> ${solvedCount}/${totalCount} solved</span>` : '';
+
           html += `
             <div class="pattern-card ${isCompleted ? 'completed' : ''}" id="${cardId}" onclick="handleCardClick(event, '${cardId}')">
               
@@ -1765,6 +1859,7 @@
               <div class="badges-row">
                 <span class="badge ${badgeClass}">${p.difficulty}</span>
                 <span class="badge badge-complexity">${p.complexity}</span>
+                ${solvedBadge}
               </div>
               
               <!-- Hidden details inside accordion -->
@@ -1777,11 +1872,19 @@
                 <div class="detail-section">
                   <div class="detail-title"><i class="fa-solid fa-code"></i> Canonical Examples (Click to Solve)</div>
                   <div class="example-pills">
-                    ${p.examples.map(ex => `
-                      <a href="${getLeetCodeUrl(ex)}" target="_blank" class="example-pill" title="Solve '${ex}' on LeetCode" onclick="event.stopPropagation();">
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i> ${highlightText(ex)}
-                      </a>
-                    `).join('')}
+                    ${p.examples.map(ex => {
+                      const isProblemCompleted = !!completedProblems[ex];
+                      return `
+                        <div class="example-pill ${isProblemCompleted ? 'solved' : ''}" onclick="event.stopPropagation();">
+                          <span class="problem-checkbox ${isProblemCompleted ? 'checked' : ''}" onclick="toggleProblemCompleted(event, '${ex}', '${p.name}')" title="Mark '${ex}' as solved">
+                            <i class="fa-solid ${isProblemCompleted ? 'fa-square-check' : 'fa-square'}"></i>
+                          </span>
+                          <a href="${getLeetCodeUrl(ex)}" target="_blank" class="problem-link" title="Solve '${ex}' on LeetCode">
+                            ${highlightText(ex)} <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                          </a>
+                        </div>
+                      `;
+                    }).join('')}
                   </div>
                 </div>
                 
@@ -1899,16 +2002,69 @@
     function togglePatternCompleted(event, name) {
       event.stopPropagation(); // prevent card expand toggle
       
+      let targetPattern = null;
+      for (const cat of patternsData) {
+        const found = cat.patterns.find(p => p.name === name);
+        if (found) {
+          targetPattern = found;
+          break;
+        }
+      }
+      
       if (completedPatterns[name]) {
         delete completedPatterns[name];
+        if (targetPattern) {
+          targetPattern.examples.forEach(ex => {
+            delete completedProblems[ex];
+          });
+        }
       } else {
         completedPatterns[name] = true;
+        if (targetPattern) {
+          targetPattern.examples.forEach(ex => {
+            completedProblems[ex] = true;
+          });
+        }
       }
       
       saveCompletedState();
       
       // Fast state refresh
       render();
+    }
+
+    function toggleProblemCompleted(event, problemName, patternName) {
+      event.stopPropagation();
+      
+      if (completedProblems[problemName]) {
+        delete completedProblems[problemName];
+      } else {
+        completedProblems[problemName] = true;
+      }
+      
+      updatePatternCompletionFromProblems(patternName);
+      saveCompletedState();
+      render();
+    }
+
+    function updatePatternCompletionFromProblems(patternName) {
+      let targetPattern = null;
+      for (const cat of patternsData) {
+        const found = cat.patterns.find(p => p.name === patternName);
+        if (found) {
+          targetPattern = found;
+          break;
+        }
+      }
+      
+      if (targetPattern) {
+        const allSolved = targetPattern.examples.every(ex => !!completedProblems[ex]);
+        if (allSolved) {
+          completedPatterns[patternName] = true;
+        } else {
+          delete completedPatterns[patternName];
+        }
+      }
     }
 
     // SEARCH INPUT LISTENER
