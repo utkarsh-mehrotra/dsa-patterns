@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- PDF.js Dynamic Cover Rendering Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
   
   <style>
     /* Reset & CSS Custom Variables */
@@ -706,19 +708,16 @@
     }
 
     .book-cover-mock {
-      height: 140px;
+      height: 160px;
       border-radius: 8px;
       margin-bottom: 1.25rem;
       background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      border: 1px solid var(--border-color);
       position: relative;
       overflow: hidden;
-      padding: 1rem;
-      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .book-cover-mock::after {
@@ -730,6 +729,43 @@
       width: 10px;
       background: rgba(255, 255, 255, 0.04);
       border-right: 1px solid rgba(0,0,0,0.2);
+      z-index: 3;
+    }
+
+    .book-cover-canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      border-radius: 8px;
+    }
+
+    .book-cover-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      border-radius: 8px;
+    }
+
+    .book-cover-fallback {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding: 1rem;
+      text-align: center;
+      z-index: 2;
+      transition: opacity 0.4s ease;
     }
 
     .book-cover-icon {
@@ -1330,6 +1366,7 @@
     let searchTerm = "";
     let completedPatterns = {};
     let currentTheme = "dark";
+    const coverCache = {}; // dynamic image base64 cache for book covers
 
     // PATH ENCODER FOR PDF RESOLUTION
     function encodeBookPath(path) {
@@ -1596,7 +1633,7 @@
       patternsListEl.innerHTML = html;
     }
 
-    // RENDERING LIBRARY VIEW WITH FLOATING CORNER ICONS
+    // RENDERING LIBRARY VIEW WITH FLOATING CORNER ICONS AND CANVAS HOOKS
     function renderLibrary() {
       let html = "";
       
@@ -1622,8 +1659,10 @@
         return;
       }
       
-      filtered.forEach(b => {
+      filtered.forEach((b, idx) => {
         const encodedPath = encodeBookPath(b.path);
+        const hasCachedCover = !!coverCache[b.path];
+        
         html += `
           <div class="book-card">
             
@@ -1637,9 +1676,17 @@
               </a>
             </div>
 
+            <!-- BOOK COVER PLACEHOLDER (SUPPORTS DYNAMIC FIRST PAGE RENDERING) -->
             <div class="book-cover-mock">
-              <div class="book-cover-icon"><i class="fa-solid fa-book-open-reader"></i></div>
-              <div class="book-cover-title">${b.title}</div>
+              ${hasCachedCover ? `
+                <img src="${coverCache[b.path]}" class="book-cover-img" alt="${b.title} Cover" />
+              ` : `
+                <canvas id="canvas-${idx}" class="book-cover-canvas"></canvas>
+                <div class="book-cover-fallback" id="fallback-${idx}">
+                  <div class="book-cover-icon"><i class="fa-solid fa-book-open-reader"></i></div>
+                  <div class="book-cover-title">${b.title}</div>
+                </div>
+              `}
             </div>
             
             <div class="book-info">
@@ -1656,6 +1703,59 @@
       });
       
       libraryGridEl.innerHTML = html;
+      
+      // Async trigger first page PDF cover rendering
+      renderAllBookCovers();
+    }
+
+    // DYNAMIC PDF COVER RENDERING ENGINE (USING DYNAMIC CACHING)
+    function renderAllBookCovers() {
+      if (typeof pdfjsLib === 'undefined') return;
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+      booksData.forEach((b, idx) => {
+        // If already rendered and stored in cache, skip loading
+        if (coverCache[b.path]) return;
+
+        const canvasId = `canvas-${idx}`;
+        const fallbackId = `fallback-${idx}`;
+        const canvas = document.getElementById(canvasId);
+        
+        if (!canvas) return;
+
+        // Fetch PDF and render first page to canvas
+        pdfjsLib.getDocument(encodeBookPath(b.path)).promise.then(pdf => {
+          return pdf.getPage(1);
+        }).then(page => {
+          const viewport = page.getViewport({ scale: 1.0 });
+          // Render at 240px height for optimal cover crispness
+          const targetHeight = 240;
+          const scale = targetHeight / viewport.height;
+          const scaledViewport = page.getViewport({ scale: scale });
+          
+          const context = canvas.getContext('2d');
+          canvas.height = scaledViewport.height;
+          canvas.width = scaledViewport.width;
+          
+          return page.render({
+            canvasContext: context,
+            viewport: scaledViewport
+          }).promise;
+        }).then(() => {
+          // Convert successfully rendered canvas to base64 Data URL and save to cache
+          coverCache[b.path] = canvas.toDataURL();
+          
+          // Smoothly reveal cover canvas and fade fallback
+          canvas.style.display = 'block';
+          const fallback = document.getElementById(fallbackId);
+          if (fallback) {
+            fallback.style.opacity = '0';
+            fallback.style.pointerEvents = 'none';
+          }
+        }).catch(err => {
+          console.warn(`Could not render cover for ${b.title} (Browsing local files via file:// might trigger security/CORS limits. Render works perfectly when served via http-server or GitHub Pages):`, err);
+        });
+      });
     }
 
     // INTERACTION HANDLERS
