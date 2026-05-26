@@ -1048,7 +1048,7 @@
             complexity: "Time: O(N) | Space: O(1)",
             idea: "Move two indices towards each other or dynamically to scan, compare, or shrink a linear range.",
             when: "Sorted input array or linked list, looking for pairs/triplets, matching elements at both ends.",
-            examples: ["Two Sum II", "3Sum", "Container With Most Water", "Valid Palindrome"],
+            examples: ["Two Sum II", "3Sum", "3Sum Closest", "Container With Most Water", "Valid Palindrome", "Move Zeroes", "Squares of a Sorted Array", "Valid Anagram", "Longest Palindrome", "String to Integer (atoi)", "Longest Common Prefix", "Backspace String Compare", "Rotate Array", "Encode and Decode Strings"],
             tip: "If the input array is not sorted, sorting it first takes O(N log N) but often opens up two-pointer access."
           },
           {
@@ -1057,7 +1057,7 @@
             complexity: "Time: O(N) | Space: O(1) or O(K)",
             idea: "Maintain a sub-array or sub-string window that expands or shrinks dynamically as you iterate.",
             when: "Problems looking for maximum, minimum, or target-matching length/sum of a contiguous subsegment.",
-            examples: ["Minimum Size Subarray Sum", "Longest Substring Without Repeating Characters", "Permutation in String"],
+            examples: ["Minimum Size Subarray Sum", "Longest Substring Without Repeating Characters", "Permutation in String", "Best Time to Buy and Sell Stock", "Find All Anagrams in a String", "Longest Repeating Character Replacement", "Minimum Window Substring"],
             tip: "Use a Hashmap or frequency array to store window counts. Keep boundaries dynamic with outer and inner loops."
           },
           {
@@ -1066,7 +1066,7 @@
             complexity: "Time: O(N log N) | Space: O(N) or O(1)",
             idea: "Sort intervals based on start points, then iterate to combine overlapping ranges or clip segments.",
             when: "Input consists of ranges, times, or coordinate spans `[start, end]` that overlap or need scheduling.",
-            examples: ["Merge Intervals", "Insert Interval", "Non-overlapping Intervals", "Meeting Rooms II"],
+            examples: ["Merge Intervals", "Insert Interval", "Non-overlapping Intervals", "Meeting Rooms", "Meeting Rooms II", "Employee Free Time"],
             tip: "Sorting the intervals by their start time is almost always the required first step. Watch end coordinate overlaps."
           },
           {
@@ -1075,7 +1075,7 @@
             complexity: "Time: O(N) | Space: O(N) or O(1)",
             idea: "Precompute running sums to fetch subarray sums over any arbitrary range `[i, j]` in O(1) time.",
             when: "Frequent range sum or range count queries on immutable linear structures.",
-            examples: ["Subarray Sum Equals K", "Range Sum Query - Immutable", "Product of Array Except Self"],
+            examples: ["Subarray Sum Equals K", "Range Sum Query - Immutable", "Product of Array Except Self", "Gas Station", "Contiguous Array"],
             tip: "Prefix sums can be offset by 1 element to simplify index bounds and avoid negative subtraction boundaries."
           },
           {
@@ -1084,7 +1084,7 @@
             complexity: "Time: O(N) | Space: O(N)",
             idea: "Utilize fast constant-time lookup maps to save frequency counts or index mappings.",
             when: "Grouping elements, counting frequencies, matching targets, or checking structural presence.",
-            examples: ["Group Anagrams", "First Unique Character in a String", "Subarray Sums Divisible by K"],
+            examples: ["Two Sum", "Group Anagrams", "First Unique Character in a String", "Subarray Sums Divisible by K", "Contains Duplicate", "Majority Element", "Longest Consecutive Sequence", "Ransom Note", "Palindrome Pairs", "Insert Delete GetRandom O(1)"],
             tip: "Combining a Hashmap with Prefix Sum is the standard trick for finding subarrays sum equal to target K."
           },
           {
@@ -1093,7 +1093,7 @@
             complexity: "Time: O(N log N) | Space: O(1) or O(N)",
             idea: "Order data explicitly to establish sorted boundaries, making subsequent scans significantly easier.",
             when: "Unordered input where sequence relations matter, or sorting isolates specific properties like min/max gaps.",
-            examples: ["Sort Colors", "Meeting Rooms", "Kth Largest Element in an Array"],
+            examples: ["Sort Colors", "Kth Largest Element in an Array", "Largest Number"],
             tip: "Consider quicksort pivot methods or bucket sorting when numbers fall within a highly localized range."
           }
         ]
@@ -1108,7 +1108,7 @@
             complexity: "Time: O(N) | Space: O(1)",
             idea: "Advance two pointers at different speeds (usually 1 step and 2 steps) along a list.",
             when: "Detecting list cycles, finding midpoint/quarter points, finding the Kth node from the tail.",
-            examples: ["Linked List Cycle", "Linked List Cycle II", "Palindrome Linked List", "Remove Nth Node From End of List"],
+            examples: ["Linked List Cycle", "Linked List Cycle II", "Palindrome Linked List", "Remove Nth Node From End of List", "Middle of the Linked List", "Rotate List"],
             tip: "Ensure `fast` and `fast.next` are not null before moving the fast pointer 2 steps to avoid null pointer exceptions."
           },
           {
@@ -1117,7 +1117,7 @@
             complexity: "Time: O(1) | Space: O(1)",
             idea: "Prepend a temporary auxiliary node at the start of a list to bypass list head mutation edge cases.",
             when: "Creating new lists, merging lists, or deleting nodes that might match the head node itself.",
-            examples: ["Merge Two Sorted Lists", "Remove Duplicates from Sorted List II", "Partition List"],
+            examples: ["Merge Two Sorted Lists", "Remove Duplicates from Sorted List II", "Partition List", "LRU Cache", "Add Two Numbers", "Sort List"],
             tip: "Always store `dummy.next` before deleting or returning the list to successfully retrieve your new head node."
           },
           {
@@ -1126,7 +1126,7 @@
             complexity: "Time: O(N) | Space: O(1)",
             idea: "Iteratively rewrite pointer directions using three references (`prev`, `curr`, `next`) without allocating extra nodes.",
             when: "Splicing, reversing elements, or modifying directions of segments inside lists.",
-            examples: ["Reverse Linked List", "Reverse Linked List II", "Reverse Nodes in k-Group"],
+            examples: ["Reverse Linked List", "Reverse Linked List II", "Reverse Nodes in k-Group", "Reorder List"],
             tip: "Track the boundary nodes strictly: the node preceding the reversal subsegment must link to the new segment head."
           },
           {
@@ -1135,7 +1135,7 @@
             complexity: "Time: O(N) | Space: O(N) stack",
             idea: "Process list segments recursively by defining operations on the current head and recurring on head.next.",
             when: "Clean, divide-and-conquer style mutations like swapping elements or flattening nested lists.",
-            examples: ["Swap Nodes in Pairs", "Flatten a Multilevel Doubly Linked List", "Reverse Nodes in k-Group"],
+            examples: ["Swap Nodes in Pairs", "Flatten a Multilevel Doubly Linked List", "Odd Even Linked List"],
             tip: "Be mindful of call stack sizes. Heavy recursion on very long lists can trigger stack overflows in production."
           }
         ]
@@ -1150,7 +1150,7 @@
             complexity: "Time: O(log N) | Space: O(1)",
             idea: "Repeatedly divide search ranges in half on ordered/sorted datasets.",
             when: "Target searching on sorted arrays or monotonic bounds.",
-            examples: ["Binary Search", "Search in Rotated Sorted Array", "Find Minimum in Rotated Sorted Array"],
+            examples: ["Binary Search", "Search in Rotated Sorted Array", "Find Minimum in Rotated Sorted Array", "Search a 2D Matrix"],
             tip: "Use `mid = left + Math.floor((right - left) / 2)` instead of `(left + right) / 2` to prevent integer overflow."
           },
           {
@@ -1168,7 +1168,7 @@
             complexity: "Time: O(log N) | Space: O(1)",
             idea: "Adapt standard binary search to find the lower bound (first occurrence) or upper bound (last occurrence).",
             when: "Finding start/end coordinates of duplicated elements, counting duplicates, or closest floor/ceil search.",
-            examples: ["Find First and Last Position of Element in Sorted Array", "First Bad Version", "Search Insert Position"],
+            examples: ["Find First and Last Position of Element in Sorted Array", "First Bad Version", "Search Insert Position", "Time Based Key-Value Store"],
             tip: "When searching for boundaries, adjust pointers to converge at `left === right` instead of returning mid immediately."
           },
           {
@@ -1177,7 +1177,7 @@
             complexity: "Time: O(log N) | Space: O(1)",
             idea: "Detect peak or maximum boundary on a non-monotonic increasing-then-decreasing structure, then search sides.",
             when: "Arrays that scale up monotonically to a single peak, and subsequently drop monotonically.",
-            examples: ["Find Peak Element", "Peak Index in a Mountain Array", "Find in Mountain Array"],
+            examples: ["Find Peak Element", "Peak Index in a Mountain Array", "Find in Mountain Array", "Median of Two Sorted Arrays"],
             tip: "If `arr[mid] < arr[mid + 1]`, peak lies strictly in the right half (`left = mid + 1`). Else, it lies in the left."
           }
         ]
@@ -1192,7 +1192,7 @@
             complexity: "Time: O(N) | Space: O(H)",
             idea: "Recursively dive deep into left and right branches using pre-order, in-order, or post-order patterns.",
             when: "Evaluating node relationships, performing deep element searches, or flattening trees.",
-            examples: ["Binary Tree Inorder Traversal", "Invert Binary Tree", "Maximum Depth of Binary Tree"],
+            examples: ["Binary Tree Inorder Traversal", "Invert Binary Tree", "Maximum Depth of Binary Tree", "Balanced Binary Tree", "Diameter of Binary Tree", "Same Tree", "Symmetric Tree", "Subtree of Another Tree", "Validate Binary Search Tree", "Kth Smallest Element in a BST", "Inorder Successor in BST"],
             tip: "In-order traversal of a Binary Search Tree (BST) always outputs values in strictly sorted ascending order."
           },
           {
@@ -1201,7 +1201,7 @@
             complexity: "Time: O(N) | Space: O(N)",
             idea: "Traverse tree structures breadth-first, level-by-level, utilizing a FIFO queue.",
             when: "Tracking horizontal depth, calculating horizontal metrics, or finding shortest distance in unweighted structures.",
-            examples: ["Binary Tree Level Order Traversal", "Binary Tree Zigzag Level Order Traversal", "Populating Next Right Pointers in Each Node"],
+            examples: ["Binary Tree Level Order Traversal", "Binary Tree Zigzag Level Order Traversal", "Populating Next Right Pointers in Each Node", "Serialize and Deserialize Binary Tree", "Binary Tree Right Side View", "Maximum Width of Binary Tree", "All Nodes Distance K in Binary Tree"],
             tip: "Track the size of the queue at the start of each level loop (`const size = queue.length`) to isolate layers."
           },
           {
@@ -1243,7 +1243,7 @@
             complexity: "Time: O(N) | Space: O(N)",
             idea: "Maintain elements in a strictly increasing or decreasing sequence inside a stack.",
             when: "Finding 'next greater element', 'previous smaller element', daily temperatures, or largest histogram areas.",
-            examples: ["Next Greater Element I", "Daily Temperatures", "Largest Rectangle in Histogram", "Online Stock Span"],
+            examples: ["Next Greater Element I", "Daily Temperatures", "Largest Rectangle in Histogram", "Online Stock Span", "Trapping Rain Water", "Longest Valid Parentheses"],
             tip: "Instead of raw element values, store indices in the stack. This retains distance/interval information."
           },
           {
@@ -1252,7 +1252,7 @@
             complexity: "Time: O(N) | Space: O(K)",
             idea: "Maintain a double-ended queue (deque) containing indices of candidates in a moving window in sorted order.",
             when: "Calculating running maximum or minimum across every sliding subarray of size K in O(N).",
-            examples: ["Sliding Window Maximum", "Shortest Subarray with Sum at Least K"],
+            examples: ["Sliding Window Maximum", "Shortest Subarray with Sum at Least K", "Design Hit Counter"],
             tip: "Ensure indices at the rear of the deque are dropped if their associated values are worse than the new incoming element."
           },
           {
@@ -1261,8 +1261,17 @@
             complexity: "Time: O(N) | Space: O(N)",
             idea: "Leverage stacks to parse, organize operations, evaluate parenthetical orders, and compute equations.",
             when: "Parsing standard mathematical expressions, string calculators, nested parentheses, or path simplification.",
-            examples: ["Basic Calculator", "Evaluate Reverse Polish Notation", "Simplify Path", "Valid Parentheses"],
+            examples: ["Basic Calculator", "Evaluate Reverse Polish Notation", "Simplify Path", "Valid Parentheses", "Basic Calculator II", "Decode String"],
             tip: "Use two separate stacks (one for operators and one for numbers) or convert the expression to Postfix format."
+          },
+          {
+            name: "Stack Utilities",
+            difficulty: "Easy",
+            complexity: "Time: O(1) | Space: O(N)",
+            idea: "Leverage standard stacks to cache operations, implement simple queues, or keep track of historical states.",
+            when: "Basic matching operations, history backtracking, or structural inversion.",
+            examples: ["Implement Queue using Stacks", "Min Stack", "Backspace String Compare", "Asteroid Collision", "Maximum Frequency Stack"],
+            tip: "Min Stack can be implemented by storing the current minimum along with every value pushed onto the stack."
           }
         ]
       },
@@ -1276,7 +1285,7 @@
             complexity: "Time: O(N log K) | Space: O(K)",
             idea: "Maintain a specialized binary heap capped strictly at size K during iterations.",
             when: "Extracting largest/smallest K items from large collections or data streams.",
-            examples: ["Kth Largest Element in an Array", "K Closest Points to Origin", "Top K Frequent Elements"],
+            examples: ["Kth Largest Element in an Array", "K Closest Points to Origin", "Top K Frequent Elements", "Task Scheduler", "Top K Frequent Words"],
             tip: "Use a Min-Heap for 'K-largest' elements (so small values drop off the top), and a Max-Heap for 'K-smallest'."
           },
           {
@@ -1285,7 +1294,7 @@
             complexity: "Time: O(log N) | Space: O(N)",
             idea: "Divide incoming datasets into two balanced heaps: a Max-Heap for the lower half, a Min-Heap for the upper half.",
             when: "Continuously calculating median values on dynamic real-time data streams.",
-            examples: ["Find Median from Data Stream", "Sliding Window Median"],
+            examples: ["Find Median from Data Stream", "Sliding Window Median", "Find K Closest Elements"],
             tip: "After each insertion, balance sizes so the difference in count between both heaps is at most 1 element."
           },
           {
@@ -1296,6 +1305,156 @@
             when: "Merging K pre-sorted lists, lists, or matrix rows into one unified sorted array.",
             examples: ["Merge k Sorted Lists", "Find K Pairs with Smallest Sums", "Smallest Range Covering Elements from K Lists"],
             tip: "Store the source list index or pointer alongside each element pushed into the heap to step forward."
+          }
+        ]
+      },
+      {
+        cat: "Graphs",
+        color: "#818cf8",
+        patterns: [
+          {
+            name: "Graph Traversal (DFS/BFS)",
+            difficulty: "Medium",
+            complexity: "Time: O(V + E) | Space: O(V)",
+            idea: "Explore node connections in a graph. BFS uses a queue level-by-level, while DFS explores branches deeply via recursion.",
+            when: "Finding connected components, checking paths, or searching unweighted grid/node structures.",
+            examples: ["Flood Fill", "01 Matrix", "Clone Graph", "Number of Islands", "Rotting Oranges", "Pacific Atlantic Water Flow", "Shortest Path to Get Food", "Minimum Knight Moves"],
+            tip: "Use a visitor Hashset (`visited`) to avoid infinite loops and duplicate checks on cyclic graphs."
+          },
+          {
+            name: "Topological Sort",
+            difficulty: "Medium",
+            complexity: "Time: O(V + E) | Space: O(V)",
+            idea: "Order directed acyclic graph (DAG) vertices linearly based on dependency relationships (Kahn's or DFS).",
+            when: "Managing tasks with prerequisites, scheduling systems, or compilation sequences.",
+            examples: ["Course Schedule", "Course Schedule II", "Alien Dictionary", "Minimum Height Trees"],
+            tip: "Keep a count of in-degrees for each vertex. Push elements with in-degree 0 into your queue to initiate BFS."
+          },
+          {
+            name: "Disjoint Set Union (Union-Find)",
+            difficulty: "Medium",
+            complexity: "Time: O(A(N)) | Space: O(N)",
+            idea: "Maintain partitions of elements. Support instant merging (Union) and query (Find) operations with path compression.",
+            when: "Checking connectivity in undirected graphs, detecting cycles, or kruskal's MST algorithm.",
+            examples: ["Accounts Merge", "Graph Valid Tree", "Number of Connected Components in an Undirected Graph"],
+            tip: "Implement path compression (`parent[i] = find(parent[i])`) and union by rank to keep query times near-constant."
+          },
+          {
+            name: "Shortest Paths (Dijkstra / BFS)",
+            difficulty: "Hard",
+            complexity: "Time: O(E log V) | Space: O(V)",
+            idea: "Determine the shortest path distance between source nodes and destinations in weighted graphs using priority queues.",
+            when: "Finding min cost routes, routing with multiple step limits, or network path optimizations.",
+            examples: ["Cheapest Flights Within K Stops", "Bus Routes", "Word Ladder"],
+            tip: "For unweighted graphs, simple BFS is sufficient and faster than Dijkstra. For negative weights, use Bellman-Ford."
+          }
+        ]
+      },
+      {
+        cat: "Dynamic Programming",
+        color: "#f43f5e",
+        patterns: [
+          {
+            name: "1D Dynamic Programming",
+            difficulty: "Medium",
+            complexity: "Time: O(N) | Space: O(N) or O(1)",
+            idea: "Build solutions to complex problems by combining solved subproblems stored in a one-dimensional array.",
+            when: "Finding maximum profit, minimum operations, or unique ways to reach a index `i` based on prior steps.",
+            examples: ["Climbing Stairs", "House Robber", "Coin Change", "Longest Increasing Subsequence", "Word Break", "Maximum Subarray", "Maximum Product Subarray", "Decode Ways", "Jump Game"],
+            tip: "Look for space optimization: if state `i` only depends on `i-1` and `i-2`, you can reduce space from O(N) to O(1)."
+          },
+          {
+            name: "2D DP / Grid Paths",
+            difficulty: "Medium",
+            complexity: "Time: O(M * N) | Space: O(M * N)",
+            idea: "Maintain a two-dimensional matrix where state `[i][j]` maps the solution for index boundaries or grid coordinates.",
+            when: "Grid movements (right/down), sequence alignment, matching substrings, or coordinates relations.",
+            examples: ["Unique Paths", "Maximal Square", "Longest Increasing Path in a Matrix", "Longest Palindromic Substring"],
+            tip: "Initiate boundary rows and columns explicitly. Ensure correct traversal order to prevent utilizing uncomputed states."
+          },
+          {
+            name: "Partition / Knapsack",
+            difficulty: "Hard",
+            complexity: "Time: O(N * W) | Space: O(W)",
+            idea: "Decide whether to include or exclude items to achieve a target weight or subset criteria.",
+            when: "Dividing subsets, matching knapsack capacities, or combination sums with restricted element pools.",
+            examples: ["Partition Equal Subset Sum", "Combination Sum IV", "Maximum Profit in Job Scheduling"],
+            tip: "For subset target sums, iterate the DP array backwards to avoid using the same element multiple times."
+          }
+        ]
+      },
+      {
+        cat: "Recursion & Backtracking",
+        color: "#ec4899",
+        patterns: [
+          {
+            name: "Backtracking Searches",
+            difficulty: "Medium",
+            complexity: "Time: O(2^N) or O(N!) | Space: O(N) stack",
+            idea: "Systematically explore all potential candidates using recursion, building paths and backtracking once bounds fail.",
+            when: "Generating all combinations, subsets, permutations, path routing, or N-Queen configurations.",
+            examples: ["Permutations", "Subsets", "Letter Combinations of a Phone Number", "Generate Parentheses", "N-Queens", "Word Search", "Word Search II", "Combination Sum", "Next Permutation"],
+            tip: "Define strict exit conditions (base cases). Push candidates, recur, and pop them immediately to restore states."
+          }
+        ]
+      },
+      {
+        cat: "Trie (Prefix Trees)",
+        color: "#14b8a6",
+        patterns: [
+          {
+            name: "Prefix Tree Operations",
+            difficulty: "Medium",
+            complexity: "Time: O(L) | Space: O(N * L)",
+            idea: "Store keys (usually strings) structured as a tree where each node represents a character to search prefixes efficiently.",
+            when: "String search, prefix autocomplete queries, spell check dictionaries, or nested filesystem builders.",
+            examples: ["Implement Trie (Prefix Tree)", "Design Add and Search Words Data Structure", "Design In-Memory File System"],
+            tip: "Represent trie nodes with an array of size 26 or a Map of child nodes, tracking a boolean flag `isEndOfWord`."
+          }
+        ]
+      },
+      {
+        cat: "Bit Manipulation",
+        color: "#f97316",
+        patterns: [
+          {
+            name: "Bitwise Arithmetic",
+            difficulty: "Easy",
+            complexity: "Time: O(1) | Space: O(1)",
+            idea: "Leverage fast bit operations (&, |, ^, ~, <<, >>) to compute values, check parity, or isolate bits directly.",
+            when: "Computing sums without arithmetic operators, counting active bits, checking duplicates, or parity operations.",
+            examples: ["Add Binary", "Counting Bits", "Number of 1 Bits", "Single Number", "Missing Number", "Reverse Bits", "Find the Duplicate Number"],
+            tip: "Use the XOR (`^`) property: `A ^ A = 0` and `A ^ 0 = A` to isolate elements occurring odd numbers of times."
+          }
+        ]
+      },
+      {
+        cat: "Math & Geometry",
+        color: "#eab308",
+        patterns: [
+          {
+            name: "Mathematical Algorithms",
+            difficulty: "Easy",
+            complexity: "Time: O(log N) or O(1) | Space: O(1)",
+            idea: "Leverage analytical theorems, prime factors, coordinate calculations, or numerical properties to solve challenges.",
+            when: "String conversions, random sampling weight calculations, exponentiation, numerical reversals, or checking coordinates.",
+            examples: ["Roman to Integer", "Random Pick with Weight", "Pow(x, n)", "Reverse Integer", "Palindrome Number", "First Missing Positive"],
+            tip: "Watch out for numerical overflows when reversing digits or multiplying terms. Use 64-bit integer fallbacks."
+          }
+        ]
+      },
+      {
+        cat: "Matrices",
+        color: "#22c55e",
+        patterns: [
+          {
+            name: "Grid-based Operations",
+            difficulty: "Medium",
+            complexity: "Time: O(M * N) | Space: O(1) or O(M * N)",
+            idea: "Scan, rotate, or modify values inside a two-dimensional grid layout following structural rules.",
+            when: "Clockwise rotations, spiral sweeps, coordinate shifts, or cell zipping.",
+            examples: ["Spiral Matrix", "Valid Sudoku", "Rotate Image", "Set Matrix Zeroes", "Sudoku Solver"],
+            tip: "Use markers or flag rows/columns (like setting state variables on row 0 and column 0) to compute in-place modifications."
           }
         ]
       }
