@@ -639,17 +639,23 @@
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
+      text-decoration: none; /* Avoid default anchor underlines */
     }
 
     .example-pill i {
       font-size: 0.65rem;
       color: var(--accent);
+      transition: var(--transition);
     }
 
     .example-pill:hover {
       background: rgba(99, 102, 241, 0.05);
       border-color: var(--accent);
       color: var(--text-primary);
+    }
+
+    .example-pill:hover i {
+      transform: translate(1px, -1px); /* micro-animation for external link */
     }
 
     .pro-tip {
@@ -1372,6 +1378,16 @@
       return '';
     }
 
+    // GENERATE LIVE LEETCODE PROBLEM URL DYNAMICALLY
+    function getLeetCodeUrl(problemName) {
+      const slug = problemName
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // remove brackets, parentheses, ampersands, commas, etc.
+        .trim()
+        .replace(/[\s-]+/g, '-');   // replace spaces and consecutive hyphens with one hyphen
+      return `https://leetcode.com/problems/${slug}/`;
+    }
+
     // THEME CONTROLLER
     function initTheme() {
       const stored = localStorage.getItem("dsa_theme");
@@ -1525,7 +1541,7 @@
       }
     }
 
-    // RENDERING PATTERNS VIEW
+    // RENDERING PATTERNS VIEW WITH LEETCODE REDIRECTION
     function renderPatterns() {
       let html = "";
       let totalShown = 0;
@@ -1590,12 +1606,12 @@
                 </div>
                 
                 <div class="detail-section">
-                  <div class="detail-title"><i class="fa-solid fa-code"></i> Canonical Examples</div>
+                  <div class="detail-title"><i class="fa-solid fa-code"></i> Canonical Examples (Click to Solve)</div>
                   <div class="example-pills">
                     ${p.examples.map(ex => `
-                      <span class="example-pill">
-                        <i class="fa-solid fa-circle-question"></i> ${highlightText(ex)}
-                      </span>
+                      <a href="${getLeetCodeUrl(ex)}" target="_blank" class="example-pill" title="Solve '${ex}' on LeetCode" onclick="event.stopPropagation();">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> ${highlightText(ex)}
+                      </a>
                     `).join('')}
                   </div>
                 </div>
