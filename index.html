@@ -793,58 +793,51 @@
       border-radius: 4px;
     }
 
+    /* Floating Icon Actions styling */
     .book-actions {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
       display: flex;
-      gap: 0.5rem;
-      margin-top: auto;
-      width: 100%;
+      gap: 0.35rem;
+      z-index: 10;
     }
 
-    .book-btn {
-      flex: 1;
-      padding: 0.7rem;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-family: inherit;
-      font-size: 0.82rem;
-      font-weight: 500;
-      cursor: pointer;
+    .book-icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.85);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.4rem;
-      text-decoration: none;
+      cursor: pointer;
       transition: var(--transition);
-      text-align: center;
+      text-decoration: none;
+      font-size: 0.85rem;
+      backdrop-filter: blur(4px);
     }
 
-    .book-btn:hover {
-      background: var(--accent-hover);
-      box-shadow: 0 4px 12px var(--accent-glow);
+    .book-icon-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+      transform: translateY(-1px);
     }
 
-    .book-btn-secondary {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-color);
-      color: var(--text-primary);
+    body.light-theme .book-icon-btn {
+      background: rgba(255, 255, 255, 0.7);
+      border-color: rgba(0, 0, 0, 0.08);
+      color: #475569;
     }
 
-    .book-btn-secondary:hover {
-      background: rgba(128, 128, 128, 0.15);
-      color: var(--text-primary);
-      box-shadow: none;
-    }
-
-    body.light-theme .book-btn-secondary {
-      background: rgba(0, 0, 0, 0.03);
-      border-color: var(--border-color);
-      color: var(--text-primary);
-    }
-
-    body.light-theme .book-btn-secondary:hover {
-      background: rgba(0, 0, 0, 0.08);
+    body.light-theme .book-icon-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
     }
 
     /* Empty states */
@@ -1394,6 +1387,7 @@
       }
     }
 
+    // SAVE STATE COMPLETED IN LOCALSTORAGE
     function saveCompletedState() {
       localStorage.setItem("dsa_completed_patterns", JSON.stringify(completedPatterns));
       updateProgressStats();
@@ -1602,7 +1596,7 @@
       patternsListEl.innerHTML = html;
     }
 
-    // RENDERING LIBRARY VIEW
+    // RENDERING LIBRARY VIEW WITH FLOATING CORNER ICONS
     function renderLibrary() {
       let html = "";
       
@@ -1632,10 +1626,22 @@
         const encodedPath = encodeBookPath(b.path);
         html += `
           <div class="book-card">
+            
+            <!-- FLOATING TOP-RIGHT CORNER ICON CONTROLS -->
+            <div class="book-actions">
+              <a href="${encodedPath}" target="_blank" class="book-icon-btn" title="Open PDF in Browser">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </a>
+              <a href="${encodedPath}" download="${b.title}.pdf" class="book-icon-btn" title="Download PDF">
+                <i class="fa-solid fa-download"></i>
+              </a>
+            </div>
+
             <div class="book-cover-mock">
               <div class="book-cover-icon"><i class="fa-solid fa-book-open-reader"></i></div>
               <div class="book-cover-title">${b.title}</div>
             </div>
+            
             <div class="book-info">
               <div class="book-title">${highlightText(b.title)}</div>
               <div class="book-author"><i class="fa-solid fa-pen-nib"></i> ${highlightText(b.author)}</div>
@@ -1643,15 +1649,8 @@
               <div class="book-tags">
                 ${b.tags.map(t => `<span class="book-tag">${highlightText(t)}</span>`).join('')}
               </div>
-              <div class="book-actions">
-                <a href="${encodedPath}" target="_blank" class="book-btn">
-                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
-                </a>
-                <a href="${encodedPath}" download="${b.title}.pdf" class="book-btn book-btn-secondary">
-                  <i class="fa-solid fa-download"></i> Download
-                </a>
-              </div>
             </div>
+
           </div>
         `;
       });
