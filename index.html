@@ -184,6 +184,62 @@
       background: radial-gradient(circle, rgba(99, 102, 241, 0.04) 0%, transparent 70%);
     }
 
+    /* Header Controls Row */
+    .right-header-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Auth Status Header styles */
+    .auth-status-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .auth-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      backdrop-filter: blur(8px);
+      transition: var(--transition);
+      border: 1px solid transparent;
+      user-select: none;
+    }
+
+    .auth-badge.offline {
+      background: rgba(255, 255, 255, 0.03);
+      border-color: var(--border-color);
+      color: var(--text-muted);
+    }
+
+    .auth-badge.synced {
+      background: rgba(16, 185, 129, 0.06);
+      border-color: rgba(16, 185, 129, 0.25);
+      color: #10b981;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.1);
+      cursor: help;
+    }
+
+    .auth-badge.synced i {
+      animation: pulseGlow 2.5s ease-in-out infinite;
+    }
+
+    body.light-theme .auth-badge.offline {
+      background: rgba(0, 0, 0, 0.02);
+      border-color: rgba(0, 0, 0, 0.08);
+      color: var(--text-muted);
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+
     /* Tabs Controller */
     .tabs-controller {
       display: flex;
@@ -1111,17 +1167,25 @@
           <p>Elevate your problem-solving. Master <span class="highlight-accent">algorithmic patterns</span> and crack the coding <span class="highlight-accent">interview</span>.</p>
         </div>
         
-        <!-- Navigation Tabs & Theme Toggle -->
-        <div class="tabs-controller">
-          <button class="tab-btn active" onclick="switchTab('patterns')">
-            <i class="fa-solid fa-folder-tree"></i> DSA Patterns
-          </button>
-          <button class="tab-btn" onclick="switchTab('library')">
-            <i class="fa-solid fa-book-bookmark"></i> Study Library
-          </button>
-          <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-            <i class="fa-solid fa-moon"></i>
-          </button>
+        <!-- Navigation Tabs, Cloud Status & Theme Toggle -->
+        <div class="right-header-controls">
+          <div class="auth-status-container" id="auth-status-container">
+            <span class="auth-badge offline" id="auth-badge" title="Local Storage Mode - Configure Firebase keys to enable Cloud Sync.">
+              <i class="fa-solid fa-cloud-slash"></i> Local Mode
+            </span>
+          </div>
+          
+          <div class="tabs-controller">
+            <button class="tab-btn active" onclick="switchTab('patterns')">
+              <i class="fa-solid fa-folder-tree"></i> DSA Patterns
+            </button>
+            <button class="tab-btn" onclick="switchTab('library')">
+              <i class="fa-solid fa-book-bookmark"></i> Study Library
+            </button>
+            <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+              <i class="fa-solid fa-moon"></i>
+            </button>
+          </div>
         </div>
       </div>
     </header>
@@ -2238,6 +2302,75 @@
       render();
       initRadialGlow();
     });
+  </script>
+
+  <!-- Firebase Core SDK and Auth Integration (Modular CDN) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    // Firebase Config Template - Plug in your credentials here!
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Helper to check if credentials are valid (i.e. not placeholders)
+    function isFirebaseConfigured(config) {
+      return config && 
+             config.apiKey && 
+             config.apiKey !== "YOUR_API_KEY" && 
+             config.authDomain !== "YOUR_AUTH_DOMAIN";
+    }
+
+    const authBadge = document.getElementById("auth-badge");
+
+    if (isFirebaseConfigured(firebaseConfig)) {
+      try {
+        console.log("[AlgoFlow Auth] Initializing Firebase Auth...");
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Silent Anonymous Sign-In
+        signInAnonymously(auth)
+          .catch((error) => {
+            console.error("[AlgoFlow Auth] Silent anonymous sign-in failed:", error);
+            setOfflineState("Connection Error");
+          });
+
+        // Observe Authentication State changes
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            console.log("[AlgoFlow Auth] User authenticated silently. UID:", user.uid);
+            if (authBadge) {
+              authBadge.className = "auth-badge synced";
+              authBadge.innerHTML = `<i class="fa-solid fa-cloud"></i> Synced`;
+              authBadge.title = `Cloud Synced (ID: ${user.uid.substring(0, 8)}...) - Your progress is securely linked to this anonymous profile.`;
+            }
+          } else {
+            setOfflineState("Disconnected");
+          }
+        });
+      } catch (e) {
+        console.error("[AlgoFlow Auth] Firebase initialization crashed:", e);
+        setOfflineState("Init Error");
+      }
+    } else {
+      console.log("[AlgoFlow Auth] Operating in Offline Local Mode (Firebase keys not configured).");
+      setOfflineState("Local Mode");
+    }
+
+    function setOfflineState(reason) {
+      if (authBadge) {
+        authBadge.className = "auth-badge offline";
+        authBadge.innerHTML = `<i class="fa-solid fa-cloud-slash"></i> ${reason}`;
+        authBadge.title = "Offline Local Mode - Configure valid Firebase credentials in index.html to activate Cloud sync.";
+      }
+    }
   </script>
 </body>
 </html>
