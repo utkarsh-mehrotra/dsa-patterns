@@ -28,6 +28,7 @@
       --accent: #6366f1;
       --accent-hover: #4f46e5;
       --accent-glow: rgba(99, 102, 241, 0.15);
+      --border-glow-color: rgba(99, 102, 241, 0.4);
       
       --difficulty-easy: #10b981;
       --difficulty-medium: #f59e0b;
@@ -55,6 +56,7 @@
       --accent: #4f46e5;
       --accent-hover: #4338ca;
       --accent-glow: rgba(79, 70, 229, 0.12);
+      --border-glow-color: rgba(79, 70, 229, 0.25);
       
       --difficulty-easy: #059669;
       --difficulty-medium: #d97706;
@@ -415,12 +417,13 @@
 
     /* Premium Pattern Card */
     .pattern-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
+      background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+                  radial-gradient(180px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), var(--border-glow-color, rgba(99, 102, 241, 0.4)), var(--border-color)) border-box;
+      border: 1px solid transparent !important;
       border-radius: var(--radius-md);
       padding: 1.25rem;
       cursor: pointer;
-      transition: var(--transition);
+      transition: background 0.3s ease, transform 0.25s ease, box-shadow 0.25s ease;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -440,8 +443,8 @@
     }
 
     .pattern-card:hover {
-      border-color: var(--border-glow);
-      background: var(--bg-card-hover);
+      background: linear-gradient(var(--bg-card-hover), var(--bg-card-hover)) padding-box,
+                  radial-gradient(180px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), var(--border-glow-color, rgba(99, 102, 241, 0.65)), var(--border-color)) border-box;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2), 0 0 20px var(--accent-glow);
       transform: translateY(-2px);
     }
@@ -740,6 +743,81 @@
       line-height: 1.4;
     }
 
+    /* Notes Textarea styling */
+    .pattern-notes-container {
+      margin-top: 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem;
+    }
+
+    .notes-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .notes-header-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .notes-status-badge {
+      font-size: 0.7rem;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      transition: var(--transition);
+    }
+
+    .notes-status-badge.saving {
+      color: var(--accent);
+      border-color: var(--accent-glow);
+    }
+
+    .pattern-notes-textarea {
+      width: 100%;
+      height: 90px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      padding: 0.5rem;
+      font-family: inherit;
+      font-size: 0.82rem;
+      line-height: 1.4;
+      resize: vertical;
+      transition: var(--transition);
+    }
+
+    .pattern-notes-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    body.light-theme .pattern-notes-container {
+      background: rgba(0, 0, 0, 0.01);
+    }
+
+    body.light-theme .pattern-notes-textarea {
+      background: #fff;
+    }
+
+    body.light-theme .pattern-notes-textarea:focus {
+      background: #fff;
+    }
+
     /* --- library styles --- */
     .library-list {
       display: flex;
@@ -751,21 +829,23 @@
     }
 
     .book-list-item {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
+      background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+                  radial-gradient(180px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), var(--border-glow-color, rgba(99, 102, 241, 0.4)), var(--border-color)) border-box;
+      border: 1px solid transparent !important;
       border-radius: var(--radius-md);
       padding: 1.15rem 1.4rem;
       backdrop-filter: blur(16px);
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      transition: var(--transition);
+      transition: background 0.3s ease, transform 0.25s ease, box-shadow 0.25s ease;
       gap: 1.25rem;
+      cursor: pointer;
     }
 
     .book-list-item:hover {
-      border-color: var(--border-glow);
-      background: var(--bg-card-hover);
+      background: linear-gradient(var(--bg-card-hover), var(--bg-card-hover)) padding-box,
+                  radial-gradient(180px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), var(--border-glow-color, rgba(99, 102, 241, 0.65)), var(--border-color)) border-box;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 0 15px var(--accent-glow);
       transform: translateX(4px);
     }
@@ -1855,6 +1935,21 @@
                     <div class="pro-tip-body">${highlightText(p.tip)}</div>
                   </div>
                 ` : ''}
+
+                <!-- Persistent Heuristic Notes Editor -->
+                <div class="pattern-notes-container" onclick="event.stopPropagation();">
+                  <div class="notes-header-row">
+                    <div class="notes-header-title">
+                      <i class="fa-solid fa-note-sticky"></i> My Study Heuristics & Notes
+                    </div>
+                    <span class="notes-status-badge" id="notes-status-${p.name.replace(/[\s&"']/g, '-')}">Saved</span>
+                  </div>
+                  <textarea 
+                    class="pattern-notes-textarea" 
+                    placeholder="Write custom patterns, edge cases, templates, or dynamic programming state updates here..."
+                    oninput="savePatternNotes(this, '${p.name}')"
+                  >${getSavedNotes(p.name)}</textarea>
+                </div>
               </div>
               
             </div>
@@ -1937,6 +2032,56 @@
     }
 
     // INTERACTION HANDLERS
+    function toggleBookExpanded(event, element) {
+      // Prevent expand toggle when clicking on action buttons
+      if (event.target.closest('.book-list-btn')) {
+        return;
+      }
+      element.classList.toggle("expanded");
+    }
+
+    // STUDY NOTES PERSISTENCE ENGINE
+    const saveTimeouts = {};
+
+    function getSavedNotes(name) {
+      const sanitizedKey = `dsa_notes_${name.replace(/[\s&"']/g, '-')}`;
+      return localStorage.getItem(sanitizedKey) || '';
+    }
+
+    function savePatternNotes(textarea, name) {
+      const sanitizedName = name.replace(/[\s&"']/g, '-');
+      const statusEl = document.getElementById(`notes-status-${sanitizedName}`);
+      if (statusEl) {
+        statusEl.textContent = "Saving...";
+        statusEl.classList.add("saving");
+      }
+      
+      if (saveTimeouts[sanitizedName]) {
+        clearTimeout(saveTimeouts[sanitizedName]);
+      }
+      
+      saveTimeouts[sanitizedName] = setTimeout(() => {
+        localStorage.setItem(`dsa_notes_${sanitizedName}`, textarea.value);
+        if (statusEl) {
+          statusEl.textContent = "Saved";
+          statusEl.classList.remove("saving");
+        }
+      }, 500);
+    }
+
+    // DYNAMIC RADIAL CURSOR GLOW ENGINE
+    function initRadialGlow() {
+      document.addEventListener('mousemove', (e) => {
+        const card = e.target.closest('.pattern-card, .book-list-item');
+        if (!card) return;
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+    }
+
     function handleCardClick(event, cardId) {
       // Prevent accordion toggle when clicking on checkbox or inside a link/pill
       if (event.target.closest('.pattern-checkbox') || event.target.closest('.example-pill')) {
@@ -2028,6 +2173,7 @@
       initFilters();
       updateProgressStats();
       render();
+      initRadialGlow();
     });
   </script>
 </body>
