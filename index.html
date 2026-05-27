@@ -1740,6 +1740,7 @@
     let completedPatterns = {};
     let completedProblems = {};
     let currentTheme = "dark";
+    const expandedCardIds = new Set();
 
     // PATH ENCODER FOR PDF RESOLUTION
     function encodeBookPath(path) {
@@ -2010,7 +2011,7 @@
           const solvedBadge = solvedCount > 0 ? `<span class="badge badge-solved-count"><i class="fa-solid fa-circle-check"></i> ${solvedCount}/${totalCount} solved</span>` : '';
 
           html += `
-            <div class="pattern-card ${isCompleted ? 'completed' : ''}" id="${cardId}" onclick="handleCardClick(event, '${cardId}')">
+            <div class="pattern-card ${isCompleted ? 'completed' : ''} ${expandedCardIds.has(cardId) ? 'expanded' : ''}" id="${cardId}" onclick="handleCardClick(event, '${cardId}')">
               
               <div class="card-top">
                 <div class="pattern-meta">
@@ -2210,14 +2211,19 @@
     }
 
     function handleCardClick(event, cardId) {
-      // Prevent accordion toggle when clicking on checkbox or inside a link/pill
-      if (event.target.closest('.pattern-checkbox') || event.target.closest('.example-pill')) {
+      // Prevent accordion toggle when clicking on checkbox, inside a link/pill, or notes container
+      if (event.target.closest('.pattern-checkbox') || event.target.closest('.example-pill') || event.target.closest('.pattern-notes-container')) {
         return;
       }
       
       const card = document.getElementById(cardId);
       if (card) {
         card.classList.toggle("expanded");
+        if (card.classList.contains("expanded")) {
+          expandedCardIds.add(cardId);
+        } else {
+          expandedCardIds.delete(cardId);
+        }
       }
     }
 
