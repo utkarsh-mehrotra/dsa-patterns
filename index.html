@@ -11,6 +11,32 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Razorpay Checkout Integration SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <!-- Tailwind CSS CDN with custom config and Preflight disabled to avoid dashboard styling conflicts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      corePlugins: {
+        preflight: false,
+      },
+      theme: {
+        extend: {
+          colors: {
+            midnight: '#0B0F19',
+            'brand-dark': '#070a12',
+            'accent-teal': '#00b8a3',
+            'accent-violet': '#8B5CF6',
+            'accent-emerald': '#10B981',
+            'accent-orange': '#ffa116',
+            'accent-yellow': '#ffc01e',
+          },
+          fontFamily: {
+            sans: ['Outfit', 'Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
   
   <style>
     /* Reset & CSS Custom Variables */
@@ -2129,79 +2155,621 @@
 <body>
 
   <!-- BRAND LANDING PAGE GATE -->
-  <div id="landing-view" class="view-container active">
-    <div class="landing-hero-section">
-      <div class="landing-logo">
-        <i class="fa-solid fa-diagram-project"></i>AlgoFlow
-      </div>
-      <div class="landing-tagline">
-        Master Core <span class="highlight">DSA Patterns</span>. Spot the Spotlights. Crack the <span class="highlight-teal">Technical Interview</span>.
-      </div>
+  <div id="landing-view" class="view-container active bg-brand-dark text-white relative overflow-hidden min-h-screen flex flex-col font-sans">
+    
+    <!-- Background Glow Blurs -->
+    <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-accent-teal/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-accent-violet/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+    <div class="absolute top-[40%] right-[20%] w-[300px] h-[300px] bg-accent-orange/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
 
-      <!-- Floating Preview Mockup -->
-      <div class="landing-mockup-container">
-        <div class="landing-mockup">
-          <div class="mockup-header">
-            <div class="mockup-dots">
-              <span class="mockup-dot red"></span>
-              <span class="mockup-dot yellow"></span>
-              <span class="mockup-dot green"></span>
-            </div>
-            <div style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; letter-spacing: 1px;">ALGOFLOW PREVIEW</div>
-          </div>
-          
-          <div class="mockup-pattern-card">
-            <div class="mockup-title-row">
-              <span class="mockup-pattern-name">1. Sliding Window</span>
-              <span class="mockup-difficulty easy">Easy to Hard</span>
-            </div>
-            <p class="mockup-desc">Track a continuous subarray or substring with two pointers shifting dynamically. Essential for string/array search queries.</p>
-          </div>
-          
-          <div class="mockup-pattern-card">
-            <div class="mockup-title-row">
-              <span class="mockup-pattern-name">2. Two Pointers</span>
-              <span class="mockup-difficulty medium">Medium</span>
-            </div>
-            <p class="mockup-desc">Process sorted arrays or lists from both ends or at different speeds to solve searches in linear time.</p>
-          </div>
-        </div>
+    <!-- Navigation Bar -->
+    <nav class="w-full flex items-center justify-between px-6 md:px-12 py-5 backdrop-blur-md bg-midnight/30 border-b border-white/5 sticky top-0 z-50">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-accent-orange via-[#ffc01e] to-accent-teal bg-clip-text text-transparent flex items-center">
+          <i class="fa-solid fa-diagram-project text-accent-orange mr-2"></i>AlgoFlow
+        </span>
       </div>
-
-      <!-- Three-Pillar Value Grid -->
-      <div class="landing-pillars">
-        <div class="pillar-card">
-          <div class="pillar-icon"><i class="fa-solid fa-folder-tree"></i></div>
-          <div class="pillar-title">Pattern Engine</div>
-          <div class="pillar-desc">Master LeetCode frequency stats, heuristics summaries, and canonical problems organized by core design patterns.</div>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-icon teal"><i class="fa-solid fa-book-bookmark"></i></div>
-          <div class="pillar-title">Pro Reference Library</div>
-          <div class="pillar-desc">Unlock premium interactive textbooks, reference manuals, and step-by-step guides for technical interviews.</div>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-          <div class="pillar-title">Real-Time Sync</div>
-          <div class="pillar-desc">Keep your checklists, notes, and solved questions perfectly synchronized across all devices in real-time.</div>
-        </div>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#features" class="text-sm font-medium text-gray-400 hover:text-white transition-colors duration-200">Features</a>
+        <a href="#flow-preview" class="text-sm font-medium text-gray-400 hover:text-white transition-colors duration-200">Interactive Flow</a>
+        <a href="#upgrade" class="text-sm font-medium text-gray-400 hover:text-white transition-colors duration-200">Premium</a>
       </div>
-
-      <!-- CTA Gate Panel -->
-      <div class="landing-cta-panel">
-        <div class="cta-heading">Ready to supercharge your problem-solving?</div>
-        <button class="cta-btn primary" onclick="window.handleSignInClick()">
-          <i class="fa-brands fa-google"></i> Sign In with Google
-        </button>
-        <button class="cta-btn secondary" onclick="window.selectMockProfile('student')">
-          <i class="fa-solid fa-cube"></i> Explore Sandbox Demo
+      <div class="flex items-center gap-4">
+        <button onclick="window.handleSignInClick()" class="px-5 py-2 rounded-full text-sm font-bold text-midnight bg-gradient-to-r from-accent-orange to-accent-yellow hover:shadow-lg hover:shadow-accent-orange/20 transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer">
+          Start Solving <i class="fa-solid fa-arrow-right ml-1"></i>
         </button>
       </div>
-    </div>
+    </nav>
 
-    <footer class="landing-footer">
-      AlgoFlow &copy; 2026 &bull; Elite Interview Prep Space &bull; Master Coding Patterns
+    <!-- Hero Section -->
+    <section class="max-w-7xl mx-auto px-6 md:px-12 pt-16 pb-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10 flex-1 w-full">
+      <!-- Left Column: Copy -->
+      <div class="lg:col-span-6 flex flex-col items-start text-left gap-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-accent-teal/20 bg-accent-teal/5 backdrop-blur-md">
+          <span class="w-2 h-2 rounded-full bg-accent-teal animate-pulse"></span>
+          <span class="text-xs font-semibold text-accent-teal tracking-wide uppercase">V2 Cloud Active</span>
+        </div>
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight">
+          Master DSA.<br/>
+          <span class="bg-gradient-to-r from-accent-orange via-[#ffc01e] to-accent-teal bg-clip-text text-transparent">Feel the Flow.</span>
+        </h1>
+        <p class="text-base sm:text-lg text-gray-400 max-w-xl leading-relaxed">
+          Unlock standard data structures and algorithms visualized in real-time. Trace code executions, identify patterns instantly, and accelerate your preparation.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          <button onclick="window.selectMockProfile('student')" class="px-8 py-4 rounded-full text-base font-bold text-midnight bg-gradient-to-r from-accent-orange to-accent-yellow hover:shadow-xl hover:shadow-accent-orange/25 transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer text-center">
+            Explore Sandbox Demo
+          </button>
+          <button onclick="window.handleSignInClick()" class="px-8 py-4 rounded-full text-base font-bold text-white bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer text-center flex items-center justify-center gap-2">
+            <i class="fa-brands fa-google text-red-500"></i> Sign In with Google
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Sorting Visualizer Sandbox Mock -->
+      <div class="lg:col-span-6 w-full flex justify-center lg:justify-end">
+        <div class="w-full max-w-[540px] rounded-2xl border border-white/5 bg-midnight/45 backdrop-blur-xl p-5 shadow-2xl relative overflow-hidden">
+          <div class="absolute -top-12 -left-12 w-48 h-48 bg-accent-teal/10 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <!-- Mock Window Header -->
+          <div class="flex items-center justify-between border-b border-white/5 pb-4 mb-4">
+            <div class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded-full bg-red-500"></span>
+              <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+              <span class="w-3 h-3 rounded-full bg-green-500"></span>
+            </div>
+            <div class="text-xs font-mono text-gray-500 tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-terminal text-accent-teal"></i> sorting_visualizer.cpp
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-semibold px-2 py-0.5 rounded bg-accent-orange/10 text-accent-orange">Bubble Sort</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Visual Array Graph Area -->
+          <div class="mb-6 bg-[#070a12]/75 border border-white/5 rounded-xl p-4 h-48 flex flex-col justify-between relative overflow-hidden">
+            <div id="visual-bars-container" class="flex items-end justify-center gap-3 h-32 w-full mt-2">
+              <!-- Visualized bars dynamically rendered by JS -->
+            </div>
+            <div class="flex justify-between items-center text-[10px] font-mono text-gray-500 mt-2 border-t border-white/5 pt-2 px-2">
+              <span id="visualizer-status">Status: Comparing</span>
+              <span id="visualizer-swaps">Swaps: 0</span>
+            </div>
+          </div>
+
+          <!-- Stylized Monospace IDE Panel -->
+          <div class="bg-[#070a12]/95 border border-white/5 rounded-xl p-4 font-mono text-xs text-gray-400 shadow-inner">
+            <div class="flex items-center justify-between border-b border-white/5 pb-2 mb-2 text-[10px] text-gray-500">
+              <span>C++ Sandbox Source Code</span>
+              <span class="text-accent-teal">Active Execution Line</span>
+            </div>
+            <div class="space-y-1 select-none text-[11px] leading-relaxed">
+              <div id="line-1" class="px-2 py-0.5 rounded transition-all duration-200">void bubbleSort(int arr[], int n) {</div>
+              <div id="line-2" class="px-2 py-0.5 rounded pl-4 transition-all duration-200">for (int i = 0; i < n - 1; i++) {</div>
+              <div id="line-3" class="px-2 py-0.5 rounded pl-8 transition-all duration-200">for (int j = 0; j < n - i - 1; j++) {</div>
+              <div id="line-4" class="px-2 py-0.5 rounded pl-12 transition-all duration-200"><span class="text-accent-violet">if</span> (arr[j] > arr[j + 1]) {</div>
+              <div id="line-5" class="px-2 py-0.5 rounded pl-16 transition-all duration-200">swap(arr[j], arr[j + 1]);</div>
+              <div id="line-6" class="px-2 py-0.5 rounded pl-12 transition-all duration-200">}</div>
+              <div id="line-7" class="px-2 py-0.5 rounded pl-8 transition-all duration-200">}</div>
+              <div id="line-8" class="px-2 py-0.5 rounded pl-4 transition-all duration-200">}</div>
+              <div id="line-9" class="px-2 py-0.5 rounded transition-all duration-200">}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section (Bento Grid) -->
+    <section id="features" class="max-w-7xl mx-auto px-6 md:px-12 py-20 w-full relative z-10">
+      <div class="text-center mb-16 flex flex-col items-center gap-3">
+        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">
+          Supercharged with <span class="bg-gradient-to-r from-accent-orange to-accent-teal bg-clip-text text-transparent">Elite Learning Engine</span>
+        </h2>
+        <p class="text-gray-400 max-w-xl text-sm md:text-base leading-relaxed">
+          AlgoFlow combines modern design patterns, textbook theory, and live sandboxed features to help you stand out.
+        </p>
+      </div>
+
+      <!-- Bento Box Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Feature 1: Real-Time Visualizer (Tall Card) -->
+        <div class="md:col-span-2 rounded-2xl border border-white/5 bg-[#0B0F19]/35 backdrop-blur-xl p-8 relative overflow-hidden flex flex-col justify-between group hover:border-accent-teal/30 hover:shadow-2xl hover:shadow-accent-teal/5 transition-all duration-300">
+          <div class="absolute -right-16 -top-16 w-48 h-48 bg-accent-teal/5 rounded-full blur-2xl group-hover:bg-accent-teal/10 transition-colors"></div>
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-accent-teal/10 border border-accent-teal/20 flex items-center justify-center text-accent-teal text-xl mb-6 shadow-lg shadow-accent-teal/10">
+              <i class="fa-solid fa-cube"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Real-time Visualizations</h3>
+            <p class="text-gray-400 text-sm leading-relaxed max-w-md">
+              Watch complex data structures reshape dynamically. Step through recursive branches, tree shifts, and sliding boundaries with detailed execution logs.
+            </p>
+          </div>
+          <!-- Tiny inline design asset -->
+          <div class="mt-8 flex gap-2 border-t border-white/5 pt-6 items-center">
+            <span class="text-xs font-mono text-gray-500">Visualization Speed:</span>
+            <div class="flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-accent-teal"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-accent-teal"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-accent-teal"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-gray-600"></span>
+            </div>
+            <span class="text-xs font-mono text-accent-teal ml-auto font-bold">1.0x (Standard)</span>
+          </div>
+        </div>
+
+        <!-- Feature 2: Curated Tracks (Square Card) -->
+        <div class="rounded-2xl border border-white/5 bg-[#0B0F19]/35 backdrop-blur-xl p-8 relative overflow-hidden flex flex-col justify-between group hover:border-accent-orange/30 hover:shadow-2xl hover:shadow-accent-orange/5 transition-all duration-300">
+          <div class="absolute -right-16 -top-16 w-48 h-48 bg-accent-orange/5 rounded-full blur-2xl group-hover:bg-accent-orange/10 transition-colors"></div>
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-accent-orange/10 border border-accent-orange/20 flex items-center justify-center text-accent-orange text-xl mb-6 shadow-lg shadow-accent-orange/10">
+              <i class="fa-solid fa-folder-tree"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Curated DSA Tracks</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">
+              Step through LeetCode frequency stats, pattern taxonomies, and interview-frequent challenges from sliding window to advanced dynamic programming.
+            </p>
+          </div>
+          <div class="mt-6 flex items-center justify-between text-xs font-mono text-gray-500 border-t border-white/5 pt-4">
+            <span>38+ Core Patterns</span>
+            <span class="text-accent-orange font-bold">Mastery Focused</span>
+          </div>
+        </div>
+
+        <!-- Feature 3: Interactive Code Sandbox -->
+        <div class="rounded-2xl border border-white/5 bg-[#0B0F19]/35 backdrop-blur-xl p-8 relative overflow-hidden flex flex-col justify-between group hover:border-accent-violet/30 hover:shadow-2xl hover:shadow-accent-violet/5 transition-all duration-300">
+          <div class="absolute -right-16 -top-16 w-48 h-48 bg-accent-violet/5 rounded-full blur-2xl group-hover:bg-accent-violet/10 transition-colors"></div>
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-accent-violet/10 border border-accent-violet/20 flex items-center justify-center text-accent-violet text-xl mb-6 shadow-lg shadow-accent-violet/10">
+              <i class="fa-solid fa-terminal"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Interactive Code Sandbox</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">
+              Interact with detailed code sandboxes in C++, Java, Python, or JavaScript. Take persistent, user-scoped notes, and sync solved trackers instantly to the cloud.
+            </p>
+          </div>
+          <div class="mt-6 flex items-center justify-between text-xs font-mono text-gray-500 border-t border-white/5 pt-4">
+            <span>4 Languages Supported</span>
+            <span class="text-accent-violet font-bold">Cloud Sync</span>
+          </div>
+        </div>
+
+        <!-- Feature 4: Reference Manuals (Tall Card) -->
+        <div class="md:col-span-2 rounded-2xl border border-white/5 bg-[#0B0F19]/35 backdrop-blur-xl p-8 relative overflow-hidden flex flex-col justify-between group hover:border-accent-emerald/30 hover:shadow-2xl hover:shadow-accent-emerald/5 transition-all duration-300">
+          <div class="absolute -right-16 -top-16 w-48 h-48 bg-accent-emerald/5 rounded-full blur-2xl group-hover:bg-accent-emerald/10 transition-colors"></div>
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-accent-emerald/10 border border-accent-emerald/20 flex items-center justify-center text-accent-emerald text-xl mb-6 shadow-lg shadow-accent-emerald/10">
+              <i class="fa-solid fa-book-open"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Pro Textbook Library</h3>
+            <p class="text-gray-400 text-sm leading-relaxed max-w-md">
+              Unlock a curated library of interactive DSA textbooks, cheatsheets, and coding checklists. Perfect for quickly refreshing concepts right before a coding interview.
+            </p>
+          </div>
+          <div class="mt-8 flex gap-4 border-t border-white/5 pt-6 items-center">
+            <span class="text-xs font-mono text-gray-500">Study Guides:</span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-accent-emerald/10 text-accent-emerald">Cracking the Coding Interview</span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-accent-emerald/10 text-accent-emerald">System Design</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive "Flow" Preview Section -->
+    <section id="flow-preview" class="max-w-7xl mx-auto px-6 md:px-12 py-20 w-full relative z-10 border-t border-white/5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <!-- Left: Copy & Tab Selectors -->
+        <div class="lg:col-span-5 flex flex-col gap-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-accent-violet/20 bg-accent-violet/5 backdrop-blur-md w-fit">
+            <i class="fa-solid fa-wand-magic-sparkles text-accent-violet"></i>
+            <span class="text-xs font-semibold text-accent-violet tracking-wide uppercase">Interactive Sandbox</span>
+          </div>
+          <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">
+            See the Flow of <span class="bg-gradient-to-r from-accent-violet to-accent-teal bg-clip-text text-transparent">Any Pattern</span>
+          </h2>
+          <p class="text-gray-400 text-sm md:text-base leading-relaxed">
+            Click on the tabs below to explore real-time mock data structures shifting automatically. Study the logic, understand the visuals.
+          </p>
+
+          <!-- Tab Selection Buttons -->
+          <div class="flex flex-col gap-3 mt-4">
+            <button onclick="window.selectFlowTab('recursion')" id="tab-btn-recursion" class="tab-select-btn flex items-center justify-between p-4 rounded-xl border bg-white/5 border-accent-violet text-white transition-all duration-300 text-left cursor-pointer">
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-recycle text-accent-violet text-lg"></i>
+                <div>
+                  <span class="text-sm font-bold block">1. Call Tree Recursion</span>
+                  <span class="text-xs text-gray-400">Trace stack frames & state returns</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+            </button>
+            
+            <button onclick="window.selectFlowTab('dfs')" id="tab-btn-dfs" class="tab-select-btn flex items-center justify-between p-4 rounded-xl border border-white/5 hover:border-white/10 hover:bg-white/5 text-gray-400 hover:text-white transition-all duration-300 text-left cursor-pointer">
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-network-wired text-accent-teal text-lg"></i>
+                <div>
+                  <span class="text-sm font-bold block">2. Graph Depth-First Search</span>
+                  <span class="text-xs text-gray-400">Track grids and traverse nodes</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
+            </button>
+
+            <button onclick="window.selectFlowTab('sliding')" id="tab-btn-sliding" class="tab-select-btn flex items-center justify-between p-4 rounded-xl border border-white/5 hover:border-white/10 hover:bg-white/5 text-gray-400 hover:text-white transition-all duration-300 text-left cursor-pointer">
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-arrows-left-right text-accent-orange text-lg"></i>
+                <div>
+                  <span class="text-sm font-bold block">3. Sliding Window Dynamic Max</span>
+                  <span class="text-xs text-gray-400">Trace moving arrays & max scopes</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Sandbox View Renderer -->
+        <div class="lg:col-span-7 w-full flex justify-center lg:justify-end">
+          <div class="w-full max-w-[620px] rounded-2xl border border-white/5 bg-midnight/45 backdrop-blur-xl p-6 shadow-2xl relative overflow-hidden flex flex-col gap-6">
+            <!-- Sandbox Header -->
+            <div class="flex items-center justify-between border-b border-white/5 pb-4">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-accent-violet" id="tab-indicator-dot"></span>
+                <span class="text-xs font-mono text-gray-400 font-bold" id="tab-indicator-title">recursion_stack.cpp</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-mono text-gray-500">Live Visual Simulator</span>
+              </div>
+            </div>
+
+            <!-- Visualization Renderer Area -->
+            <div class="bg-[#070a12]/75 border border-white/5 rounded-xl p-6 h-64 flex items-center justify-center relative overflow-hidden" id="tab-visual-renderer">
+              <!-- Visualized trees/grids dynamically rendered by JS -->
+            </div>
+
+            <!-- Monospace Code Editor Block -->
+            <div class="bg-[#070a12]/95 border border-white/5 rounded-xl p-4 font-mono text-xs text-gray-400">
+              <div class="flex items-center justify-between border-b border-white/5 pb-2 mb-2 text-[10px] text-gray-500">
+                <span>IDE Preview</span>
+                <span class="text-accent-violet">Source Code Pattern</span>
+              </div>
+              <pre id="tab-code-block" class="overflow-x-auto text-[11px] leading-relaxed">
+int fib(int n) {
+    if (n <= 1) return n;
+    return fib(n - 1) + fib(n - 2);
+}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action Banner -->
+    <section id="upgrade" class="max-w-5xl mx-auto px-6 py-20 w-full relative z-10">
+      <div class="rounded-3xl border border-accent-orange/20 bg-gradient-to-b from-[#131b2e] to-[#0B0F19]/80 backdrop-blur-2xl p-10 md:p-16 text-center flex flex-col items-center gap-6 shadow-2xl relative overflow-hidden">
+        <!-- Absolute decorative circles -->
+        <div class="absolute -right-24 -bottom-24 w-64 h-64 bg-accent-orange/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -left-24 -top-24 w-64 h-64 bg-accent-teal/5 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <span class="w-16 h-16 rounded-2xl bg-accent-orange/10 border border-accent-orange/20 flex items-center justify-center text-accent-orange text-3xl mb-2 shadow-lg shadow-accent-orange/10 animate-bounce">
+          <i class="fa-solid fa-crown"></i>
+        </span>
+        <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight">
+          Supercharge Your <span class="bg-gradient-to-r from-accent-orange to-accent-yellow bg-clip-text text-transparent">DSA Mastery</span>
+        </h2>
+        <p class="text-gray-400 text-sm md:text-base max-w-xl leading-relaxed">
+          Upgrade to **AlgoFlow Pro** for lifetime access to textbook reference libraries, unlimited problem trackers, and secure multi-device cloud synchronizations.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 mt-6">
+          <button onclick="window.selectMockProfile('student')" class="px-8 py-4 rounded-full text-base font-bold text-midnight bg-gradient-to-r from-accent-orange to-accent-yellow hover:shadow-xl hover:shadow-accent-orange/25 transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer">
+            Explore Sandbox Demo
+          </button>
+          <button onclick="window.handleSignInClick()" class="px-8 py-4 rounded-full text-base font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer">
+            Start Syncing Scopes
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="w-full border-t border-white/5 py-10 px-6 bg-brand-dark relative z-10 text-center text-xs text-gray-500">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-6">
+        <div>
+          <span class="text-base font-bold bg-gradient-to-r from-accent-orange to-accent-teal bg-clip-text text-transparent">
+            AlgoFlow &copy; 2026
+          </span>
+          <span class="ml-2 font-medium">| Master Coding Patterns</span>
+        </div>
+        <div class="flex items-center gap-6">
+          <a href="https://github.com/utkarsh-mehrotra/dsa-patterns" target="_blank" class="hover:text-white transition-colors"><i class="fa-brands fa-github text-base"></i></a>
+          <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-twitter text-base"></i></a>
+          <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-linkedin text-base"></i></a>
+        </div>
+      </div>
     </footer>
+
+    <!-- INTERACTIVE SCRIPTS COMPONENT FOR BUBBLE SORT & FLOW PREVIEW -->
+    <script>
+      (function() {
+        // --- 1. BUBBLE SORT HERO ANIMATION ENGINE ---
+        let sortArray = [45, 12, 85, 32, 60, 22];
+        let originalArray = [...sortArray];
+        let sortI = 0;
+        let sortJ = 0;
+        let swapCount = 0;
+        let compareCount = 0;
+        let isSorted = false;
+        let stepInterval = null;
+
+        function renderSortBars() {
+          const container = document.getElementById("visual-bars-container");
+          if (!container) return;
+          
+          container.innerHTML = sortArray.map((val, idx) => {
+            let colorClass = "bg-white/10 border-white/5";
+            
+            if (isSorted) {
+              colorClass = "bg-accent-emerald border-accent-emerald/30 shadow-lg shadow-accent-emerald/10";
+            } else if (idx === sortJ || idx === sortJ + 1) {
+              colorClass = "bg-accent-teal border-accent-teal/30 shadow-lg shadow-accent-teal/20";
+            }
+            
+            const heightPercent = Math.max((val / 100) * 100, 10);
+            return `
+              <div class="flex flex-col items-center gap-1.5 w-10">
+                <span class="text-[10px] font-mono text-gray-500">${val}</span>
+                <div class="w-full rounded-t-md border-t border-x transition-all duration-300 ${colorClass}" style="height: ${heightPercent}px;"></div>
+              </div>
+            `;
+          }).join("");
+
+          const statusEl = document.getElementById("visualizer-status");
+          const swapsEl = document.getElementById("visualizer-swaps");
+          
+          if (statusEl) {
+            statusEl.textContent = isSorted 
+              ? "Status: Array Sorted! 🎉" 
+              : `Status: Comparing index [${sortJ}] & [${sortJ + 1}]`;
+          }
+          if (swapsEl) {
+            swapsEl.textContent = `Swaps: ${swapCount}`;
+          }
+        }
+
+        function highlightCodeLine(lineNum) {
+          for (let i = 1; i <= 9; i++) {
+            const line = document.getElementById(`line-${i}`);
+            if (line) {
+              if (i === lineNum) {
+                line.className = line.className.includes("pl-16") 
+                  ? "px-2 py-0.5 rounded pl-16 bg-accent-teal/15 text-accent-teal font-semibold shadow-sm border-l-2 border-accent-teal"
+                  : line.className.includes("pl-12")
+                  ? "px-2 py-0.5 rounded pl-12 bg-accent-teal/15 text-accent-teal font-semibold shadow-sm border-l-2 border-accent-teal"
+                  : "px-2 py-0.5 rounded bg-accent-teal/15 text-accent-teal font-semibold shadow-sm border-l-2 border-accent-teal";
+              } else {
+                // Reset styling
+                line.className = line.className.includes("pl-16")
+                  ? "px-2 py-0.5 rounded pl-16 text-gray-400"
+                  : line.className.includes("pl-12")
+                  ? "px-2 py-0.5 rounded pl-12 text-gray-400"
+                  : line.className.includes("pl-8")
+                  ? "px-2 py-0.5 rounded pl-8 text-gray-400"
+                  : line.className.includes("pl-4")
+                  ? "px-2 py-0.5 rounded pl-4 text-gray-400"
+                  : "px-2 py-0.5 rounded text-gray-400";
+              }
+            }
+          }
+        }
+
+        function stepSort() {
+          const n = sortArray.length;
+          if (sortI >= n - 1) {
+            isSorted = true;
+            renderSortBars();
+            highlightCodeLine(8);
+            clearInterval(stepInterval);
+            
+            // Restart visualizer after 3.5s delay
+            setTimeout(() => {
+              sortArray = [...originalArray];
+              sortI = 0;
+              sortJ = 0;
+              swapCount = 0;
+              isSorted = false;
+              renderSortBars();
+              stepInterval = setInterval(stepSort, 1200);
+            }, 3500);
+            return;
+          }
+
+          highlightCodeLine(4);
+          renderSortBars();
+
+          setTimeout(() => {
+            if (sortArray[sortJ] > sortArray[sortJ + 1]) {
+              // Swap elements
+              let temp = sortArray[sortJ];
+              sortArray[sortJ] = sortArray[sortJ + 1];
+              sortArray[sortJ + 1] = temp;
+              swapCount++;
+              
+              highlightCodeLine(5);
+              renderSortBars();
+            }
+
+            sortJ++;
+            if (sortJ >= n - sortI - 1) {
+              sortJ = 0;
+              sortI++;
+            }
+          }, 600);
+        }
+
+        // Initialize Hero Visualizer
+        setTimeout(() => {
+          renderSortBars();
+          stepInterval = setInterval(stepSort, 1200);
+        }, 1000);
+
+
+        // --- 2. INTERACTIVE "FLOW" PREVIEW SECTION ENGINE ---
+        const flowData = {
+          recursion: {
+            title: "recursion_stack.cpp",
+            dotColor: "bg-accent-violet shadow-accent-violet/30",
+            code: `int fib(int n) {
+    if (n <= 1) return n;
+    return fib(n - 1) + fib(n - 2);
+}`,
+            render: function() {
+              return `
+                <div class="flex flex-col items-center gap-4 text-white font-mono select-none">
+                  <!-- Root Node -->
+                  <div class="px-4 py-2 rounded-xl bg-accent-violet border border-accent-violet/30 text-xs font-bold text-center flex flex-col shadow-lg shadow-accent-violet/20 animate-pulse">
+                    <span>fib(4)</span>
+                    <span class="text-[9px] text-white/70">Returns 3</span>
+                  </div>
+                  
+                  <!-- Connections & Child Row 1 -->
+                  <div class="flex gap-16 relative">
+                    <div class="absolute top-[-16px] left-[25%] right-[25%] h-px bg-gradient-to-r from-accent-violet to-accent-teal"></div>
+                    
+                    <div class="flex flex-col items-center gap-3">
+                      <div class="px-3 py-1.5 rounded-lg bg-accent-violet/30 border border-accent-violet/20 text-[10px] text-center flex flex-col">
+                        <span>fib(3)</span>
+                        <span class="text-[8px] text-gray-400">Returns 2</span>
+                      </div>
+                      
+                      <!-- Child Row 2 -->
+                      <div class="flex gap-4">
+                        <div class="px-2 py-1 rounded bg-[#0B0F19] border border-white/5 text-[8px]">fib(2)</div>
+                        <div class="px-2 py-1 rounded bg-[#0B0F19] border border-white/5 text-[8px]">fib(1)</div>
+                      </div>
+                    </div>
+
+                    <div class="flex flex-col items-center gap-3">
+                      <div class="px-3 py-1.5 rounded-lg bg-accent-violet/30 border border-accent-violet/20 text-[10px] text-center flex flex-col">
+                        <span>fib(2)</span>
+                        <span class="text-[8px] text-gray-400">Returns 1</span>
+                      </div>
+                      
+                      <!-- Child Row 2 -->
+                      <div class="flex gap-4">
+                        <div class="px-2 py-1 rounded bg-[#0B0F19] border border-white/5 text-[8px]">fib(1)</div>
+                        <div class="px-2 py-1 rounded bg-[#0B0F19] border border-white/5 text-[8px]">fib(0)</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }
+          },
+          dfs: {
+            title: "depth_first_search.cpp",
+            dotColor: "bg-accent-teal shadow-accent-teal/30",
+            code: `void dfs(int r, int c, vector<vector<int>>& grid) {
+    if (invalid(r, c) || visited[r][c]) return;
+    visited[r][c] = true;
+    dfs(r + 1, c, grid); // Down
+    dfs(r, c + 1, grid); // Right
+}`,
+            render: function() {
+              return `
+                <div class="grid grid-cols-4 gap-2 w-48 font-mono select-none">
+                  <!-- Row 0 -->
+                  <div class="w-10 h-10 rounded border bg-accent-teal/20 border-accent-teal flex items-center justify-center text-[10px] text-accent-teal font-bold shadow-md shadow-accent-teal/10">0,0</div>
+                  <div class="w-10 h-10 rounded border bg-accent-teal/20 border-accent-teal flex items-center justify-center text-[10px] text-accent-teal font-bold shadow-md shadow-accent-teal/10">0,1</div>
+                  <div class="w-10 h-10 rounded border bg-accent-teal/20 border-accent-teal flex items-center justify-center text-[10px] text-accent-teal font-bold shadow-md shadow-accent-teal/10">0,2</div>
+                  <div class="w-10 h-10 rounded border border-white/5 bg-[#0B0F19] flex items-center justify-center text-[10px] text-gray-600">0,3</div>
+
+                  <!-- Row 1 -->
+                  <div class="w-10 h-10 rounded border border-white/5 bg-[#0B0F19] flex items-center justify-center text-[10px] text-gray-600">1,0</div>
+                  <div class="w-10 h-10 rounded border border-white/5 bg-[#0B0F19] flex items-center justify-center text-[10px] text-gray-600">1,1</div>
+                  <div class="w-10 h-10 rounded border bg-accent-teal/20 border-accent-teal flex items-center justify-center text-[10px] text-accent-teal font-bold shadow-md shadow-accent-teal/10">1,2</div>
+                  <div class="w-10 h-10 rounded border border-white/5 bg-red-950/35 border-red-500/30 flex items-center justify-center text-[10px] text-red-400 font-bold"><i class="fa-solid fa-ban"></i></div>
+
+                  <!-- Row 2 -->
+                  <div class="w-10 h-10 rounded border border-white/5 bg-[#0B0F19] flex items-center justify-center text-[10px] text-gray-600">2,0</div>
+                  <div class="w-10 h-10 rounded border border-white/5 bg-[#0B0F19] flex items-center justify-center text-[10px] text-gray-600">2,1</div>
+                  <div class="w-10 h-10 rounded border bg-accent-teal/20 border-accent-teal flex items-center justify-center text-[10px] text-accent-teal font-bold shadow-md shadow-accent-teal/10">2,2</div>
+                  <div class="w-10 h-10 rounded border bg-accent-teal/40 border-accent-teal flex items-center justify-center text-[10px] text-accent-teal font-bold animate-pulse">2,3</div>
+                </div>
+              `;
+            }
+          },
+          sliding: {
+            title: "sliding_window.cpp",
+            dotColor: "bg-accent-orange shadow-accent-orange/30",
+            code: `vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+    deque<int> dq;
+    for (int i = 0; i < nums.size(); i++) {
+        // Slide window & pop elements outside...
+        // Highlight dynamic maximums inside deque
+    }
+}`,
+            render: function() {
+              return `
+                <div class="flex flex-col items-center gap-5 w-full font-mono text-white select-none">
+                  <!-- Array row -->
+                  <div class="flex items-center gap-1.5 border border-white/5 bg-[#0B0F19] p-3 rounded-xl relative">
+                    <!-- Sliding Window overlay -->
+                    <div class="absolute left-[70px] w-[140px] top-[6px] bottom-[6px] border border-accent-orange/40 bg-accent-orange/10 rounded-lg shadow-inner z-0 pointer-events-none"></div>
+                    
+                    <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center font-bold text-xs relative z-10 text-gray-500">1</div>
+                    <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center font-bold text-xs relative z-10 text-gray-500">3</div>
+                    <div class="w-10 h-10 rounded-lg bg-accent-orange/20 border border-accent-orange/30 flex items-center justify-center font-bold text-xs relative z-10 text-accent-orange shadow-md shadow-accent-orange/10">-1</div>
+                    <div class="w-10 h-10 rounded-lg bg-accent-orange/20 border border-accent-orange/30 flex items-center justify-center font-bold text-xs relative z-10 text-accent-orange shadow-md shadow-accent-orange/10">-3</div>
+                    <div class="w-10 h-10 rounded-lg bg-accent-orange/20 border border-accent-orange/30 flex items-center justify-center font-bold text-xs relative z-10 text-accent-orange shadow-md shadow-accent-orange/10">5</div>
+                    <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center font-bold text-xs relative z-10 text-gray-500">3</div>
+                  </div>
+
+                  <!-- Details -->
+                  <div class="flex gap-4 border-t border-white/5 pt-4 w-full justify-center text-xs">
+                    <span class="text-gray-400">Window Range: <strong class="text-accent-orange">[-1, -3, 5]</strong></span>
+                    <span class="text-gray-400">Max in Window: <strong class="text-accent-teal">5</strong></span>
+                  </div>
+                </div>
+              `;
+            }
+          }
+        };
+
+        window.selectFlowTab = function(tabId) {
+          const tab = flowData[tabId];
+          if (!tab) return;
+
+          // Update active button layout
+          document.querySelectorAll(".tab-select-btn").forEach(btn => {
+            btn.className = "tab-select-btn flex items-center justify-between p-4 rounded-xl border border-white/5 hover:border-white/10 hover:bg-white/5 text-gray-400 hover:text-white transition-all duration-300 text-left cursor-pointer";
+          });
+          const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+          if (activeBtn) {
+            let activeBorderClass = "border-accent-violet text-white";
+            if (tabId === "dfs") activeBorderClass = "border-accent-teal text-white";
+            if (tabId === "sliding") activeBorderClass = "border-accent-orange text-white";
+            
+            activeBtn.className = `tab-select-btn flex items-center justify-between p-4 rounded-xl border bg-white/5 ${activeBorderClass} transition-all duration-300 text-left cursor-pointer`;
+          }
+
+          // Update IDE preview & visual rendering
+          const dot = document.getElementById("tab-indicator-dot");
+          const title = document.getElementById("tab-indicator-title");
+          const codeBlock = document.getElementById("tab-code-block");
+          const renderer = document.getElementById("tab-visual-renderer");
+
+          if (dot) dot.className = `w-2.5 h-2.5 rounded-full ${tab.dotColor}`;
+          if (title) title.textContent = tab.title;
+          if (codeBlock) codeBlock.textContent = tab.code;
+          if (renderer) renderer.innerHTML = tab.render();
+        };
+
+        // Initialize defaults
+        setTimeout(() => {
+          window.selectFlowTab("recursion");
+        }, 500);
+
+      })();
+    </script>
   </div>
 
   <!-- INTERACTIVE INTERFACE / PRO MAIN DASHBOARD -->
