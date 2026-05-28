@@ -1807,406 +1807,12 @@
         justify-content: center;
         text-align: center;
       }
-
-    /* VIEW CONTAINERS & SMOOTH STATE SWITCHING */
-    .view-container {
-      opacity: 0;
-      transform: translateY(15px);
-      transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      display: none;
-      width: 100%;
-      min-height: 100vh;
-      flex-direction: column;
-    }
-    .view-container.active {
-      display: flex;
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* BRAND LANDING PAGE AESTHETICS */
-    .landing-hero-section {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 6rem 2rem 4rem 2rem;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1.5rem;
-      flex: 1;
-    }
-    .landing-logo {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3.5rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #ffc01e 0%, #ffa116 35%, #00b8a3 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 0.5rem;
-      filter: drop-shadow(0 0 20px rgba(255, 161, 22, 0.15));
-      animation: floatHero 6s ease-in-out infinite;
-    }
-    .landing-logo i {
-      margin-right: 0.8rem;
-      background: linear-gradient(135deg, #ffc01e 0%, #00b8a3 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .landing-tagline {
-      font-size: 1.6rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      max-width: 700px;
-      line-height: 1.4;
-      margin-bottom: 2rem;
-    }
-    .landing-tagline span.highlight {
-      color: #ffa116;
-      font-weight: 700;
-    }
-    .landing-tagline span.highlight-teal {
-      color: #00b8a3;
-      font-weight: 700;
-    }
-
-    /* Floating preview mockup styling */
-    .landing-mockup-container {
-      width: 100%;
-      max-width: 680px;
-      margin: 1.5rem 0 3.5rem 0;
-      position: relative;
-    }
-    .landing-mockup {
-      background: rgba(38, 38, 38, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      padding: 1.5rem 2rem;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      text-align: left;
-      position: relative;
-    }
-    .landing-mockup::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent 0%, rgba(255, 161, 22, 0.2) 50%, transparent 100%);
-    }
-    .mockup-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.2rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      padding-bottom: 0.8rem;
-    }
-    .mockup-dots {
-      display: flex;
-      gap: 0.4rem;
-    }
-    .mockup-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.2);
-    }
-    .mockup-dot.red { background: #ff375f; }
-    .mockup-dot.yellow { background: #ffc01e; }
-    .mockup-dot.green { background: #00b8a3; }
-    .mockup-pattern-card {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 0.8rem;
-    }
-    .mockup-pattern-card:last-child {
-      margin-bottom: 0;
-    }
-    .mockup-title-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.4rem;
-    }
-    .mockup-pattern-name {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #f5f5f5;
-    }
-    .mockup-difficulty {
-      font-size: 0.65rem;
-      font-weight: 700;
-      padding: 0.15rem 0.45rem;
-      border-radius: 4px;
-    }
-    .mockup-difficulty.easy { background: rgba(0, 184, 163, 0.1); color: #00b8a3; border: 1px solid rgba(0, 184, 163, 0.2); }
-    .mockup-difficulty.medium { background: rgba(255, 192, 30, 0.1); color: #ffc01e; border: 1px solid rgba(255, 192, 30, 0.2); }
-    .mockup-desc {
-      font-size: 0.75rem;
-      color: #a3a3a3;
-      line-height: 1.4;
-    }
-
-    /* Core Pillars grid */
-    .landing-pillars {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-      width: 100%;
-      max-width: 1000px;
-      margin-bottom: 3.5rem;
-    }
-    .pillar-card {
-      background: rgba(38, 38, 38, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      border-radius: 16px;
-      padding: 1.8rem;
-      text-align: left;
-      backdrop-filter: blur(12px);
-      transition: var(--transition);
-    }
-    .pillar-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(255, 161, 22, 0.15);
-      background: rgba(38, 38, 38, 0.55);
-      box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.3);
-    }
-    .pillar-icon {
-      font-size: 1.8rem;
-      color: #ffa116;
-      margin-bottom: 1rem;
-      filter: drop-shadow(0 2px 8px rgba(255, 161, 22, 0.25));
-    }
-    .pillar-icon.teal {
-      color: #00b8a3;
-      filter: drop-shadow(0 2px 8px rgba(0, 184, 163, 0.25));
-    }
-    .pillar-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 0.5rem;
-    }
-    .pillar-desc {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-
-    /* CTA gates panel */
-    .landing-cta-panel {
-      background: rgba(255, 161, 22, 0.02);
-      border: 1px solid rgba(255, 161, 22, 0.08);
-      border-radius: 20px;
-      padding: 2.2rem 3rem;
-      width: 100%;
-      max-width: 600px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.4);
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-      align-items: center;
-    }
-    .cta-heading {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-    .cta-btn {
-      width: 100%;
-      padding: 0.85rem;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
-      text-decoration: none;
-      outline: none;
-    }
-    .cta-btn.primary {
-      background: linear-gradient(135deg, #ffc01e 0%, #ffa116 100%);
-      color: #121212;
-      border: 1px solid #ffa116;
-      box-shadow: 0 4px 15px rgba(255, 161, 22, 0.3);
-    }
-    .cta-btn.primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(255, 161, 22, 0.45);
-      background: linear-gradient(135deg, #ffe0b2 0%, #ffc01e 100%);
-    }
-    .cta-btn.secondary {
-      background: transparent;
-      color: var(--text-primary);
-      border: 1px solid var(--border-color);
-    }
-    .cta-btn.secondary:hover {
-      transform: translateY(-1px);
-      background: rgba(255, 255, 255, 0.03);
-      border-color: var(--text-secondary);
-    }
-
-    /* Footer styling */
-    .landing-footer {
-      width: 100%;
-      border-top: 1px solid var(--border-color);
-      padding: 1.5rem;
-      text-align: center;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    /* Float Animation */
-    @keyframes floatHero {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
-      100% { transform: translateY(0px); }
-    }
-
-    /* Light Theme overrides */
-    body.light-theme .pillar-card {
-      background: rgba(255, 255, 255, 0.75);
-      border-color: rgba(0, 0, 0, 0.05);
-    }
-    body.light-theme .pillar-card:hover {
-      background: rgba(255, 255, 255, 0.95);
-      border-color: rgba(255, 161, 22, 0.25);
-    }
-    body.light-theme .landing-mockup {
-      background: rgba(255, 255, 255, 0.85);
-      border-color: rgba(0, 0, 0, 0.05);
-      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.08);
-    }
-    body.light-theme .mockup-pattern-card {
-      background: rgba(0, 0, 0, 0.01);
-      border-color: rgba(0, 0, 0, 0.04);
-    }
-    body.light-theme .mockup-pattern-name {
-      color: #121212;
-    }
-    body.light-theme .landing-cta-panel {
-      background: rgba(255, 161, 22, 0.02);
-      border-color: rgba(255, 161, 22, 0.12);
-      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.05);
-    }
-
-    /* Responsive adjustments for Landing Page */
-    @media (max-width: 900px) {
-      .landing-pillars {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        max-width: 500px;
-      }
-    }
-    @media (max-width: 600px) {
-      .landing-hero-section {
-        padding: 4rem 1.25rem 3rem 1.25rem;
-      }
-      .landing-logo {
-        font-size: 2.8rem;
-      }
-      .landing-tagline {
-        font-size: 1.25rem;
-      }
-      .landing-cta-panel {
-        padding: 1.8rem 1.5rem;
-      }
     }
   </style>
 </head>
 <body>
 
-  <!-- BRAND LANDING PAGE GATE -->
-  <div id="landing-view" class="view-container active">
-    <div class="landing-hero-section">
-      <div class="landing-logo">
-        <i class="fa-solid fa-diagram-project"></i>AlgoFlow
-      </div>
-      <div class="landing-tagline">
-        Master Core <span class="highlight">DSA Patterns</span>. Spot the Spotlights. Crack the <span class="highlight-teal">Technical Interview</span>.
-      </div>
-
-      <!-- Floating Preview Mockup -->
-      <div class="landing-mockup-container">
-        <div class="landing-mockup">
-          <div class="mockup-header">
-            <div class="mockup-dots">
-              <span class="mockup-dot red"></span>
-              <span class="mockup-dot yellow"></span>
-              <span class="mockup-dot green"></span>
-            </div>
-            <div style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; letter-spacing: 1px;">ALGOFLOW PREVIEW</div>
-          </div>
-          
-          <div class="mockup-pattern-card">
-            <div class="mockup-title-row">
-              <span class="mockup-pattern-name">1. Sliding Window</span>
-              <span class="mockup-difficulty easy">Easy to Hard</span>
-            </div>
-            <p class="mockup-desc">Track a continuous subarray or substring with two pointers shifting dynamically. Essential for string/array search queries.</p>
-          </div>
-          
-          <div class="mockup-pattern-card">
-            <div class="mockup-title-row">
-              <span class="mockup-pattern-name">2. Two Pointers</span>
-              <span class="mockup-difficulty medium">Medium</span>
-            </div>
-            <p class="mockup-desc">Process sorted arrays or lists from both ends or at different speeds to solve searches in linear time.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Three-Pillar Value Grid -->
-      <div class="landing-pillars">
-        <div class="pillar-card">
-          <div class="pillar-icon"><i class="fa-solid fa-folder-tree"></i></div>
-          <div class="pillar-title">Pattern Engine</div>
-          <div class="pillar-desc">Master LeetCode frequency stats, heuristics summaries, and canonical problems organized by core design patterns.</div>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-icon teal"><i class="fa-solid fa-book-bookmark"></i></div>
-          <div class="pillar-title">Pro Reference Library</div>
-          <div class="pillar-desc">Unlock premium interactive textbooks, reference manuals, and step-by-step guides for technical interviews.</div>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-          <div class="pillar-title">Real-Time Sync</div>
-          <div class="pillar-desc">Keep your checklists, notes, and solved questions perfectly synchronized across all devices in real-time.</div>
-        </div>
-      </div>
-
-      <!-- CTA Gate Panel -->
-      <div class="landing-cta-panel">
-        <div class="cta-heading">Ready to supercharge your problem-solving?</div>
-        <button class="cta-btn primary" onclick="window.handleSignInClick()">
-          <i class="fa-brands fa-google"></i> Sign In with Google
-        </button>
-        <button class="cta-btn secondary" onclick="window.selectMockProfile('student')">
-          <i class="fa-solid fa-cube"></i> Explore Sandbox Demo
-        </button>
-      </div>
-    </div>
-
-    <footer class="landing-footer">
-      AlgoFlow &copy; 2026 &bull; Elite Interview Prep Space &bull; Master Coding Patterns
-    </footer>
-  </div>
-
-  <!-- INTERACTIVE INTERFACE / PRO MAIN DASHBOARD -->
-  <div id="dashboard-view" class="view-container">
-    <div class="app-container">
+  <div class="app-container">
     
     <!-- Dashboard Header -->
     <header>
@@ -2310,8 +1916,6 @@
   <footer>
     <p>DSA Patterns Dashboard &bull; Local Interview Prep Space &bull; <a href="https://github.com/utkarsh-mehrotra/dsa-patterns" target="_blank"><i class="fa-brands fa-github"></i> Repository</a></p>
   </footer>
-
-  </div> <!-- Close #dashboard-view -->
 
   <script>
     // RICH DATASETS
@@ -3482,11 +3086,6 @@
       render();
       renderLibrary();
       console.log(`[AlgoFlow Auth] Mock session initialized for: ${displayName}`);
-      
-      // Dynamic view switch to main dashboard
-      if (window.switchView) {
-        window.switchView("dashboard");
-      }
     };
 
     window.handleSignOut = function() {
@@ -3495,9 +3094,6 @@
         signOut(window.firebaseAuthInstance)
           .then(() => {
             console.log("[AlgoFlow Auth] Real Google user logged out successfully.");
-            if (window.switchView) {
-              window.switchView("landing");
-            }
           })
           .catch((e) => console.error("[AlgoFlow Auth] Logout error:", e));
       } else {
@@ -3509,9 +3105,6 @@
         render();
         renderLibrary();
         console.log("[AlgoFlow Auth] Mock user logged out.");
-        if (window.switchView) {
-          window.switchView("landing");
-        }
       }
     };
 
@@ -3776,43 +3369,6 @@
       }
     });
 
-    // VIEW STATE SWITCHER CONTROLLER
-    window.switchView = function(viewId, instant = false) {
-      const landing = document.getElementById("landing-view");
-      const dashboard = document.getElementById("dashboard-view");
-      if (!landing || !dashboard) return;
-      
-      if (viewId === "dashboard") {
-        if (instant) {
-          landing.classList.remove("active");
-          landing.style.display = "none";
-          dashboard.style.display = "flex";
-          dashboard.classList.add("active");
-        } else {
-          landing.classList.remove("active");
-          setTimeout(() => {
-            landing.style.display = "none";
-            dashboard.style.display = "flex";
-            setTimeout(() => dashboard.classList.add("active"), 50);
-          }, 400);
-        }
-      } else {
-        if (instant) {
-          dashboard.classList.remove("active");
-          dashboard.style.display = "none";
-          landing.style.display = "flex";
-          landing.classList.add("active");
-        } else {
-          dashboard.classList.remove("active");
-          setTimeout(() => {
-            dashboard.style.display = "none";
-            landing.style.display = "flex";
-            setTimeout(() => landing.classList.add("active"), 50);
-          }, 400);
-        }
-      }
-    };
-
     window.addEventListener("DOMContentLoaded", () => {
       initTheme();
       
@@ -3832,13 +3388,6 @@
       updateProgressStats();
       render();
       initRadialGlow();
-
-      // Initialize default landing/dashboard view state based on active session
-      if (window.currentUser) {
-        window.switchView("dashboard", true);
-      } else {
-        window.switchView("landing", true);
-      }
       
       // Light-dismiss click outside paywall modal
       const paywallModal = document.getElementById("paywall-modal");
@@ -4143,9 +3692,6 @@
             window.updateAuthHeaderUI();
             await window.syncUserDataOnLogin(user);
             renderLibrary();
-            if (window.switchView) {
-              window.switchView("dashboard");
-            }
           } else {
             // Sign out logic
             if (window.currentUser && !window.currentUser.isDemo) {
@@ -4155,9 +3701,6 @@
               window.updateProgressStats();
               window.render();
               renderLibrary();
-              if (window.switchView) {
-                window.switchView("landing");
-              }
             }
           }
         });
