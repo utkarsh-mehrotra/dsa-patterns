@@ -1,14 +1,31 @@
-# DSA Patterns & Interview Preparation
+# AlgoFlow - DSA Patterns & Interview Preparation
 
 An interactive reference dashboard and curated library designed to help you master core Data Structures & Algorithms (DSA) patterns, spot their application in coding challenges, and prepare for system design and technical interviews.
 
+---
+
 ## 🚀 Features
 
-* **Interactive Reference Board (`index.html`)**: A lightweight, responsive, and single-page web app to:
+* **Interactive Reference Board (`index.html`)**: A lightweight, responsive, single-page web app to:
   * Browse core DSA patterns categorized by topics (e.g., Two Pointers, Sliding Window, Fast/Slow Pointers, Binary Search on Answer, Monotonic Stacks, Heap Streams).
   * Filter patterns dynamically by category or search across names, conceptual ideas, and specific LeetCode examples.
   * Expand pattern cards to view **when to spot them** (heuristics) and **canonical examples**.
-* **Offline Library (`books/`)**: A handpicked collection of authoritative interview preparation guides and reference textbooks.
+  * Keep rich, custom heuristics notes in your dashboard.
+
+* **Google Authentication & Cloud Sync**:
+  * Real-time sync with Google Auth or mock login triggers for immediate, multi-user sandbox testing.
+  * Auto-upload of checked progress and textnotes to Cloud Firestore with built-in debouncing.
+  * Intelligent progress merging: offline local progress is automatically integrated into cloud accounts during first-time sign-ins.
+
+* **Razorpay Pro & Dual-Engine Checkout**:
+  * Integrated **Razorpay Checkout SDK** to support real-time ₹299 lifetime premium membership upgrades.
+  * Interactive **Sandbox Checkout Simulator** for offline test environments when live keys are absent.
+  * Persistent user-scoped Pro checks with zero-cross-talk data partitioning across account sign-outs.
+
+* **Sleek Study Library Access Controls**:
+  * Premium textbooks are protected by visual matte blurs (`filter: blur(4px)`) and glowing crown locked badges.
+  * Locked states dissolve dynamically into active **Open** and **Download** links immediately upon upgrading to Pro.
+  * Mapped with high-fidelity, handpicked authoritative DSA and System Design references.
 
 ---
 
@@ -41,20 +58,50 @@ The `books/` directory contains highly comprehensive guides covering algorithmic
 
 ---
 
+## ⚙️ Configuration & Live Deployment
+
+To activate live real-world Google Auth, Firestore background sync, and Razorpay payment triggers, update the following configurations near the bottom of `index.html`:
+
+### 1. Firebase API Configuration
+Replace placeholder credentials in the `firebaseConfig` object:
+```javascript
+const firebaseConfig = {
+  apiKey: "YOUR_REAL_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+```
+
+### 2. Razorpay API Key ID
+Replace `"YOUR_RAZORPAY_KEY_ID"` inside the `razorpayConfig` block:
+```javascript
+const razorpayConfig = {
+  keyId: "rzp_live_YOUR_LIVE_KEY_ID" // Paste your live Razorpay Key ID here
+};
+```
+
+> [!NOTE]
+> If these credentials are not set up or configured, the application automatically runs in **Offline / Sandbox Demo Mode**, enabling full mock checkout testing, local segregated data persistence, and simulated Pro unlock confirmations.
+
+---
+
 ## 🛠️ How to Use
 
-### 1. Interactive Dashboard
-Since the dashboard is built purely with vanilla HTML, CSS, and JavaScript, you can open and run it locally without installing any external dependencies.
+### 1. Servicing the Dashboard Locally
+Since the dashboard is built purely with vanilla HTML, CSS, and JavaScript, you can open and run it locally without installing complex build pipelines.
 
 * **Option A: Direct Open**  
-  Simply double-click the [index.html](file:///Users/utkarsh/.gemini/antigravity-ide/scratch/dsa-patterns/index.html) file to open it in your preferred web browser.
+  Simply double-click the `index.html` file to open it in your preferred web browser.
 
 * **Option B: Run a Local Server**  
-  To serve the application locally (useful if you want to access it over your local network), run one of the following commands in the project directory:
+  To serve the application locally (highly recommended to enable proper cross-origin PDF embedding), run one of the following commands in the project directory:
 
   ```bash
   # Using Python 3
-  python3 -m http-server 8000
+  python3 -m http.server 8000
   
   # Or using Node.js / npx
   npx -y http-server -p 8000
@@ -62,4 +109,4 @@ Since the dashboard is built purely with vanilla HTML, CSS, and JavaScript, you 
   Then, navigate to `http://localhost:8000` in your web browser.
 
 ### 2. Reading Guides
-You can find all PDF resources locally in the [books/](file:///Users/utkarsh/.gemini/antigravity-ide/scratch/dsa-patterns/books) directory. They can be opened in any standard PDF reader.
+You can find all PDF resources locally in the `books/` directory or unlock access in the interactive library view upon upgrading your dashboard profile.
