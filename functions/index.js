@@ -52,10 +52,15 @@ app.post("/api/create-order", async (req, res) => {
     }
 
     const razorpayClient = getRazorpayClient();
+    let finalReceipt = receipt || `rzp_${Date.now()}`;
+    if (finalReceipt.length > 40) {
+      finalReceipt = finalReceipt.substring(0, 40);
+    }
+
     const options = {
       amount: amountInPaise,
       currency: currency || "INR",
-      receipt: receipt || `receipt_cloud_${Date.now()}`
+      receipt: finalReceipt
     };
 
     console.log(`[AlgoFlow Cloud Function] Calling Razorpay Orders API for amount: ${amountInPaise} paise`);

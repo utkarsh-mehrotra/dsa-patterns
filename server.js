@@ -73,10 +73,15 @@ app.post("/api/create-order", async (req, res) => {
       return res.status(401).json({ error: "Razorpay API credentials are not initialized or authorized on this server." });
     }
 
+    let finalReceipt = receipt || `rzp_${Date.now()}`;
+    if (finalReceipt.length > 40) {
+      finalReceipt = finalReceipt.substring(0, 40);
+    }
+
     const options = {
       amount: amountInPaise,
       currency: currency || "INR",
-      receipt: receipt || `receipt_order_${Date.now()}`
+      receipt: finalReceipt
     };
 
     console.log(`[AlgoFlow Server] Sending Order request to Razorpay:`, options);
