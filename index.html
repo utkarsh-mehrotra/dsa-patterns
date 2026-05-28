@@ -1458,6 +1458,9 @@
             <span class="brand-name">AlgoFlow</span>
           </h1>
           <p>Elevate your problem-solving. Master <span class="highlight-accent">algorithmic patterns</span> and crack the coding <span class="highlight-accent">interview</span>.</p>
+          <p id="welcome-message" style="display: none; font-size: 0.85rem; font-weight: 500; color: var(--text-color); margin-top: 0.6rem; gap: 0.4rem; align-items: center; background: rgba(99, 102, 241, 0.06); padding: 0.35rem 0.85rem; border-radius: 20px; border: 1px solid rgba(99, 102, 241, 0.15); width: fit-content; backdrop-filter: blur(4px);">
+            <i class="fa-solid fa-sparkles" style="color: #6366f1;"></i> Welcome back, <span id="welcome-user-name" style="font-weight: 700; color: #6366f1;"></span>!
+          </p>
         </div>
         
         <!-- Navigation Tabs, Cloud Status & Theme Toggle -->
@@ -2627,6 +2630,10 @@
       if (window.isLiveFirebaseConfigured) {
         const { signInWithPopup, GoogleAuthProvider } = window.firebaseAuthModule;
         const provider = new GoogleAuthProvider();
+        // Force Google account chooser overlay to select from multiple logged-in accounts
+        provider.setCustomParameters({
+          prompt: 'select_account'
+        });
         signInWithPopup(window.firebaseAuthInstance, provider)
           .then((result) => {
             console.log("[AlgoFlow Auth] Real Google login successful UID:", result.user.uid);
@@ -2717,8 +2724,17 @@
       const container = document.getElementById("auth-status-container");
       if (!container) return;
       
+      const welcomeMsg = document.getElementById("welcome-message");
+      const welcomeName = document.getElementById("welcome-user-name");
+      
       if (window.currentUser) {
-        const firstName = window.currentUser.displayName.split(" ")[0];
+        let firstName = "User";
+        if (window.currentUser.displayName) {
+          firstName = window.currentUser.displayName.trim().split(" ")[0];
+        } else if (window.currentUser.email) {
+          firstName = window.currentUser.email.split("@")[0];
+        }
+        
         const syncColor = window.currentUser.isDemo ? "orange" : "green";
         const syncLabel = window.currentUser.isDemo ? "Demo Mode" : "Cloud Active";
         
@@ -2730,7 +2746,7 @@
           </div>
           <div class="profile-dropdown" id="profile-dropdown">
             <div class="dropdown-user-info">
-              <span class="dropdown-user-name">${window.currentUser.displayName}</span>
+              <span class="dropdown-user-name">${window.currentUser.displayName || "Google User"}</span>
               <span class="dropdown-user-email">${window.currentUser.email}</span>
             </div>
             <div class="dropdown-sync-status">
@@ -2742,12 +2758,23 @@
             </button>
           </div>
         `;
+        
+        // Show welcome message under the header brand subtitle
+        if (welcomeMsg && welcomeName) {
+          welcomeName.textContent = window.currentUser.displayName || firstName;
+          welcomeMsg.style.display = "inline-flex";
+        }
       } else {
         container.innerHTML = `
           <button id="auth-btn" class="auth-btn" onclick="window.handleSignInClick()">
             <i class="fa-brands fa-google"></i> Sign In
           </button>
         `;
+        
+        // Hide welcome message when unauthenticated
+        if (welcomeMsg) {
+          welcomeMsg.style.display = "none";
+        }
       }
     };
 
