@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Razorpay Checkout Integration SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   
   <style>
     /* Reset & CSS Custom Variables */
@@ -518,7 +520,213 @@
       font-size: 0.7rem;
       color: var(--text-muted);
     }
-    .mock-modal-close {
+      outline: none;
+    }
+    .mock-modal-close:hover {
+      color: var(--text-color);
+    }
+
+    /* Pro Member Accents & Locked Overlays */
+    .pro-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #ffc01e 0%, #ffa116 100%);
+      color: #121212;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      box-shadow: 0 0 10px rgba(255, 161, 22, 0.4);
+      user-select: none;
+      animation: pulseGlow 2.5s ease-in-out infinite;
+      margin-left: 0.25rem;
+    }
+    
+    .pro-banner {
+      background: linear-gradient(135deg, rgba(255, 192, 30, 0.1) 0%, rgba(255, 161, 22, 0.05) 100%);
+      border: 1px solid rgba(255, 161, 22, 0.25);
+      border-radius: 8px;
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #ffa116;
+      margin-bottom: 0.2rem;
+      box-shadow: inset 0 0 8px rgba(255, 161, 22, 0.05);
+    }
+
+    .book-list-item.locked .book-list-desc {
+      filter: blur(4px);
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    .book-list-item.locked .book-list-author {
+      filter: blur(2px);
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    .book-locked-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #ffa116;
+      background: rgba(255, 161, 22, 0.1);
+      border: 1px solid rgba(255, 161, 22, 0.2);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    .unlock-pro-btn {
+      background: linear-gradient(135deg, #ffc01e 0%, #ffa116 100%);
+      color: #121212;
+      border: 1px solid #ffa116;
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(255, 161, 22, 0.2);
+      text-decoration: none;
+    }
+    .unlock-pro-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(255, 161, 22, 0.35);
+      background: linear-gradient(135deg, #ffe0b2 0%, #ffc01e 100%);
+    }
+
+    /* Paywall Modal */
+    .paywall-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(6, 9, 15, 0.7);
+      backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      animation: fadeInModal 0.25s ease-out forwards;
+    }
+    body.light-theme .paywall-modal-overlay {
+      background: rgba(248, 250, 252, 0.7);
+    }
+    .paywall-modal {
+      background: #1a1a1a;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 440px;
+      padding: 2.2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(20px);
+      transform: scale(0.95);
+      animation: scaleUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      position: relative;
+    }
+    body.light-theme .paywall-modal {
+      background: #ffffff;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    }
+    .paywall-crown {
+      font-size: 2.5rem;
+      color: #ffa116;
+      margin-bottom: 0.8rem;
+      display: block;
+      text-align: center;
+      animation: floatLogo 4s ease-in-out infinite;
+      filter: drop-shadow(0 4px 12px rgba(255, 161, 22, 0.3));
+    }
+    .paywall-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text-color);
+      margin-bottom: 0.4rem;
+      text-align: center;
+    }
+    .paywall-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.8rem;
+      text-align: center;
+    }
+    .paywall-perks {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+    .paywall-perk-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text-color);
+    }
+    .paywall-perk-item i {
+      color: #00b8a3;
+      margin-top: 0.15rem;
+    }
+    .paywall-price-box {
+      background: rgba(255, 161, 22, 0.05);
+      border: 1px solid rgba(255, 161, 22, 0.15);
+      border-radius: 10px;
+      padding: 0.85rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .paywall-price-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .paywall-price-amount {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #ffa116;
+    }
+    .paywall-checkout-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #ffc01e 0%, #ffa116 100%);
+      color: #121212;
+      border: 1px solid #ffa116;
+      padding: 0.8rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(255, 161, 22, 0.3);
+      outline: none;
+    }
+    .paywall-checkout-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(255, 161, 22, 0.45);
+      background: linear-gradient(135deg, #ffe0b2 0%, #ffc01e 100%);
+    }
+    .paywall-close {
       font-size: 0.7rem;
       font-weight: 600;
       color: var(--text-muted);
@@ -527,9 +735,11 @@
       cursor: pointer;
       margin-top: 1rem;
       transition: var(--transition);
+      width: 100%;
+      text-align: center;
       outline: none;
     }
-    .mock-modal-close:hover {
+    .paywall-close:hover {
       color: var(--text-color);
     }
 
@@ -2462,28 +2672,48 @@
       // Sort filtered books alphabetically by title
       filtered.sort((a, b) => a.title.localeCompare(b.title));
       
+      const isUserPro = window.currentUser && window.currentUser.isPro;
+      
       filtered.forEach((b) => {
         const encodedPath = encodeBookPath(b.path);
         
+        let itemClass = "book-list-item";
+        let titleSuffix = "";
+        let actionButtons = "";
+        
+        if (!isUserPro) {
+          itemClass = "book-list-item locked";
+          titleSuffix = `<span class="book-locked-tag"><i class="fa-solid fa-lock"></i> Locked</span>`;
+          actionButtons = `
+            <button class="unlock-pro-btn" onclick="window.openUpgradePaywall(event)" title="Upgrade to AlgoFlow Pro to unlock PDF textbook">
+              <i class="fa-solid fa-crown"></i> Unlock Pro
+            </button>
+          `;
+        } else {
+          actionButtons = `
+            <a href="${encodedPath}" target="_blank" class="book-list-btn secondary" title="Open PDF in Browser">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
+            </a>
+            <a href="${encodedPath}" download="${b.title}.pdf" class="book-list-btn primary" title="Download PDF">
+              <i class="fa-solid fa-download"></i> Download
+            </a>
+          `;
+        }
+        
         html += `
-          <div class="book-list-item">
+          <div class="${itemClass}">
             <div class="book-list-meta">
               <div class="book-list-icon">
                 <i class="fa-solid fa-file-pdf"></i>
               </div>
               <div class="book-list-details">
-                <div class="book-list-title">${highlightText(b.title)}</div>
+                <div class="book-list-title">${highlightText(b.title)} ${titleSuffix}</div>
                 <div class="book-list-author">by ${highlightText(b.author)}</div>
                 <div class="book-list-desc">${highlightText(b.desc)}</div>
               </div>
             </div>
             <div class="book-list-actions">
-              <a href="${encodedPath}" target="_blank" class="book-list-btn secondary" title="Open PDF in Browser">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
-              </a>
-              <a href="${encodedPath}" download="${b.title}.pdf" class="book-list-btn primary" title="Download PDF">
-                <i class="fa-solid fa-download"></i> Download
-              </a>
+              ${actionButtons}
             </div>
           </div>
         `;
@@ -2696,12 +2926,14 @@
         photoURL = "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=100&q=80";
       }
       
+      const isPro = localStorage.getItem(`dsa_demo_${uid}_isPro`) === "true";
       const mockUser = {
         uid: uid,
         displayName: displayName,
         email: email,
         photoURL: photoURL,
-        isDemo: true
+        isDemo: true,
+        isPro: isPro
       };
       
       localStorage.setItem("dsa_mock_user", JSON.stringify(mockUser));
@@ -2713,6 +2945,7 @@
       loadCompletedState();
       updateProgressStats();
       render();
+      renderLibrary();
       console.log(`[AlgoFlow Auth] Mock session initialized for: ${displayName}`);
     };
 
@@ -2731,6 +2964,7 @@
         loadCompletedState();
         updateProgressStats();
         render();
+        renderLibrary();
         console.log("[AlgoFlow Auth] Mock user logged out.");
       }
     };
@@ -2747,6 +2981,85 @@
         if (isVisible) trigger.classList.remove("active");
         else trigger.classList.add("active");
       }
+    };
+
+    window.openUpgradePaywall = function(event) {
+      if (event) event.stopPropagation();
+      if (!window.currentUser) {
+        alert("Please Sign In first to link your AlgoFlow Pro purchase to an account!");
+        window.handleSignInClick();
+        return;
+      }
+      const paywall = document.getElementById("paywall-modal");
+      if (paywall) {
+        paywall.style.display = "flex";
+      }
+    };
+
+    window.closeUpgradePaywall = function() {
+      const paywall = document.getElementById("paywall-modal");
+      if (paywall) {
+        paywall.style.display = "none";
+      }
+    };
+
+    window.initiateRazorpayPayment = function() {
+      if (!window.currentUser) return;
+      
+      if (window.isRazorpayConfigured && window.isLiveFirebaseConfigured && !window.currentUser.isDemo) {
+        const options = {
+          key: window.razorpayKeyId,
+          amount: 29900, // ₹299.00 in paise
+          currency: "INR",
+          name: "AlgoFlow Pro",
+          description: "One-Time Lifetime Premium Access",
+          image: window.currentUser.photoURL,
+          handler: function (response) {
+            console.log("[AlgoFlow Razorpay] Payment success transaction ID:", response.razorpay_payment_id);
+            window.completeUserUpgrade(response.razorpay_payment_id);
+          },
+          prefill: {
+            name: window.currentUser.displayName,
+            email: window.currentUser.email
+          },
+          theme: {
+            color: "#ffa116"
+          }
+        };
+        const rzp = new Razorpay(options);
+        rzp.open();
+      } else {
+        const success = confirm("💳 [Simulated Razorpay Checkout]\n\nThis is a mock transaction gateway because live keys are not configured.\n\nClick 'OK' to simulate a successful payment of ₹299.\nClick 'Cancel' to mock a cancelled/failed transaction.");
+        if (success) {
+          const mockPaymentId = `pay_mock_${Math.random().toString(36).substr(2, 9)}`;
+          window.completeUserUpgrade(mockPaymentId);
+        } else {
+          alert("Payment Cancelled.");
+        }
+      }
+    };
+
+    window.completeUserUpgrade = function(paymentId) {
+      if (!window.currentUser) return;
+      
+      window.currentUser.isPro = true;
+      const prefix = getUserStoragePrefix();
+      localStorage.setItem(`${prefix}_isPro`, "true");
+      
+      if (window.currentUser.isDemo) {
+        localStorage.setItem(`dsa_demo_${window.currentUser.uid}_isPro`, "true");
+        localStorage.setItem("dsa_mock_user", JSON.stringify(window.currentUser));
+      } else {
+        if (window.triggerCloudSync) {
+          window.triggerCloudSync();
+        }
+      }
+      
+      window.closeUpgradePaywall();
+      window.updateAuthHeaderUI();
+      renderLibrary();
+      
+      alert(`🎉 Congratulations!\n\nYour purchase was successful!\n\nPayment ID: ${paymentId}\n\nAlgoFlow Pro features are now fully unlocked!`);
     };
 
     window.updateAuthHeaderUI = function() {
@@ -2767,13 +3080,27 @@
         const syncColor = window.currentUser.isDemo ? "orange" : "green";
         const syncLabel = window.currentUser.isDemo ? "Demo Mode" : "Cloud Active";
         
+        let proTag = "";
+        let proBanner = "";
+        
+        if (window.currentUser.isPro) {
+          proTag = `<span class="pro-badge"><i class="fa-solid fa-crown"></i> PRO</span>`;
+          proBanner = `
+            <div class="pro-banner">
+              <i class="fa-solid fa-crown"></i> AlgoFlow Pro Active
+            </div>
+          `;
+        }
+        
         container.innerHTML = `
           <div class="user-profile" id="user-profile-trigger" onclick="window.toggleProfileDropdown(event)">
             <img src="${window.currentUser.photoURL}" alt="${window.currentUser.displayName}" class="user-avatar">
             <span class="user-name">${firstName}</span>
+            ${proTag}
             <i class="fa-solid fa-chevron-down user-chevron"></i>
           </div>
           <div class="profile-dropdown" id="profile-dropdown">
+            ${proBanner}
             <div class="dropdown-user-info">
               <span class="dropdown-user-name">${window.currentUser.displayName || "Google User"}</span>
               <span class="dropdown-user-email">${window.currentUser.email}</span>
@@ -2838,6 +3165,16 @@
       updateProgressStats();
       render();
       initRadialGlow();
+      
+      // Light-dismiss click outside paywall modal
+      const paywallModal = document.getElementById("paywall-modal");
+      if (paywallModal) {
+        paywallModal.addEventListener("click", (e) => {
+          if (e.target === paywallModal) {
+            window.closeUpgradePaywall();
+          }
+        });
+      }
     });
   </script>
 
@@ -2866,7 +3203,47 @@
     </div>
   </div>
 
+  <!-- Paywall Modal overlay -->
+  <div id="paywall-modal" class="paywall-modal-overlay">
+    <div class="paywall-modal">
+      <span class="paywall-crown"><i class="fa-solid fa-crown"></i></span>
+      <div class="paywall-title">Upgrade to AlgoFlow Pro</div>
+      <div class="paywall-subtitle">Unlock unlimited access and accelerate your preparation.</div>
+      
+      <div class="paywall-perks">
+        <div class="paywall-perk-item">
+          <i class="fa-solid fa-circle-check"></i>
+          <span><strong>All 8+ Master Textbooks</strong>: Unlimited web opens and offline PDF downloads.</span>
+        </div>
+        <div class="paywall-perk-item">
+          <i class="fa-solid fa-circle-check"></i>
+          <span><strong>Exclusive Core Exercises</strong>: In-depth canonical checklists and heuristics guides.</span>
+        </div>
+        <div class="paywall-perk-item">
+          <i class="fa-solid fa-circle-check"></i>
+          <span><strong>Dynamic Multi-Device Sync</strong>: Save solved tasks and study notes seamlessly in the cloud.</span>
+        </div>
+        <div class="paywall-perk-item">
+          <i class="fa-solid fa-circle-check"></i>
+          <span><strong>Lifetime Membership</strong>: One-time purchase, access forever.</span>
+        </div>
+      </div>
+      
+      <div class="paywall-price-box">
+        <span class="paywall-price-label">LIFETIME ACCESS</span>
+        <span class="paywall-price-amount">₹299</span>
+      </div>
+      
+      <button class="paywall-checkout-btn" onclick="window.initiateRazorpayPayment()">
+        <i class="fa-solid fa-credit-card"></i> Pay with Razorpay
+      </button>
+      
+      <button class="paywall-close" onclick="window.closeUpgradePaywall()">Cancel</button>
+    </div>
+  </div>
+
   <!-- Firebase Core, Auth and Cloud Firestore Integration (Modular CDN) -->
+  <script type="module" src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -2891,6 +3268,13 @@
     }
 
     window.isLiveFirebaseConfigured = isFirebaseConfigured(firebaseConfig);
+
+    // Razorpay Live Configuration
+    const razorpayConfig = {
+      keyId: "YOUR_RAZORPAY_KEY_ID" // Paste your live Razorpay Key ID here!
+    };
+    window.isRazorpayConfigured = razorpayConfig.keyId && razorpayConfig.keyId !== "YOUR_RAZORPAY_KEY_ID";
+    window.razorpayKeyId = razorpayConfig.keyId;
 
     if (window.isLiveFirebaseConfigured) {
       try {
@@ -2924,6 +3308,7 @@
               uid: window.currentUser.uid,
               email: window.currentUser.email,
               displayName: window.currentUser.displayName,
+              isPro: window.currentUser.isPro || false,
               completedPatterns: window.getCompletedPatterns(),
               completedProblems: window.getCompletedProblems(),
               notes: notesObj,
@@ -2948,6 +3333,10 @@
               console.log("[AlgoFlow Sync] Cloud record found. Downloading state...");
               const cloudData = docSnap.data();
               
+              user.isPro = cloudData.isPro || false;
+              window.currentUser.isPro = user.isPro;
+              localStorage.setItem(`${prefix}_isPro`, user.isPro ? "true" : "false");
+              
               if (cloudData.completedPatterns) {
                 localStorage.setItem(`${prefix}_completed_patterns`, JSON.stringify(cloudData.completedPatterns));
               }
@@ -2963,15 +3352,11 @@
               console.log("[AlgoFlow Sync] No cloud record found. Merging local progress...");
               const localPatterns = localStorage.getItem("dsa_completed_patterns");
               const localProblems = localStorage.getItem("dsa_completed_problems");
+              const localIsPro = localStorage.getItem("dsa_isPro") === "true";
               
-              let parsedPatterns = {};
-              let parsedProblems = {};
-              if (localPatterns) {
-                try { parsedPatterns = JSON.parse(localPatterns); } catch(e){}
-              }
-              if (localProblems) {
-                try { parsedProblems = JSON.parse(localProblems); } catch(e){}
-              }
+              user.isPro = localIsPro;
+              window.currentUser.isPro = localIsPro;
+              localStorage.setItem(`${prefix}_isPro`, localIsPro ? "true" : "false");
 
               localStorage.setItem(`${prefix}_completed_patterns`, JSON.stringify(parsedPatterns));
               localStorage.setItem(`${prefix}_completed_problems`, JSON.stringify(parsedProblems));
@@ -2992,6 +3377,7 @@
                 uid: user.uid,
                 email: user.email || "",
                 displayName: user.displayName || "Google User",
+                isPro: localIsPro,
                 completedPatterns: parsedPatterns,
                 completedProblems: parsedProblems,
                 notes: mergedNotes,
@@ -3015,16 +3401,21 @@
         onAuthStateChanged(auth, async (user) => {
           if (user) {
             console.log("[AlgoFlow Auth] Google User authenticated:", user.uid);
+            const prefix = `dsa_cloud_${user.uid}`;
+            const isPro = localStorage.getItem(`${prefix}_isPro`) === "true";
+            
             window.currentUser = {
               uid: user.uid,
               displayName: user.displayName || "Google User",
               email: user.email || "",
               photoURL: user.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80",
-              isDemo: false
+              isDemo: false,
+              isPro: isPro
             };
             
             window.updateAuthHeaderUI();
             await window.syncUserDataOnLogin(user);
+            renderLibrary();
           } else {
             // Sign out logic
             if (window.currentUser && !window.currentUser.isDemo) {
@@ -3033,6 +3424,7 @@
               window.loadCompletedState();
               window.updateProgressStats();
               window.render();
+              renderLibrary();
             }
           }
         });
