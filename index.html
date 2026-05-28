@@ -3015,7 +3015,7 @@
           body: JSON.stringify({
             amount: 29900, // ₹299.00 in paise
             currency: "INR",
-            receipt: `receipt_${window.currentUser.uid}_${Date.now()}`
+            receipt: `rzp_${Math.random().toString(36).substr(2, 6)}_${Date.now()}`
           })
         })
         .then(res => {

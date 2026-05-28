@@ -25,7 +25,7 @@ function getRazorpayClient() {
  * GET /api/config
  * Exposes only the public Key ID to client widgets dynamically
  */
-app.get("/config", (req, res) => {
+app.get("/api/config", (req, res) => {
   const keyId = process.env.RAZORPAY_KEY_ID || "rzp_test_SuoPBJ2avHN0qZ";
   if (keyId) {
     return res.status(200).json({ keyId: keyId });
@@ -38,7 +38,7 @@ app.get("/config", (req, res) => {
  * POST /api/create-order
  * Generates official transaction order on Razorpay servers
  */
-app.post("/create-order", async (req, res) => {
+app.post("/api/create-order", async (req, res) => {
   try {
     const { amount, currency, receipt } = req.body;
 
@@ -80,7 +80,7 @@ app.post("/create-order", async (req, res) => {
  * POST /api/verify-payment
  * Cryptographically verifies signatures using HMAC-SHA256
  */
-app.post("/verify-payment", (req, res) => {
+app.post("/api/verify-payment", (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
