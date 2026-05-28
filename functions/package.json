@@ -1,0 +1,16 @@
+{
+  "name": "functions",
+  "description": "Firebase Cloud Functions for AlgoFlow Pro Razorpay Integration",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^5.0.0",
+    "razorpay": "^2.9.4"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "private": true
+}
