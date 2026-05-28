@@ -2640,6 +2640,18 @@
           })
           .catch((err) => {
             console.error("[AlgoFlow Auth] Real Google login error:", err);
+            let userMessage = `Sign-in failed: ${err.message} (Code: ${err.code})`;
+            
+            // Auto-detect common configuration/runtime issues
+            if (window.location.protocol === "file:") {
+              userMessage = "⚠️ [AlgoFlow Auth Error]\n\nFirebase Authentication cannot be executed under the file:// protocol (double-clicking the HTML file).\n\nTo fix this:\n1. Open your terminal in this directory\n2. Run a local server: python3 -m http.server 8000\n3. Visit http://localhost:8000 in your browser.";
+            } else if (err.code === "auth/unauthorized-domain") {
+              userMessage = `⚠️ [AlgoFlow Auth Error]\n\nThis domain (${window.location.hostname}) is not authorized in your Firebase Console.\n\nTo fix this:\n1. Go to your Firebase Console -> Authentication -> Settings -> Authorized Domains\n2. Click "Add Domain"\n3. Enter: ${window.location.hostname}\n4. Click Save and try again.`;
+            } else if (err.code === "auth/configuration-not-found") {
+              userMessage = "⚠️ [AlgoFlow Auth Error]\n\nGoogle Sign-In is not yet enabled in your Firebase Console.\n\nTo fix this:\n1. Go to your Firebase Console -> Authentication -> Sign-in Method\n2. Click 'Add Provider' -> select Google\n3. Enable it, select a support email, and save.";
+            }
+            
+            alert(userMessage);
           });
       } else {
         const modal = document.getElementById("mock-auth-modal");
