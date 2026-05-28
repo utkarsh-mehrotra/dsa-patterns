@@ -3006,30 +3006,99 @@
     window.initiateRazorpayPayment = function() {
       if (!window.currentUser) return;
       
-      if (window.isRazorpayConfigured && window.isLiveFirebaseConfigured && !window.currentUser.isDemo) {
-        const options = {
-          key: window.razorpayKeyId,
-          amount: 29900, // ₹299.00 in paise
-          currency: "INR",
-          name: "AlgoFlow Pro",
-          description: "One-Time Lifetime Premium Access",
-          image: window.currentUser.photoURL,
-          handler: function (response) {
-            console.log("[AlgoFlow Razorpay] Payment success transaction ID:", response.razorpay_payment_id);
-            window.completeUserUpgrade(response.razorpay_payment_id);
-          },
-          prefill: {
-            name: window.currentUser.displayName,
-            email: window.currentUser.email
-          },
-          theme: {
-            color: "#ffa116"
+      if (window.isRazorpayConfigured) {
+        console.log("⚡ [AlgoFlow Frontend] Initiating live server-side Razorpay order creation...");
+        
+        fetch("/api/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: 29900, // ₹299.00 in paise
+            currency: "INR",
+            receipt: `receipt_${window.currentUser.uid}_${Date.now()}`
+          })
+        })
+        .then(res => {
+          if (!res.ok) {
+            return res.json().then(errData => {
+              throw new Error(errData.error || "Order creation request rejected.");
+            });
           }
-        };
-        const rzp = new Razorpay(options);
-        rzp.open();
+          return res.json();
+        })
+        .then(orderData => {
+          console.log("🟢 [AlgoFlow Frontend] Secure order created successfully:", orderData.order_id);
+          
+          const options = {
+            key: window.razorpayKeyId,
+            amount: orderData.amount,
+            currency: orderData.currency,
+            name: "AlgoFlow Pro",
+            description: "One-Time Lifetime Premium Access",
+            image: window.currentUser.photoURL || "https://img.icons8.com/color/96/google-logo.png",
+            order_id: orderData.order_id,
+            handler: function (response) {
+              console.log("🟢 [AlgoFlow Frontend] Checkout successful, submitting signatures for verification:", response);
+              
+              // Verify signature via backend API
+              fetch("/api/verify-payment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature
+                })
+              })
+              .then(verifyRes => {
+                if (!verifyRes.ok) {
+                  return verifyRes.json().then(err => {
+                    throw new Error(err.error || "Cryptographic signature validation failed.");
+                  });
+                }
+                return verifyRes.json();
+              })
+              .then(verifyData => {
+                console.log("🟢 [AlgoFlow Frontend] Signature successfully verified! Upgrading profile...");
+                window.completeUserUpgrade(response.razorpay_payment_id);
+              })
+              .catch(verifyErr => {
+                console.error("❌ [AlgoFlow Frontend] Transaction verification rejected:", verifyErr);
+                alert(`❌ Payment Verification Failed!\n\nSecurity signature mismatch. Your membership was NOT upgraded.\n\nDetails: ${verifyErr.message}`);
+              });
+            },
+            prefill: {
+              name: window.currentUser.displayName || "",
+              email: window.currentUser.email || ""
+            },
+            theme: {
+              color: "#ffa116"
+            },
+            modal: {
+              ondismiss: function() {
+                console.log("ℹ️ [AlgoFlow Frontend] Standard Checkout modal dismissed by user.");
+              }
+            }
+          };
+          
+          const rzp = new Razorpay(options);
+          rzp.on('payment.failed', function (failedResponse) {
+            console.error("❌ [AlgoFlow Frontend] Razorpay Standard Payment Error:", failedResponse.error);
+            alert(`❌ Payment Failed!\n\nReason: ${failedResponse.error.description || "Unknown failure"}`);
+          });
+          rzp.open();
+        })
+        .catch(err => {
+          console.error("⚠️ [AlgoFlow Frontend] Server-side order creation failed:", err);
+          alert(`⚠️ Checkout Error!\n\nCould not create a transaction order on the server.\n\nDetails: ${err.message}\n\nFalling back to simulated sandbox mode.`);
+          triggerSandboxPaymentFallback();
+        });
       } else {
-        const success = confirm("💳 [Simulated Razorpay Checkout]\n\nThis is a mock transaction gateway because live keys are not configured.\n\nClick 'OK' to simulate a successful payment of ₹299.\nClick 'Cancel' to mock a cancelled/failed transaction.");
+        triggerSandboxPaymentFallback();
+      }
+
+      function triggerSandboxPaymentFallback() {
+        const success = confirm("💳 [Simulated Razorpay Checkout]\n\nThis is a mock transaction gateway because live keys are not configured or the server is running offline.\n\nClick 'OK' to simulate a successful payment of ₹299.\nClick 'Cancel' to mock a cancelled/failed transaction.");
         if (success) {
           const mockPaymentId = `pay_mock_${Math.random().toString(36).substr(2, 9)}`;
           window.completeUserUpgrade(mockPaymentId);
@@ -3269,12 +3338,29 @@
 
     window.isLiveFirebaseConfigured = isFirebaseConfigured(firebaseConfig);
 
-    // Razorpay Live Configuration
+    // Razorpay Live Configuration (Will be dynamically fetched from Express backend if active)
     const razorpayConfig = {
-      keyId: "YOUR_RAZORPAY_KEY_ID" // Paste your live Razorpay Key ID here!
+      keyId: "YOUR_RAZORPAY_KEY_ID"
     };
-    window.isRazorpayConfigured = razorpayConfig.keyId && razorpayConfig.keyId !== "YOUR_RAZORPAY_KEY_ID";
     window.razorpayKeyId = razorpayConfig.keyId;
+    window.isRazorpayConfigured = window.razorpayKeyId && window.razorpayKeyId !== "YOUR_RAZORPAY_KEY_ID";
+
+    // Attempt to load dynamic server credentials if served by full-stack server
+    fetch("/api/config")
+      .then(res => {
+        if (!res.ok) throw new Error("API server configurations are offline.");
+        return res.json();
+      })
+      .then(data => {
+        if (data.keyId) {
+          window.razorpayKeyId = data.keyId;
+          window.isRazorpayConfigured = true;
+          console.log("⚡ [AlgoFlow Auth] Loaded Razorpay Key ID from full-stack API server config:", data.keyId);
+        }
+      })
+      .catch(e => {
+        console.log("ℹ️ [AlgoFlow Auth] Express backend configuration fetch skipped. Using static defaults.");
+      });
 
     if (window.isLiveFirebaseConfigured) {
       try {
