@@ -10,19 +10,15 @@ const app = express();
 app.use(cors({ origin: true }));
 app.use(express.json());
 
-// Initialize Razorpay SDK using Environment Credentials
-let razorpay = null;
-try {
+// Helper to get initialized Razorpay SDK dynamically (supporting decrypted secrets at runtime)
+function getRazorpayClient() {
   const keyId = process.env.RAZORPAY_KEY_ID || "rzp_test_SuoPBJ2avHN0qZ";
   const keySecret = process.env.RAZORPAY_KEY_SECRET || "ym356xZmxzaJdR4ljE67QkoU";
 
-  razorpay = new Razorpay({
+  return new Razorpay({
     key_id: keyId,
     key_secret: keySecret
   });
-  console.log("⚡ [AlgoFlow Cloud Function] Razorpay SDK initialized successfully.");
-} catch (e) {
-  console.error("❌ [AlgoFlow Cloud Function] Failed to initialize Razorpay SDK:", e);
 }
 
 /**
@@ -55,10 +51,7 @@ app.post("/create-order", async (req, res) => {
       return res.status(400).json({ error: "Transaction amount must be at least 100 paise (₹1.00)." });
     }
 
-    if (!razorpay) {
-      return res.status(500).json({ error: "Razorpay API client is not initialized in the cloud runtime." });
-    }
-
+    const razorpayClient = getRazorpayClient();
     const options = {
       amount: amountInPaise,
       currency: currency || "INR",
@@ -66,7 +59,7 @@ app.post("/create-order", async (req, res) => {
     };
 
     console.log(`[AlgoFlow Cloud Function] Calling Razorpay Orders API for amount: ${amountInPaise} paise`);
-    const order = await razorpay.orders.create(options);
+    const order = await razorpayClient.orders.create(options);
     console.log(`[AlgoFlow Cloud Function] Razorpay Order generated:`, order.id);
 
     return res.status(200).json({
@@ -131,4 +124,8 @@ app.post("/verify-payment", (req, res) => {
 });
 
 // Export Express Application as a standard Cloud Function named "api"
-exports.api = onRequest({ cors: true }, app);
+// Mounts secure environment secrets securely using Cloud Secret Manager
+exports.api = onRequest({ 
+  cors: true,
+  secrets: ["RAZORPAY_KEY_ID", "RAZORPAY_KEY_SECRET"]
+}, app);
