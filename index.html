@@ -3293,6 +3293,8 @@
       const welcomeName = document.getElementById("welcome-user-name");
       
       if (window.currentUser) {
+        // Sandbox Bypass: Temporarily open sandbox to full access by default
+        window.currentUser.isPro = true;
         let firstName = "User";
         if (window.currentUser.displayName) {
           firstName = window.currentUser.displayName.trim().split(" ")[0];
