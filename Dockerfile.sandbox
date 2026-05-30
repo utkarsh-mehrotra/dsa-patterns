@@ -1,0 +1,19 @@
+FROM alpine:latest
+
+# Install compilers and standard runtimes
+RUN apk add --no-cache g++ openjdk17-jdk python3 bash
+
+# Create heavily restricted non-root execution user and group
+RUN addgroup -S sandbox_group && adduser -S sandbox_user -G sandbox_group
+
+# Set up isolated workspace directory
+WORKDIR /sandbox
+
+# Grant the restricted user ownership of the workspace directory
+RUN chown -R sandbox_user:sandbox_group /sandbox
+
+# Switch to the non-root execution user to block host privilege escalation
+USER sandbox_user
+
+# Set working temporary folders
+ENV TMPDIR=/tmp
