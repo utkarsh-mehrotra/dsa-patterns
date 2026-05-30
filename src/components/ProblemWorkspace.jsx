@@ -39,6 +39,8 @@ export default function ProblemWorkspace() {
   const lspClientRef = useRef(null);
   const socketRef = useRef(null);
   const savedCodesRef = useRef({});
+  const consoleHeightRef = useRef(consoleHeight);
+  consoleHeightRef.current = consoleHeight;
 
   // 1. Fetch problem definition from local json
   useEffect(() => {
@@ -251,139 +253,115 @@ export default function ProblemWorkspace() {
   }, [fontSize]);
 
   // 8. Draggable dividers effects
-  useEffect(() => {
+  const handleSplitMouseDown = (e) => {
+    e.preventDefault();
     const container = document.getElementById("sandbox-split-container");
     const resizer = document.getElementById("sandbox-resizer");
-    const leftPanel = document.getElementById("sandbox-desc-panel");
-    
-    if (!resizer || !leftPanel || !container) return;
-    
-    let isDragging = false;
-    
-    const onMouseDown = () => {
-      isDragging = true;
-      resizer.classList.add("dragging");
-      document.body.style.cursor = "col-resize";
-      document.body.style.userSelect = "none";
-      
-      const overlay = document.createElement("div");
-      overlay.id = "sandbox-drag-overlay";
-      overlay.style.position = "fixed";
-      overlay.style.top = "0";
-      overlay.style.left = "0";
-      overlay.style.width = "100vw";
-      overlay.style.height = "100vh";
-      overlay.style.zIndex = "9999";
-      overlay.style.cursor = "col-resize";
-      document.body.appendChild(overlay);
-    };
-    
-    const onMouseMove = (e) => {
-      if (!isDragging) return;
+    if (!container || !resizer) return;
+
+    resizer.classList.add("dragging");
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+
+    const overlay = document.createElement("div");
+    overlay.id = "sandbox-drag-overlay";
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100vw";
+    overlay.style.height = "100vh";
+    overlay.style.zIndex = "9999";
+    overlay.style.cursor = "col-resize";
+    document.body.appendChild(overlay);
+
+    const onMouseMove = (moveEvent) => {
       const containerRect = container.getBoundingClientRect();
-      const offsetLeft = e.clientX - containerRect.left;
+      const offsetLeft = moveEvent.clientX - containerRect.left;
       let percentage = (offsetLeft / containerRect.width) * 100;
       if (percentage < 20) percentage = 20;
       if (percentage > 85) percentage = 85;
-      
+
       setSplitWidth(percentage);
       if (monacoRef.current) {
         monacoRef.current.layout();
       }
     };
-    
+
     const onMouseUp = () => {
-      if (!isDragging) return;
-      isDragging = false;
       resizer.classList.remove("dragging");
       document.body.style.cursor = "";
       document.body.style.userSelect = "";
-      const overlay = document.getElementById("sandbox-drag-overlay");
-      if (overlay) overlay.remove();
+      const overlayEl = document.getElementById("sandbox-drag-overlay");
+      if (overlayEl) overlayEl.remove();
+      
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+      
       if (monacoRef.current) {
         monacoRef.current.layout();
       }
     };
-    
-    resizer.addEventListener("mousedown", onMouseDown);
+
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
-    
-    return () => {
-      resizer.removeEventListener("mousedown", onMouseDown);
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-    };
-  }, [problem]);
+  };
 
-  useEffect(() => {
+  const handleConsoleMouseDown = (e) => {
+    e.preventDefault();
     const resizer = document.getElementById("sandbox-console-resizer");
     const drawer = document.getElementById("sandbox-console-drawer");
-    
     if (!resizer || !drawer) return;
+
+    resizer.classList.add("dragging");
+    document.body.style.cursor = "row-resize";
+    document.body.style.userSelect = "none";
+
+    const startY = e.clientY;
+    const startHeight = consoleHeightRef.current;
     
-    let isDragging = false;
-    let startY = 0;
-    let startHeight = 0;
-    
-    const onMouseDown = (e) => {
-      isDragging = true;
-      resizer.classList.add("dragging");
-      document.body.style.cursor = "row-resize";
-      document.body.style.userSelect = "none";
-      
-      startY = e.clientY;
-      startHeight = consoleHeight;
-      setIsConsoleCollapsed(false);
-      
-      const overlay = document.createElement("div");
-      overlay.id = "sandbox-console-drag-overlay";
-      overlay.style.position = "fixed";
-      overlay.style.top = "0";
-      overlay.style.left = "0";
-      overlay.style.width = "100vw";
-      overlay.style.height = "100vh";
-      overlay.style.zIndex = "9999";
-      overlay.style.cursor = "row-resize";
-      document.body.appendChild(overlay);
-    };
-    
-    const onMouseMove = (e) => {
-      if (!isDragging) return;
-      const dY = e.clientY - startY;
+    setIsConsoleCollapsed(false);
+
+    const overlay = document.createElement("div");
+    overlay.id = "sandbox-console-drag-overlay";
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100vw";
+    overlay.style.height = "100vh";
+    overlay.style.zIndex = "9999";
+    overlay.style.cursor = "row-resize";
+    document.body.appendChild(overlay);
+
+    const onMouseMove = (moveEvent) => {
+      const dY = moveEvent.clientY - startY;
       let newHeight = startHeight - dY;
       if (newHeight < 80) newHeight = 80;
       if (newHeight > 450) newHeight = 450;
-      
+
       setConsoleHeight(newHeight);
       if (monacoRef.current) {
         monacoRef.current.layout();
       }
     };
-    
+
     const onMouseUp = () => {
-      if (!isDragging) return;
-      isDragging = false;
       resizer.classList.remove("dragging");
       document.body.style.cursor = "";
       document.body.style.userSelect = "";
-      const overlay = document.getElementById("sandbox-console-drag-overlay");
-      if (overlay) overlay.remove();
+      const overlayEl = document.getElementById("sandbox-console-drag-overlay");
+      if (overlayEl) overlayEl.remove();
+
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+
       if (monacoRef.current) {
         monacoRef.current.layout();
       }
     };
-    
-    resizer.addEventListener("mousedown", onMouseDown);
+
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
-    
-    return () => {
-      resizer.removeEventListener("mousedown", onMouseDown);
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-    };
-  }, [problem, consoleHeight]);
+  };
 
   // 9. Reset current language code
   const handleResetCode = () => {
@@ -566,7 +544,11 @@ export default function ProblemWorkspace() {
         </div>
 
         {/* Separator draggable bar */}
-        <div className="sandbox-resizer" id="sandbox-resizer">
+        <div 
+          className="sandbox-resizer" 
+          id="sandbox-resizer"
+          onMouseDown={handleSplitMouseDown}
+        >
           <div className="sandbox-resizer-line"></div>
         </div>
 
@@ -609,7 +591,11 @@ export default function ProblemWorkspace() {
           <div className="sandbox-monaco-container" ref={editorRef}></div>
 
           {/* Draggable console bar */}
-          <div className="sandbox-console-resizer" id="sandbox-console-resizer">
+          <div 
+            className="sandbox-console-resizer" 
+            id="sandbox-console-resizer"
+            onMouseDown={handleConsoleMouseDown}
+          >
             <div className="sandbox-console-resizer-line"></div>
           </div>
 
