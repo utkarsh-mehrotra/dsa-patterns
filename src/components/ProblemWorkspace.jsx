@@ -33,6 +33,7 @@ export default function ProblemWorkspace() {
   const [showNotes, setShowNotes] = useState(false);
   const [notesText, setNotesText] = useState('');
   const [notesStatus, setNotesStatus] = useState('Saved');
+  const [compilationStage, setCompilationStage] = useState('none');
 
   const editorRef = useRef(null);
   const monacoRef = useRef(null);
@@ -379,6 +380,12 @@ export default function ProblemWorkspace() {
     setRunResult(null);
     setActiveConsoleTab('result');
     setIsConsoleCollapsed(false);
+    
+    // Cycle AI compilation timeline pastels
+    setCompilationStage('thinking');
+    const t1 = setTimeout(() => setCompilationStage('grep'), 300);
+    const t2 = setTimeout(() => setCompilationStage('read'), 600);
+    const t3 = setTimeout(() => setCompilationStage('edit'), 900);
 
     const userCode = monacoRef.current.getValue();
     const currentInput = testCases[activeTestCaseIndex] || '';
@@ -395,6 +402,9 @@ export default function ProblemWorkspace() {
           stdin: currentInput
         })
       });
+
+      // Brief padding delay to allow visual timeline stages to be fully visible
+      await new Promise(resolve => setTimeout(resolve, 1100));
 
       if (response.ok) {
         const data = await response.json();
@@ -431,7 +441,14 @@ export default function ProblemWorkspace() {
         code: 500
       });
     } finally {
-      setIsRunning(false);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      setCompilationStage('done');
+      setTimeout(() => {
+        setIsRunning(false);
+        setCompilationStage('none');
+      }, 300);
     }
   };
 
@@ -463,7 +480,7 @@ export default function ProblemWorkspace() {
             {problem.difficulty}
           </span>
           {completedProblems.has(slug) && (
-            <span style={{ fontSize: '12px', color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span style={{ fontSize: '12px', color: 'var(--semantic-success)', display: 'flex', alignItems: 'center', gap: '4px' }}>
               <i className="fa-solid fa-circle-check"></i> Solved
             </span>
           )}
@@ -680,16 +697,53 @@ export default function ProblemWorkspace() {
                 /* Run Results view */
                 <div className="sandbox-output-view">
                   {isRunning ? (
-                    <div className="sandbox-output-loading-container">
-                      <div className="sandbox-skeleton-pulse" style={{ width: '40px', height: '40px', borderRadius: '50%' }}></div>
-                      <span>Compiling and Running...</span>
+                    <div className="sandbox-output-loading-container" style={{ padding: '24px 0' }}>
+                      <div className="timeline-container">
+                        <span className={`timeline-pill timeline-pill-thinking ${compilationStage === 'thinking' ? 'active' : ''}`}>
+                          <i className="fa-solid fa-gear fa-spin"></i> Thinking
+                        </span>
+                        <div className={`timeline-connector ${['grep', 'read', 'edit', 'done'].includes(compilationStage) ? 'highlight' : ''}`}></div>
+                        <span className={`timeline-pill timeline-pill-grep ${compilationStage === 'grep' ? 'active' : ''}`}>
+                          <i className="fa-solid fa-magnifying-glass"></i> Grep
+                        </span>
+                        <div className={`timeline-connector ${['read', 'edit', 'done'].includes(compilationStage) ? 'highlight' : ''}`}></div>
+                        <span className={`timeline-pill timeline-pill-read ${compilationStage === 'read' ? 'active' : ''}`}>
+                          <i className="fa-solid fa-book-open"></i> Read
+                        </span>
+                        <div className={`timeline-connector ${['edit', 'done'].includes(compilationStage) ? 'highlight' : ''}`}></div>
+                        <span className={`timeline-pill timeline-pill-edit ${compilationStage === 'edit' ? 'active' : ''}`}>
+                          <i className="fa-solid fa-pen-nib"></i> Edit
+                        </span>
+                        <div className={`timeline-connector ${compilationStage === 'done' ? 'highlight' : ''}`}></div>
+                        <span className={`timeline-pill timeline-pill-done ${compilationStage === 'done' ? 'active' : ''}`}>
+                          <i className="fa-solid fa-check"></i> Done
+                        </span>
+                      </div>
+                      
+                      <div style={{ color: 'var(--ink)', fontSize: '0.85rem', fontWeight: '500' }}>
+                        {compilationStage === 'thinking' && "Analyzing code syntactical structures..."}
+                        {compilationStage === 'grep' && "Scanning symbols and function parameters..."}
+                        {compilationStage === 'read' && "Feeding custom standard input stream..."}
+                        {compilationStage === 'edit' && "Evaluating runtime execution bounds..."}
+                        {compilationStage === 'done' && "Process finished!"}
+                      </div>
                     </div>
                   ) : runResult ? (
                     <div className="sandbox-output-pre-container">
                       
                       {/* Metric specs */}
                       <div className={`sandbox-output-spec-header ${runResult.code === 0 ? 'success' : 'error'}`}>
-                        <span>{runResult.code === 0 ? '🟢 Finished' : '❌ Error'}</span>
+                        <span>
+                          {runResult.code === 0 ? (
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <i className="fa-solid fa-circle-check" style={{ color: 'var(--semantic-success)' }}></i> Finished
+                            </span>
+                          ) : (
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <i className="fa-solid fa-circle-xmark" style={{ color: 'var(--semantic-error)' }}></i> Error
+                            </span>
+                          )}
+                        </span>
                         <div style={{ display: 'flex', gap: '16px' }}>
                           <span className="sandbox-output-spec-val-badge">Runtime: <b>{runResult.time || 'N/A'}</b></span>
                           <span className="sandbox-output-spec-val-badge">Memory: <b>{runResult.memory || 'N/A'}</b></span>
@@ -769,22 +823,22 @@ export default function ProblemWorkspace() {
               <i className="fa-solid fa-trophy"></i>
             </span>
             <h3 className="success-title">Congratulations!</h3>
-            <p className="success-desc" style={{ fontSize: '14px', color: '#a1a1aa', margin: '12px 0 24px' }}>
+            <p className="success-desc">
               Your solution code has successfully passed all test cases! The problem has been marked as completed on your dashboard.
             </p>
             
-            <div className="success-receipt-box" style={{ background: '#121214', border: '1px solid #27272a', padding: '16px', borderRadius: '8px', marginBottom: '24px', textAlign: 'left' }}>
-              <div className="receipt-row" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span className="receipt-label" style={{ color: '#71717a' }}>Status:</span>
-                <span className="receipt-value" style={{ color: '#10b981', fontWeight: 'bold' }}>Accepted</span>
+            <div className="success-receipt-box">
+              <div className="receipt-row">
+                <span className="receipt-label">Status:</span>
+                <span className="receipt-value" style={{ color: 'var(--semantic-success)', fontWeight: 'bold' }}>Accepted</span>
               </div>
-              <div className="receipt-row" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span className="receipt-label" style={{ color: '#71717a' }}>Language:</span>
-                <span className="receipt-value" style={{ color: '#e4e4e7' }}>{selectedLanguage === 'cpp' ? 'C++' : selectedLanguage === 'java' ? 'Java' : 'Python 3'}</span>
+              <div className="receipt-row">
+                <span className="receipt-label">Language:</span>
+                <span className="receipt-value">{selectedLanguage === 'cpp' ? 'C++' : selectedLanguage === 'java' ? 'Java' : 'Python 3'}</span>
               </div>
-              <div className="receipt-row" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span className="receipt-label" style={{ color: '#71717a' }}>Runtime:</span>
-                <span className="receipt-value" style={{ color: '#ffa116' }}>{runResult ? runResult.time : '12ms'}</span>
+              <div className="receipt-row">
+                <span className="receipt-label">Runtime:</span>
+                <span className="receipt-value" style={{ color: 'var(--timeline-done)' }}>{runResult ? runResult.time : '12ms'}</span>
               </div>
             </div>
 
@@ -794,7 +848,6 @@ export default function ProblemWorkspace() {
                 setShowSolvedModal(false);
                 navigate('/dashboard');
               }}
-              style={{ width: '100%', padding: '12px', background: '#ffa116', color: '#09090b', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
             >
               Continue to Dashboard
             </button>

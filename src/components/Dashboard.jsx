@@ -108,7 +108,7 @@ export default function Dashboard() {
                 onClick={() => setShowProfileDropdown(!showProfileDropdown)}
                 style={{ position: 'relative' }}
               >
-                <div className="user-avatar" style={{ background: '#ffa116', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#121212', fontWeight: 'bold', fontSize: '13px' }}>
+                <div className="user-avatar">
                   {user.displayName.charAt(0).toUpperCase()}
                 </div>
                 <span className="user-name">{user.displayName}</span>
@@ -130,7 +130,7 @@ export default function Dashboard() {
                       </div>
                     ) : (
                       <button className="dropdown-item" onClick={() => { upgradeToPro(); setShowProfileDropdown(false); }}>
-                        <i className="fa-solid fa-bolt" style={{ color: '#ffa116' }}></i> Upgrade to Pro
+                        <i className="fa-solid fa-bolt" style={{ color: 'var(--primary)' }}></i> Upgrade to Pro
                       </button>
                     )}
                     <button className="dropdown-item logout" onClick={() => { logoutUser(); setShowProfileDropdown(false); }}>
@@ -245,7 +245,7 @@ export default function Dashboard() {
             {filteredPatternsData.map(category => (
               <div key={category.cat} className="category-section">
                 <div className="cat-header">
-                  <span className="cat-dot-large" style={{ background: category.color, boxShadow: `0 0 10px ${category.color}` }}></span>
+                  <span className="cat-dot-large" style={{ background: category.color }}></span>
                   <h2 className="cat-title">{category.cat}</h2>
                   <span className="cat-count">
                     {category.patterns.length} {category.patterns.length === 1 ? 'Pattern' : 'Patterns'}
@@ -412,7 +412,7 @@ export default function Dashboard() {
                 className="mock-auth-input"
                 value={mockName}
                 onChange={(e) => setMockName(e.target.value)}
-                style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px', color: '#fff', outline: 'none' }}
+                style={{ width: '100%', padding: '10px', background: 'var(--canvas-soft)', border: '1px solid var(--hairline-strong)', borderRadius: '6px', color: 'var(--ink)', outline: 'none' }}
               />
               <input 
                 type="email" 
@@ -420,7 +420,7 @@ export default function Dashboard() {
                 className="mock-auth-input"
                 value={mockEmail}
                 onChange={(e) => setMockEmail(e.target.value)}
-                style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px', color: '#fff', outline: 'none' }}
+                style={{ width: '100%', padding: '10px', background: 'var(--canvas-soft)', border: '1px solid var(--hairline-strong)', borderRadius: '6px', color: 'var(--ink)', outline: 'none' }}
               />
               <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
                 <button 
@@ -429,13 +429,13 @@ export default function Dashboard() {
                     loginMockUser(mockName, mockEmail);
                     setShowAuthModal(false);
                   }}
-                  style={{ flex: 1, padding: '10px', background: '#ffa116', color: '#121212', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+                  style={{ flex: 1, padding: '10px', background: 'var(--ink)', color: 'var(--canvas)', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
                 >
                   Sign In
                 </button>
                 <button 
                   onClick={() => setShowAuthModal(false)}
-                  style={{ padding: '10px 16px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '6px', color: '#a1a1aa', cursor: 'pointer' }}
+                  style={{ padding: '10px 16px', background: 'transparent', border: '1px solid var(--hairline-strong)', borderRadius: '6px', color: 'var(--muted)', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
