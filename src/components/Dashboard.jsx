@@ -11,10 +11,13 @@ export default function Dashboard() {
     isPro,
     problems,
     completedProblems,
+    completedPatterns,
     toggleProblemCompletion,
-    loginMockUser,
+    togglePatternCompletion,
+    loginWithGoogle,
     logoutUser,
     upgradeToPro,
+    resetProStatus,
     theme,
     toggleTheme
   } = useApp();
@@ -25,8 +28,113 @@ export default function Dashboard() {
   const [expandedPatterns, setExpandedPatterns] = useState({});
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-  const [mockName, setMockName] = useState("");
-  const [mockEmail, setMockEmail] = useState("");
+
+  const handleUpgradeClick = async () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+
+    try {
+      console.log("⚡ [AlgoFlow Frontend] Fetching Razorpay configurations...");
+      const configRes = await fetch("/api/config");
+      if (!configRes.ok) throw new Error("API server dynamic config offline.");
+      
+      const configData = await configRes.json();
+      const keyId = configData.keyId;
+
+      if (keyId) {
+        console.log("⚡ [AlgoFlow Frontend] Contacting full-stack server for order token...");
+        const orderRes = await fetch("/api/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: 29900, // ₹299.00 in paise
+            currency: "INR",
+            receipt: `rzp_${Math.random().toString(36).substr(2, 6)}_${Date.now()}`
+          })
+        });
+
+        if (!orderRes.ok) {
+          const errData = await orderRes.json();
+          throw new Error(errData.error || "Failed to create secure transaction order token.");
+        }
+
+        const orderData = await orderRes.json();
+        console.log("🟢 [AlgoFlow Frontend] Secure order token received:", orderData.order_id);
+
+        const options = {
+          key: keyId,
+          amount: orderData.amount,
+          currency: orderData.currency,
+          name: "AlgoFlow Pro",
+          description: "One-Time Lifetime Premium Access",
+          image: user.photoURL || "https://img.icons8.com/color/96/google-logo.png",
+          order_id: orderData.order_id,
+          handler: async function (response) {
+            console.log("🟢 [AlgoFlow Frontend] Checkout successful. Verifying payment...");
+            try {
+              const verifyRes = await fetch("/api/verify-payment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature
+                })
+              });
+
+              if (!verifyRes.ok) {
+                const errData = await verifyRes.json();
+                throw new Error(errData.error || "Cryptographic signature validation failed.");
+              }
+
+              console.log("🟢 [AlgoFlow Frontend] Payment verified! Upgrading profile...");
+              await upgradeToPro();
+              alert(`🎉 Welcome to AlgoFlow Pro!\n\nYour account has been upgraded successfully.\nTransaction ID: ${response.razorpay_payment_id}`);
+            } catch (verifyErr) {
+              console.error("❌ [AlgoFlow Frontend] Transaction verification rejected:", verifyErr);
+              alert(`❌ Payment Verification Failed!\n\nSecurity signature mismatch. Your membership was NOT upgraded.\n\nDetails: ${verifyErr.message}`);
+            }
+          },
+          prefill: {
+            name: user.displayName || "",
+            email: user.email || ""
+          },
+          theme: {
+            color: "#f54e00" // Brand Cursor Orange
+          },
+          modal: {
+            ondismiss: function() {
+              console.log("ℹ️ [AlgoFlow Frontend] Checkout dismissed by user.");
+            }
+          }
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (failedResponse) {
+          console.error("❌ [AlgoFlow Frontend] Razorpay Standard Payment Error:", failedResponse.error);
+          alert(`❌ Payment Failed!\n\nReason: ${failedResponse.error.description || "Unknown failure"}`);
+        });
+        rzp.open();
+      } else {
+        triggerSandboxFallback();
+      }
+    } catch (err) {
+      console.warn("⚠️ [AlgoFlow Frontend] Server-side checkout pipeline failed, trying fallback...", err);
+      triggerSandboxFallback();
+    }
+  };
+
+  const triggerSandboxFallback = () => {
+    const success = confirm("💳 [Simulated Razorpay Checkout]\n\nThis is a mock transaction gateway because live keys are not configured or the server is running offline.\n\nClick 'OK' to simulate a successful payment of ₹299.\nClick 'Cancel' to mock a cancelled/failed transaction.");
+    if (success) {
+      upgradeToPro();
+      alert("🎉 [Simulated Success] Welcome to AlgoFlow Pro! Sandbox upgrade completed successfully.");
+    } else {
+      alert("Payment Cancelled.");
+    }
+  };
 
   const categories = ["All", ...patternsData.map(c => c.cat)];
 
@@ -87,6 +195,9 @@ export default function Dashboard() {
   const completedCount = completedProblems.size;
   const completionPercentage = totalProblemsCount > 0 ? Math.round((completedCount / totalProblemsCount) * 100) : 0;
 
+  const totalPatternsCount = patternsData.reduce((acc, cat) => acc + cat.patterns.length, 0);
+  const completedPatternsCount = completedPatterns.size;
+
   return (
     <div className="app-container">
       {/* 1. GLASSMORPHISM NAVBAR HEADER */}
@@ -131,7 +242,7 @@ export default function Dashboard() {
                         <i className="fa-solid fa-crown"></i> Pro Premium Active
                       </div>
                     ) : (
-                      <button className="dropdown-item" onClick={() => { upgradeToPro(); setShowProfileDropdown(false); }}>
+                      <button className="dropdown-item" onClick={() => { handleUpgradeClick(); setShowProfileDropdown(false); }}>
                         <i className="fa-solid fa-bolt" style={{ color: 'var(--primary)' }}></i> Upgrade to Pro
                       </button>
                     )}
@@ -143,7 +254,7 @@ export default function Dashboard() {
               </div>
             ) : (
               <button className="auth-btn" onClick={() => setShowAuthModal(true)}>
-                <i className="fa-solid fa-circle-user"></i> Guest Sign In
+                <i className="fa-solid fa-circle-user"></i> Sign In
               </button>
             )}
 
@@ -200,7 +311,7 @@ export default function Dashboard() {
           <div className="stat-icon"><i className="fa-solid fa-list-check"></i></div>
           <div className="stat-info">
             <div className="stat-val">
-              {patternsData.reduce((acc, cat) => acc + cat.patterns.length, 0)}
+              {completedPatternsCount} / {totalPatternsCount}
             </div>
             <div className="stat-label">Patterns Mastered</div>
           </div>
@@ -267,15 +378,26 @@ export default function Dashboard() {
                     const isExpanded = !!expandedPatterns[pattern.name];
                     const numExamples = pattern.examples.length;
                     const matchedCount = pattern.matchedExamples ? pattern.matchedExamples.length : numExamples;
+                    const isPatternCompleted = completedPatterns.has(pattern.name);
                     
                     return (
                       <div 
                         key={pattern.name} 
-                        className={`pattern-card ${isExpanded ? 'expanded' : ''}`}
+                        className={`pattern-card ${isExpanded ? 'expanded' : ''} ${isPatternCompleted ? 'completed' : ''}`}
                         onClick={() => handleTogglePatternExpand(pattern.name)}
                       >
                         <div className="card-top">
                           <div className="pattern-meta" onClick={(e) => e.stopPropagation()}>
+                            <span 
+                              className={`pattern-checkbox ${isPatternCompleted ? 'checked' : ''}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                togglePatternCompletion(pattern.name, pattern.examples);
+                              }}
+                              style={{ marginRight: '10px', cursor: 'pointer', fontSize: '1.05rem', display: 'inline-flex', alignItems: 'center', verticalAlign: 'middle' }}
+                            >
+                              <i className={`fa-solid ${isPatternCompleted ? 'fa-circle-check' : 'fa-circle'}`} style={{ color: isPatternCompleted ? 'var(--primary, #f54e00)' : 'var(--hairline-strong, #ccc)' }}></i>
+                            </span>
                             <span className="pattern-name">{pattern.name}</span>
                           </div>
                           <span className="expand-icon">
@@ -313,7 +435,7 @@ export default function Dashboard() {
                                   <div key={ex} className={`example-pill ${isCompleted ? 'solved' : ''}`}>
                                     <span 
                                       className={`problem-checkbox ${isCompleted ? 'checked' : ''}`}
-                                      onClick={() => toggleProblemCompletion(slug, pattern.name)}
+                                      onClick={() => toggleProblemCompletion(slug, pattern.name, pattern.examples)}
                                       style={{ cursor: 'pointer' }}
                                     >
                                       <i className={`fa-solid ${isCompleted ? 'fa-square-check' : 'fa-square'}`}></i>
@@ -362,7 +484,7 @@ export default function Dashboard() {
           /* STUDY HANDBOOKS LIBRARY VAULT VIEW */
           <div className="library-list">
             {booksData.map(book => {
-              const hasAccess = isPro;
+              const hasAccess = user && isPro;
               return (
                 <div 
                   key={book.title} 
@@ -384,18 +506,32 @@ export default function Dashboard() {
                   
                   <div className="book-list-actions">
                     {hasAccess ? (
-                      <a 
-                        href={`/${book.path}`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="book-list-btn primary"
-                      >
-                        <i className="fa-solid fa-download"></i> View PDF
-                      </a>
+                      <div style={{ display: 'flex', gap: '10px' }}>
+                        <a 
+                          href={`/${book.path}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="book-list-btn"
+                        >
+                          <i className="fa-solid fa-eye"></i> View
+                        </a>
+                        <a 
+                          href={`/${book.path}`} 
+                          download
+                          className="book-list-btn"
+                          style={{
+                            background: 'transparent',
+                            color: 'var(--ink)',
+                            border: '1px solid var(--hairline-strong)'
+                          }}
+                        >
+                          <i className="fa-solid fa-download"></i> Download
+                        </a>
+                      </div>
                     ) : (
                       <button 
                         className="unlock-pro-btn"
-                        onClick={upgradeToPro}
+                        onClick={handleUpgradeClick}
                       >
                         <i className="fa-solid fa-lock"></i> Unlock Vault
                       </button>
@@ -408,49 +544,63 @@ export default function Dashboard() {
         )}
       </main>
 
-      {/* 5. GUEST AUTHENTICATION MODAL */}
+      {/* 5. GOOGLE AUTHENTICATION MODAL */}
       {showAuthModal && (
-        <div className="mock-modal-overlay" style={{ display: 'flex' }}>
-          <div className="mock-modal">
+        <div className="mock-modal-overlay" style={{ display: 'flex' }} onClick={() => setShowAuthModal(false)}>
+          <div className="mock-modal" onClick={(e) => e.stopPropagation()}>
             <h3 className="mock-modal-title">Sign In to Save Progress</h3>
-            <div className="mock-modal-subtitle">Save progress to your personal dashboard</div>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '20px' }}>
-              <input 
-                type="text" 
-                placeholder="Enter display name..." 
-                className="mock-auth-input"
-                value={mockName}
-                onChange={(e) => setMockName(e.target.value)}
-                style={{ width: '100%', padding: '10px', background: 'var(--canvas-soft)', border: '1px solid var(--hairline-strong)', borderRadius: '6px', color: 'var(--ink)', outline: 'none' }}
-              />
-              <input 
-                type="email" 
-                placeholder="Enter email address..." 
-                className="mock-auth-input"
-                value={mockEmail}
-                onChange={(e) => setMockEmail(e.target.value)}
-                style={{ width: '100%', padding: '10px', background: 'var(--canvas-soft)', border: '1px solid var(--hairline-strong)', borderRadius: '6px', color: 'var(--ink)', outline: 'none' }}
-              />
-              <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
-                <button 
-                  className="mock-auth-submit-btn"
-                  onClick={() => {
-                    loginMockUser(mockName, mockEmail);
-                    setShowAuthModal(false);
-                  }}
-                  style={{ flex: 1, padding: '10px', background: 'var(--ink)', color: 'var(--canvas)', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
-                >
-                  Sign In
-                </button>
-                <button 
-                  onClick={() => setShowAuthModal(false)}
-                  style={{ padding: '10px 16px', background: 'transparent', border: '1px solid var(--hairline-strong)', borderRadius: '6px', color: 'var(--muted)', cursor: 'pointer' }}
-                >
-                  Cancel
-                </button>
-              </div>
+            <div className="mock-modal-subtitle" style={{ marginBottom: '24px' }}>
+              Connect with your Google account to sync notes, completed problems, and Pro membership across all your devices.
             </div>
+            
+            <button 
+              className="google-sign-in-btn"
+              onClick={async () => {
+                await loginWithGoogle();
+                setShowAuthModal(false);
+              }}
+              style={{
+                width: '100%',
+                padding: '12px',
+                background: '#ffffff',
+                border: '1px solid var(--hairline-strong)',
+                borderRadius: '6px',
+                color: '#3c4043',
+                fontSize: '15px',
+                fontWeight: '500',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                fontFamily: 'Inter, sans-serif'
+              }}
+            >
+              <img 
+                src="https://img.icons8.com/color/48/google-logo.png" 
+                alt="Google Logo" 
+                style={{ width: '20px', height: '20px' }} 
+              />
+              Continue with Google
+            </button>
+
+            <button 
+              onClick={() => setShowAuthModal(false)}
+              style={{ 
+                width: '100%',
+                padding: '10px', 
+                background: 'transparent', 
+                border: 'none', 
+                borderRadius: '6px', 
+                color: 'var(--muted)', 
+                cursor: 'pointer',
+                marginTop: '12px',
+                fontSize: '14px'
+              }}
+            >
+              Keep Browsing as Guest
+            </button>
           </div>
         </div>
       )}
