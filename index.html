@@ -12,6 +12,10 @@
   <!-- Razorpay Checkout Integration SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   
+  <!-- Monaco Editor CDN Dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js"></script>
+  
   <style>
     /* Reset & CSS Custom Variables */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1788,24 +1792,686 @@
         padding: 1rem;
       }
       .title-area h1 {
-        font-size: 1.8rem;
-      }
-
-      /* Book List Mobile Optimization */
-      .book-list-item {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
-      }
-      .book-list-actions {
-        width: 100%;
-        display: flex;
-        gap: 0.5rem;
-      }
-      .book-list-btn {
         flex: 1;
         justify-content: center;
         text-align: center;
+      }
+    }
+
+      /* ===================================================================
+         PREMIUM CODE SANDBOX UI WORKSPACE STYLES (ZINC/DARK THEME)
+         =================================================================== */
+      #sandbox-view {
+        width: 100%;
+        display: none;
+        flex-direction: column;
+        background: #09090b;
+        color: #fafafa;
+        font-family: 'Outfit', sans-serif;
+        height: calc(100vh - 70px);
+        margin: 0;
+        padding: 0;
+        border-radius: 0;
+        border: none;
+      }
+      #sandbox-view.active {
+        display: flex !important;
+      }
+      
+      /* TOP BAR (Header) */
+      .sandbox-header {
+        height: 56px;
+        background: #09090b;
+        border-bottom: 1px solid #27272a;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        flex-shrink: 0;
+      }
+      .sandbox-header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .sandbox-back-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #18181b;
+        border: 1px solid #27272a;
+        color: #a1a1aa;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .sandbox-back-btn:hover {
+        color: #ffffff;
+        background: #27272a;
+      }
+      .sandbox-header-divider {
+        width: 1px;
+        height: 20px;
+        background: #27272a;
+      }
+      .sandbox-header-title {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: #e4e4e7;
+      }
+      .sandbox-header-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .sandbox-leetcode-link {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      .sandbox-leetcode-link:hover {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+      }
+      
+      /* MAIN SPLIT WORKSPACE */
+      .sandbox-split-container {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        position: relative;
+      }
+      
+      /* LEFT PANEL (Description & Questions) */
+      .sandbox-description-panel {
+        width: 50%;
+        height: 100%;
+        overflow-y: auto;
+        padding: 24px;
+        background: rgba(9, 9, 11, 0.4);
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+      
+      .sandbox-title-section {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .sandbox-title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .sandbox-problem-title {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #f4f4f5;
+        margin: 0;
+      }
+      .sandbox-difficulty-badge {
+        padding: 3px 10px;
+        border-radius: 9999px;
+        font-size: 11px;
+        font-weight: 700;
+        border: 1px solid transparent;
+      }
+      .sandbox-difficulty-badge.easy {
+        color: #34d399;
+        background: rgba(52, 211, 153, 0.1);
+        border-color: rgba(52, 211, 153, 0.2);
+      }
+      .sandbox-difficulty-badge.medium {
+        color: #fbbf24;
+        background: rgba(251, 191, 36, 0.1);
+        border-color: rgba(251, 191, 36, 0.2);
+      }
+      .sandbox-difficulty-badge.hard {
+        color: #f87171;
+        background: rgba(248, 113, 113, 0.1);
+        border-color: rgba(248, 113, 113, 0.2);
+      }
+      
+      /* Problem HTML Content Overrides */
+      .sandbox-body-content {
+        font-size: 14.5px;
+        line-height: 1.65;
+        color: #d4d4d8;
+      }
+      .sandbox-body-content p {
+        margin-bottom: 12px;
+      }
+      .sandbox-body-content code {
+        font-family: 'JetBrains Mono', monospace;
+        color: #fbbf24;
+        background: rgba(39, 39, 42, 0.6);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+      .sandbox-body-content pre {
+        background: rgba(24, 24, 27, 0.6);
+        border: 1px solid #27272a;
+        border-radius: 8px;
+        padding: 16px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        overflow-x: auto;
+        margin: 16px 0;
+        white-space: pre-wrap;
+        color: #e4e4e7;
+      }
+      .sandbox-body-content pre strong {
+        color: #a1a1aa;
+      }
+      .sandbox-body-content ul {
+        list-style-type: disc;
+        padding-left: 20px;
+        margin-bottom: 12px;
+      }
+      .sandbox-body-content li {
+        margin-bottom: 6px;
+      }
+      
+      /* Constraints Container */
+      .sandbox-constraints-block {
+        border-top: 1px solid rgba(39, 39, 42, 0.6);
+        padding-top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .sandbox-constraints-title {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #71717a;
+      }
+      .sandbox-constraints-list {
+        list-style-type: disc;
+        padding-left: 20px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        color: #a1a1aa;
+      }
+      .sandbox-constraints-list li {
+        margin-bottom: 6px;
+      }
+      
+      /* RIGHT PANEL (Monaco & Actions) */
+      .sandbox-workspace-panel {
+        width: 50%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border-left: 1px solid #27272a;
+        background: #09090b;
+      }
+      
+      /* Editor Options Bar */
+      .sandbox-options-bar {
+        height: 48px;
+        background: #09090b;
+        border-bottom: 1px solid #27272a;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        flex-shrink: 0;
+      }
+      .sandbox-options-bar-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .sandbox-lang-select {
+        background: #18181b;
+        border: 1px solid #27272a;
+        color: #e4e4e7;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 6px;
+        outline: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .sandbox-lang-select:focus {
+        border-color: rgba(245, 158, 11, 0.4);
+      }
+      .sandbox-option-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: transparent;
+        border: 1px solid transparent;
+        color: #71717a;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .sandbox-option-btn:hover {
+        color: #e4e4e7;
+        background: rgba(39, 39, 42, 0.5);
+        border-color: #27272a;
+      }
+      .sandbox-options-bar-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .sandbox-font-size-label {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #52525b;
+      }
+      .sandbox-font-slider {
+        width: 60px;
+        accent-color: #f59e0b;
+        background: #27272a;
+        height: 3px;
+        border-radius: 9999px;
+        cursor: pointer;
+      }
+      .sandbox-font-val {
+        font-size: 11px;
+        font-weight: 600;
+        font-family: 'JetBrains Mono', monospace;
+        color: #a1a1aa;
+      }
+      
+      /* Monaco container */
+      .sandbox-monaco-container {
+        flex: 1;
+        position: relative;
+        min-height: 200px;
+        background: #1e1e1e;
+      }
+      
+      /* ACTION CONSOLE / TERMINAL */
+      .sandbox-console-dock {
+        border-top: 1px solid #27272a;
+        background: #09090b;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+      }
+      
+      /* Console Tab Selector Row */
+      .sandbox-console-header {
+        height: 40px;
+        border-bottom: 1px solid #27272a;
+        background: #09090b;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+      }
+      .sandbox-console-header-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .sandbox-console-toggle {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: transparent;
+        border: none;
+        color: #71717a;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+      }
+      .sandbox-console-toggle:hover {
+        color: #e4e4e7;
+        background: rgba(39, 39, 42, 0.4);
+      }
+      .sandbox-console-toggle i {
+        transition: transform 0.2s ease;
+      }
+      .sandbox-console-toggle.collapsed i {
+        transform: rotate(-180deg);
+      }
+      .sandbox-console-header-divider {
+        width: 1px;
+        height: 16px;
+        background: #27272a;
+        margin: 0 4px;
+      }
+      .sandbox-console-tab {
+        background: transparent;
+        border: 1px solid transparent;
+        color: #71717a;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .sandbox-console-tab:hover {
+        color: #e4e4e7;
+      }
+      .sandbox-console-tab.active {
+        color: #f59e0b;
+        background: rgba(245, 158, 11, 0.08);
+        border-color: rgba(245, 158, 11, 0.15);
+      }
+      
+      /* Console Drawer Content */
+      .sandbox-console-drawer {
+        height: 176px;
+        background: #09090b;
+        padding: 12px 16px;
+        overflow-y: auto;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        border-bottom: 1px solid rgba(39, 39, 42, 0.6);
+      }
+      .sandbox-console-drawer.collapsed {
+        display: none !important;
+      }
+      
+      /* Stdin Case Drawer layout */
+      .sandbox-stdin-view {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .sandbox-testcase-tabs-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+      .sandbox-testcase-pill {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        background: #18181b;
+        border: 1px solid transparent;
+        color: #71717a;
+        font-size: 11px;
+        font-weight: 700;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+      }
+      .sandbox-testcase-pill.active {
+        color: #f4f4f5;
+        background: #27272a;
+        border-color: #3f3f46;
+      }
+      .sandbox-testcase-pill-close {
+        color: #71717a;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      .sandbox-testcase-pill-close:hover {
+        color: #f4f4f5;
+      }
+      .sandbox-add-case-btn {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        background: #18181b;
+        border: 1px solid #27272a;
+        color: #71717a;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+      .sandbox-add-case-btn:hover {
+        color: #e4e4e7;
+        background: #27272a;
+        border-color: #3f3f46;
+      }
+      .sandbox-stdin-textarea {
+        flex: 1;
+        width: 100%;
+        background: rgba(24, 24, 27, 0.6);
+        border: 1px solid #27272a;
+        border-radius: 8px;
+        padding: 12px;
+        color: #f4f4f5;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        outline: none;
+        resize: none;
+        transition: all 0.2s ease;
+      }
+      .sandbox-stdin-textarea:focus {
+        border-color: rgba(245, 158, 11, 0.25);
+      }
+      
+      /* Output Display View layout */
+      .sandbox-output-view {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .sandbox-output-loading-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        color: #71717a;
+      }
+      .sandbox-output-spec-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        background: rgba(39, 39, 42, 0.4);
+        border: 1px solid #27272a;
+        border-radius: 6px;
+        flex-shrink: 0;
+      }
+      .sandbox-output-spec-header.success {
+        background: rgba(16, 185, 129, 0.05);
+        border-color: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+      }
+      .sandbox-output-spec-header.error {
+        background: rgba(244, 63, 94, 0.05);
+        border-color: rgba(244, 63, 94, 0.15);
+        color: #f87171;
+      }
+      .sandbox-output-spec-val-badge {
+        font-size: 11px;
+        font-weight: 600;
+        color: #a1a1aa;
+      }
+      .sandbox-output-spec-val-badge b {
+        color: #e4e4e7;
+      }
+      .sandbox-output-pre-container {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .sandbox-output-pre-label {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 4px;
+        display: block;
+      }
+      .sandbox-output-pre-label.stdout {
+        color: #10b981;
+      }
+      .sandbox-output-pre-label.stderr {
+        color: #f43f5e;
+      }
+      .sandbox-output-pre {
+        background: rgba(24, 24, 27, 0.6);
+        border: 1px solid #27272a;
+        border-radius: 6px;
+        padding: 10px 12px;
+        color: #e4e4e7;
+        margin: 0;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12.5px;
+        white-space: pre-wrap;
+        overflow-x: auto;
+      }
+      .sandbox-output-pre.error {
+        color: #f87171;
+        background: rgba(244, 63, 94, 0.02);
+        border-color: rgba(244, 63, 94, 0.1);
+      }
+      
+      /* Bottom Actions Row */
+      .sandbox-console-actions-row {
+        height: 48px;
+        background: #09090b;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+      }
+      .sandbox-action-btn-secondary {
+        background: transparent;
+        border: none;
+        color: #71717a;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 6px 12px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+      }
+      .sandbox-action-btn-secondary:hover {
+        color: #e4e4e7;
+        background: rgba(39, 39, 42, 0.4);
+      }
+      .sandbox-actions-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .sandbox-action-btn-run {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #18181b;
+        border: 1px solid #27272a;
+        color: #e4e4e7;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 7px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .sandbox-action-btn-run:hover:not(:disabled) {
+        background: #27272a;
+        border-color: #3f3f46;
+      }
+      .sandbox-action-btn-run:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .sandbox-action-btn-submit {
+        background: #f59e0b;
+        border: 1px solid #d97706;
+        color: #09090b;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 7px 18px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .sandbox-action-btn-submit:hover {
+        background: #fbbf24;
+      }
+      
+      /* LOADING SKELETON LAYER */
+      .sandbox-skeleton-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .sandbox-skeleton-pulse {
+        background: #18181b;
+        border-radius: 6px;
+        animation: sandboxPulse 1.5s infinite ease-in-out;
+      }
+      @keyframes sandboxPulse {
+        0%, 100% { opacity: 0.6; }
+        50% { opacity: 0.3; }
+      }
+      
+      /* RESPONSIVE STACKING FOR MOBILE LAYOUTS */
+      @media (max-width: 768px) {
+        #sandbox-view {
+          height: auto;
+          overflow-y: auto;
+        }
+        .sandbox-split-container {
+          flex-direction: column;
+          height: auto;
+          overflow: visible;
+        }
+        .sandbox-description-panel {
+          width: 100%;
+          height: auto;
+          overflow: visible;
+          border-bottom: 1px solid #27272a;
+        }
+        .sandbox-workspace-panel {
+          width: 100%;
+          height: auto;
+          overflow: visible;
+          border-left: none;
+        }
+        .sandbox-monaco-container {
+          height: 350px;
+        }
       }
     }
   </style>
@@ -1841,6 +2507,9 @@
             </button>
             <button class="tab-btn" onclick="switchTab('library')">
               <i class="fa-solid fa-book-bookmark"></i> Study Library
+            </button>
+            <button class="tab-btn" onclick="switchTab('sandbox')" id="sandbox-tab-btn" style="display: none;">
+              <i class="fa-solid fa-laptop-code"></i> Code Sandbox
             </button>
             <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
               <i class="fa-solid fa-moon"></i>
@@ -1909,6 +2578,138 @@
     <!-- MAIN VIEW 2: STUDY LIBRARY -->
     <div id="library-view" class="view-content">
       <div class="library-list" id="library-grid"></div>
+    </div>
+
+    <!-- MAIN VIEW 3: CODE SANDBOX (ZINC/SLATE MODERN WORKSPACE) -->
+    <div id="sandbox-view" class="view-content">
+      
+      <!-- Sandbox Top Navigation Bar -->
+      <div class="sandbox-header">
+        <div class="sandbox-header-left">
+          <button class="sandbox-back-btn" onclick="switchTab('patterns')">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+          </button>
+          <div class="sandbox-header-divider"></div>
+          <span class="sandbox-header-title" id="sandbox-header-title">Code Sandbox</span>
+        </div>
+        <div class="sandbox-header-right">
+          <a href="#" target="_blank" class="sandbox-leetcode-link" id="sandbox-leetcode-link">
+            View on LeetCode <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Sandbox Split Screen Body Workspace -->
+      <div class="sandbox-split-container">
+        
+        <!-- Left Panel: Scraped problem descriptions & constraints -->
+        <div class="sandbox-description-panel" id="sandbox-desc-panel">
+          <!-- Dynamically populated or rendered skeleton loading overlay -->
+        </div>
+        
+        <!-- Right Panel: Monaco IDE & Terminal Action Console -->
+        <div class="sandbox-workspace-panel">
+          
+          <!-- Options bar -->
+          <div class="sandbox-options-bar">
+            <div class="sandbox-options-bar-left">
+              <select class="sandbox-lang-select" id="sandbox-lang-select" onchange="window.handleSandboxLanguageChange(this.value)">
+                <option value="cpp">C++ (GCC 14.1)</option>
+                <option value="java">Java (JDK 17)</option>
+                <option value="python">Python3 (3.12)</option>
+              </select>
+              <button class="sandbox-option-btn" onclick="window.resetSandboxCodeToTemplate()">
+                <i class="fa-solid fa-arrow-rotate-left"></i> Reset
+              </button>
+            </div>
+            
+            <div class="sandbox-options-bar-right">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="sandbox-font-size-label">Font:</span>
+                <input 
+                  type="range" 
+                  min="12" 
+                  max="20" 
+                  value="14" 
+                  id="sandbox-font-slider" 
+                  class="sandbox-font-slider" 
+                  oninput="window.updateSandboxFontSize(this.value)"
+                />
+                <span class="sandbox-font-val" id="sandbox-font-val">14px</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Monaco editor container -->
+          <div class="sandbox-monaco-container" id="sandbox-monaco-container"></div>
+          
+          <!-- Collapsible Terminal Console -->
+          <div class="sandbox-console-dock">
+            
+            <!-- Terminal Header Controls -->
+            <div class="sandbox-console-header">
+              <div class="sandbox-console-header-left">
+                <button class="sandbox-console-toggle" id="sandbox-console-toggle-btn" onclick="window.toggleSandboxConsole()">
+                  <i class="fa-solid fa-chevron-down"></i> Console Terminal
+                </button>
+                <div class="sandbox-console-header-divider"></div>
+                <button class="sandbox-console-tab active" id="sandbox-console-tab-input" onclick="window.switchSandboxConsoleTab('input')">
+                  Stdin Case
+                </button>
+                <button class="sandbox-console-tab" id="sandbox-console-tab-output" onclick="window.switchSandboxConsoleTab('output')">
+                  Output
+                </button>
+              </div>
+            </div>
+            
+            <!-- Terminal Drawer Content Area -->
+            <div class="sandbox-console-drawer" id="sandbox-console-drawer">
+              
+              <!-- Stdin Case View -->
+              <div class="sandbox-stdin-view" id="sandbox-stdin-view">
+                <div class="sandbox-testcase-tabs-row" id="sandbox-testcase-tabs-row">
+                  <!-- Dynamically populated testcase pills -->
+                </div>
+                <textarea 
+                  class="sandbox-stdin-textarea" 
+                  id="sandbox-stdin-textarea" 
+                  placeholder="Provide program input parameters here..."
+                  oninput="window.syncSandboxActiveStdin(this.value)"
+                ></textarea>
+              </div>
+              
+              <!-- Compile output View -->
+              <div class="sandbox-output-view" id="sandbox-output-view" style="display: none;">
+                <!-- Dynamically populated compiler results -->
+                <div style="height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; color: #52525b;">
+                  Click 'Run Code' to compile and execute program outputs.
+                </div>
+              </div>
+              
+            </div>
+            
+            <!-- Actions Panel Footer Row -->
+            <div class="sandbox-console-actions-row">
+              <button class="sandbox-action-btn-secondary" onclick="window.toggleSandboxConsole()">
+                Console
+              </button>
+              
+              <div class="sandbox-actions-right">
+                <button class="sandbox-action-btn-run" id="sandbox-run-btn" onclick="window.runSandboxCode()">
+                  <i class="fa-solid fa-play"></i> Run Code
+                </button>
+                <button class="sandbox-action-btn-submit" onclick="alert('Solution submitted successfully!')">
+                  Submit
+                </button>
+              </div>
+            </div>
+            
+          </div>
+          
+        </div>
+        
+      </div>
+      
     </div>
 
   </div>
@@ -2555,12 +3356,34 @@
       document.querySelectorAll(".view-content").forEach(el => el.classList.remove("active"));
       document.getElementById(`${tabId}-view`).classList.add("active");
       
-      // Update filters block visibility
+      const controlsPanel = document.querySelector(".controls-panel");
+      const statsPanel = document.getElementById("stats-panel");
       const filtersRow = document.getElementById("filters-row");
-      if (tabId === "library") {
-        filtersRow.style.display = "none";
+      const footer = document.querySelector("footer");
+      const sandboxTabBtn = document.getElementById("sandbox-tab-btn");
+      
+      if (tabId === "sandbox") {
+        if (controlsPanel) controlsPanel.style.display = "none";
+        if (statsPanel) statsPanel.style.display = "none";
+        if (footer) footer.style.display = "none";
+        if (sandboxTabBtn) sandboxTabBtn.style.display = "flex";
+        
+        // Resize Monaco editor to fit containers after displays transition
+        setTimeout(() => {
+          if (window.editorInstance) {
+            window.editorInstance.layout();
+          }
+        }, 150);
       } else {
-        filtersRow.style.display = "flex";
+        if (controlsPanel) controlsPanel.style.display = "block";
+        if (statsPanel) statsPanel.style.display = "flex";
+        if (footer) footer.style.display = "block";
+        
+        if (tabId === "library") {
+          if (filtersRow) filtersRow.style.display = "none";
+        } else {
+          if (filtersRow) filtersRow.style.display = "flex";
+        }
       }
       
       render();
@@ -2726,12 +3549,15 @@
                     ${p.examples.map(ex => {
                       const isProblemCompleted = !!completedProblems[ex];
                       return `
-                        <div class="example-pill ${isProblemCompleted ? 'solved' : ''}" onclick="event.stopPropagation();">
+                        <div class="example-pill ${isProblemCompleted ? 'solved' : ''}" onclick="event.stopPropagation(); window.openProblemInSandbox('${ex}')" style="cursor: pointer;">
                           <span class="problem-checkbox ${isProblemCompleted ? 'checked' : ''}" onclick="toggleProblemCompleted(event, '${ex}', '${p.name}')" title="Mark '${ex}' as solved">
                             <i class="fa-solid ${isProblemCompleted ? 'fa-square-check' : 'fa-square'}"></i>
                           </span>
-                          <a href="${getLeetCodeUrl(ex)}" target="_blank" class="problem-link" title="Solve '${ex}' on LeetCode">
-                            ${highlightText(ex)} <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                          <span class="problem-link" title="Solve '${ex}' in-browser sandbox">
+                            ${highlightText(ex)}
+                          </span>
+                          <a href="${getLeetCodeUrl(ex)}" target="_blank" onclick="event.stopPropagation();" class="external-lc-link" title="View '${ex}' on LeetCode ↗" style="margin-left: 6px; color: rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; height: 100%;">
+                            <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i>
                           </a>
                         </div>
                       `;
@@ -3370,6 +4196,477 @@
         }
       }
     });
+
+    // ===================================================================
+    // PREMIUM CODE SANDBOX JAVASCRIPT CONTROLLER (ZINC/DARK SPACE)
+    // ===================================================================
+    
+    // Scraper URL Extractor Helper
+    function extractSlugFromUrl(url) {
+      const cleaned = url.trim().replace(/\/$/, '');
+      const match = cleaned.match(/\/problems\/([^/]+)/);
+      if (match) return match[1];
+      return cleaned.split('/').pop();
+    }
+    
+    let sandboxProblem = null;
+    let activeTestCaseId = null;
+    let testCases = [];
+    let sandboxLang = "cpp";
+    let sandboxFontSize = 14;
+    
+    // Dynamic Problem Loader Hook
+    window.openProblemInSandbox = function(problemName) {
+      const url = getLeetCodeUrl(problemName);
+      const slug = extractSlugFromUrl(url);
+      
+      switchTab('sandbox');
+      window.loadSandboxProblem(slug);
+    };
+    
+    // Core Problem Dynamic Fetch and Loader
+    window.loadSandboxProblem = async function(slug) {
+      const descPanel = document.getElementById("sandbox-desc-panel");
+      const titleEl = document.getElementById("sandbox-header-title");
+      const linkEl = document.getElementById("sandbox-leetcode-link");
+      
+      if (!descPanel) return;
+      
+      // Reset outputs/terminal state
+      window.switchSandboxConsoleTab("input");
+      document.getElementById("sandbox-output-view").innerHTML = `
+        <div style="height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; color: #52525b;">
+          Click 'Run Code' to compile and execute program outputs.
+        </div>
+      `;
+      
+      // Render Skeleton Loader Layout
+      descPanel.innerHTML = `
+        <div class="sandbox-skeleton-container animate-pulse">
+          <div class="sandbox-skeleton-pulse" style="width: 70%; height: 32px; background: #27272a;"></div>
+          <div class="sandbox-skeleton-pulse" style="width: 25%; height: 20px; background: #27272a;"></div>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+            <div class="sandbox-skeleton-pulse" style="width: 100%; height: 16px; background: #27272a;"></div>
+            <div class="sandbox-skeleton-pulse" style="width: 95%; height: 16px; background: #27272a;"></div>
+            <div class="sandbox-skeleton-pulse" style="width: 85%; height: 16px; background: #27272a;"></div>
+          </div>
+          <div class="sandbox-skeleton-pulse" style="width: 100%; height: 120px; background: rgba(39,39,42,0.4);"></div>
+        </div>
+      `;
+      
+      try {
+        console.log(`[AlgoFlow Sandbox] Fetching problem data for: ${slug}...`);
+        const res = await fetch(`/leetcode_data/${slug}.json`);
+        if (!res.ok) throw new Error("Problem JSON not found locally.");
+        
+        const data = await res.json();
+        sandboxProblem = data;
+        
+        // Populate Description Panel Content
+        let difficultyClass = "medium";
+        if (data.difficulty.toLowerCase() === "easy") difficultyClass = "easy";
+        if (data.difficulty.toLowerCase() === "hard") difficultyClass = "hard";
+        
+        let constraintsMarkup = "";
+        if (data.constraints && data.constraints.length > 0) {
+          constraintsMarkup = `
+            <div class="sandbox-constraints-block">
+              <span class="sandbox-constraints-title">Constraints:</span>
+              <ul class="sandbox-constraints-list">
+                ${data.constraints.map(c => `<li>${c}</li>`).join("")}
+              </ul>
+            </div>
+          `;
+        }
+        
+        descPanel.innerHTML = `
+          <div class="sandbox-title-section">
+            <div class="sandbox-title-row">
+              <h2 class="sandbox-problem-title">${data.title}</h2>
+              <span class="sandbox-difficulty-badge ${difficultyClass}">${data.difficulty}</span>
+            </div>
+          </div>
+          <div class="sandbox-body-content">${data.description}</div>
+          ${constraintsMarkup}
+        `;
+        
+        // Update top bar title and external badge link
+        if (titleEl) titleEl.textContent = `Code Sandbox - ${data.title}`;
+        if (linkEl) {
+          linkEl.href = `https://leetcode.com/problems/${slug}/`;
+          linkEl.style.display = "flex";
+        }
+        
+        // Initialize Testcases Tabs State
+        testCases = data.examples.map((ex, idx) => ({
+          id: idx + 1,
+          name: `Case ${idx + 1}`,
+          input: ex.input || ""
+        }));
+        
+        if (testCases.length === 0) {
+          testCases = [{ id: 1, name: "Case 1", input: "" }];
+        }
+        
+        activeTestCaseId = testCases[0].id;
+        window.renderSandboxTestcaseTabs();
+        
+        // Initialize Monaco Editor
+        window.initMonacoEditor();
+        
+        // Sync code values based on Lang selection & Cache
+        window.syncSandboxEditorCode();
+        
+      } catch (err) {
+        console.error("❌ [AlgoFlow Sandbox] Scraper JSON load failure:", err);
+        descPanel.innerHTML = `
+          <div class="sandbox-title-section">
+            <h2 class="sandbox-problem-title" style="color: #f87171;">Problem Scraped Data Missing</h2>
+          </div>
+          <div class="sandbox-body-content" style="color: #a1a1aa;">
+            <p>Could not locate the local database file: <code>/leetcode_data/${slug}.json</code>.</p>
+            <p>Please make sure you have run the batch scraper script successfully to build the problem database.</p>
+          </div>
+        `;
+        if (titleEl) titleEl.textContent = `Code Sandbox - Error`;
+      }
+    };
+    
+    // Sync Editor Content with Caches or boilerplate templates
+    window.syncSandboxEditorCode = function() {
+      if (!sandboxProblem) return;
+      
+      const cacheKey = `dsa_sandbox_code_${sandboxProblem.titleSlug || extractSlugFromUrl(getLeetCodeUrl(sandboxProblem.title))}_${sandboxLang}`;
+      const cached = localStorage.getItem(cacheKey);
+      
+      let targetCode = "";
+      if (cached) {
+        targetCode = cached;
+      } else {
+        let snippetLang = "cpp";
+        if (sandboxLang === "python") snippetLang = "python3";
+        else if (sandboxLang === "java") snippetLang = "java";
+        
+        const snippet = sandboxProblem.code_stubs?.find(s => s.lang_slug === snippetLang) || sandboxProblem.code_stubs?.[0];
+        targetCode = snippet ? snippet.code : "";
+      }
+      
+      if (window.editorInstance) {
+        window.editorInstance.setValue(targetCode);
+        const mode = sandboxLang === "cpp" ? "cpp" : sandboxLang === "java" ? "java" : "python";
+        monaco.editor.setModelLanguage(window.editorInstance.getModel(), mode);
+      }
+    };
+    
+    // Initialize Monaco Editor inside tab layout
+    window.initMonacoEditor = function() {
+      const container = document.getElementById("sandbox-monaco-container");
+      if (!container || window.editorInstance) return;
+      
+      console.log("⚡ [AlgoFlow Sandbox] Configuring Monaco Editor via CDN...");
+      require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs' } });
+      
+      require(['vs/editor/editor.main'], function() {
+        window.editorInstance = monaco.editor.create(container, {
+          value: "",
+          language: "cpp",
+          theme: "vs-dark",
+          fontSize: sandboxFontSize,
+          minimap: { enabled: false },
+          lineNumbers: "on",
+          bracketPairColorization: { enabled: true },
+          automaticLayout: true,
+          padding: { top: 12, bottom: 12 },
+          scrollBeyondLastLine: false,
+          cursorBlinking: "smooth",
+          fontFamily: "JetBrains Mono, Menlo, Monaco, Consolas, monospace"
+        });
+        
+        window.editorInstance.onDidChangeModelContent(() => {
+          if (!sandboxProblem) return;
+          const codeVal = window.editorInstance.getValue();
+          const slug = sandboxProblem.titleSlug || extractSlugFromUrl(getLeetCodeUrl(sandboxProblem.title));
+          const cacheKey = `dsa_sandbox_code_${slug}_${sandboxLang}`;
+          localStorage.setItem(cacheKey, codeVal);
+        });
+        
+        window.editorInstance.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, function() {
+          window.runSandboxCode();
+        });
+        
+        console.log("🟢 [AlgoFlow Sandbox] Monaco Editor successfully mounted!");
+        window.syncSandboxEditorCode();
+      });
+    };
+    
+    // Settings toggles
+    window.updateSandboxFontSize = function(val) {
+      sandboxFontSize = parseInt(val);
+      document.getElementById("sandbox-font-val").textContent = `${val}px`;
+      if (window.editorInstance) {
+        window.editorInstance.updateOptions({ fontSize: sandboxFontSize });
+      }
+    };
+    
+    window.handleSandboxLanguageChange = function(langSlug) {
+      sandboxLang = langSlug;
+      window.syncSandboxEditorCode();
+    };
+    
+    window.resetSandboxCodeToTemplate = function() {
+      if (!sandboxProblem) return;
+      if (confirm("Reset current editor code to standard template boilerplate? All your changes will be purged.")) {
+        let snippetLang = "cpp";
+        if (sandboxLang === "python") snippetLang = "python3";
+        else if (sandboxLang === "java") snippetLang = "java";
+        
+        const snippet = sandboxProblem.code_stubs?.find(s => s.lang_slug === snippetLang) || sandboxProblem.code_stubs?.[0];
+        const template = snippet ? snippet.code : "";
+        
+        if (window.editorInstance) {
+          window.editorInstance.setValue(template);
+        }
+        
+        const slug = sandboxProblem.titleSlug || extractSlugFromUrl(getLeetCodeUrl(sandboxProblem.title));
+        const cacheKey = `dsa_sandbox_code_${slug}_${sandboxLang}`;
+        localStorage.removeItem(cacheKey);
+      }
+    };
+    
+    // Console Collapsing Toggles
+    window.toggleSandboxConsole = function() {
+      const drawer = document.getElementById("sandbox-console-drawer");
+      const toggleBtn = document.getElementById("sandbox-console-toggle-btn");
+      if (!drawer) return;
+      
+      drawer.classList.toggle("collapsed");
+      if (drawer.classList.contains("collapsed")) {
+        toggleBtn.classList.add("collapsed");
+      } else {
+        toggleBtn.classList.remove("collapsed");
+      }
+      
+      setTimeout(() => {
+        if (window.editorInstance) window.editorInstance.layout();
+      }, 100);
+    };
+    
+    window.switchSandboxConsoleTab = function(tabName) {
+      const inputTabBtn = document.getElementById("sandbox-console-tab-input");
+      const outputTabBtn = document.getElementById("sandbox-console-tab-output");
+      const inputView = document.getElementById("sandbox-stdin-view");
+      const outputView = document.getElementById("sandbox-output-view");
+      
+      const drawer = document.getElementById("sandbox-console-drawer");
+      const toggleBtn = document.getElementById("sandbox-console-toggle-btn");
+      
+      if (drawer && drawer.classList.contains("collapsed")) {
+        drawer.classList.remove("collapsed");
+        if (toggleBtn) toggleBtn.classList.remove("collapsed");
+      }
+      
+      if (tabName === "input") {
+        inputTabBtn.classList.add("active");
+        outputTabBtn.classList.remove("active");
+        inputView.style.display = "flex";
+        outputView.style.display = "none";
+      } else {
+        inputTabBtn.classList.remove("active");
+        outputTabBtn.classList.add("active");
+        inputView.style.display = "none";
+        outputView.style.display = "flex";
+      }
+      
+      setTimeout(() => {
+        if (window.editorInstance) window.editorInstance.layout();
+      }, 100);
+    };
+    
+    // Stdin Case tabs populate
+    window.renderSandboxTestcaseTabs = function() {
+      const container = document.getElementById("sandbox-testcase-tabs-row");
+      if (!container) return;
+      
+      container.innerHTML = testCases.map(tc => `
+        <div class="sandbox-testcase-pill ${tc.id === activeTestCaseId ? 'active' : ''}" onclick="window.switchSandboxTestCase(${tc.id})">
+          <span>${tc.name}</span>
+          ${testCases.length > 1 ? `<span class="sandbox-testcase-pill-close" onclick="window.removeSandboxTestCase(event, ${tc.id})">×</span>` : ''}
+        </div>
+      `).join("");
+      
+      const activeCase = testCases.find(tc => tc.id === activeTestCaseId);
+      const textarea = document.getElementById("sandbox-stdin-textarea");
+      if (textarea && activeCase) {
+        textarea.value = activeCase.input;
+      }
+    };
+    
+    window.switchSandboxTestCase = function(caseId) {
+      const textarea = document.getElementById("sandbox-stdin-textarea");
+      const activeCase = testCases.find(tc => tc.id === activeTestCaseId);
+      if (textarea && activeCase) {
+        activeCase.input = textarea.value;
+      }
+      
+      activeTestCaseId = caseId;
+      window.renderSandboxTestcaseTabs();
+    };
+    
+    window.addSandboxTestCase = function() {
+      if (testCases.length >= 5) {
+        alert("Maximum limit of 5 test cases reached.");
+        return;
+      }
+      
+      const textarea = document.getElementById("sandbox-stdin-textarea");
+      const activeCase = testCases.find(tc => tc.id === activeTestCaseId);
+      if (textarea && activeCase) {
+        activeCase.input = textarea.value;
+      }
+      
+      const newId = Date.now();
+      const newCase = {
+        id: newId,
+        name: `Case ${testCases.length + 1}`,
+        input: ""
+      };
+      
+      testCases.push(newCase);
+      activeTestCaseId = newId;
+      window.renderSandboxTestcaseTabs();
+    };
+    
+    window.removeSandboxTestCase = function(e, caseId) {
+      e.stopPropagation();
+      if (testCases.length <= 1) return;
+      
+      testCases = testCases.filter(tc => tc.id !== caseId);
+      testCases.forEach((tc, idx) => {
+        tc.name = `Case ${idx + 1}`;
+      });
+      
+      if (activeTestCaseId === caseId) {
+        activeTestCaseId = testCases[0].id;
+      }
+      
+      window.renderSandboxTestcaseTabs();
+    };
+    
+    window.syncSandboxActiveStdin = function(val) {
+      const activeCase = testCases.find(tc => tc.id === activeTestCaseId);
+      if (activeCase) {
+        activeCase.input = val;
+      }
+    };
+    
+    // Core Execution AJAX compilation trigger
+    window.runSandboxCode = async function() {
+      if (!window.editorInstance || !sandboxProblem) return;
+      
+      const runBtn = document.getElementById("sandbox-run-btn");
+      const outputView = document.getElementById("sandbox-output-view");
+      
+      const textarea = document.getElementById("sandbox-stdin-textarea");
+      const activeCase = testCases.find(tc => tc.id === activeTestCaseId);
+      if (textarea && activeCase) {
+        activeCase.input = textarea.value;
+      }
+      
+      const stdinPayload = activeCase ? activeCase.input : "";
+      const codePayload = window.editorInstance.getValue();
+      
+      window.switchSandboxConsoleTab("output");
+      if (outputView) {
+        outputView.innerHTML = `
+          <div class="sandbox-output-loading-container">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 20px; color: #f59e0b;"></i>
+            <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.05em; color: #71717a; animation: sandboxPulse 1.5s infinite;">Compiling Solution...</span>
+          </div>
+        `;
+      }
+      
+      if (runBtn) {
+        runBtn.disabled = true;
+        runBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Executing...`;
+      }
+      
+      try {
+        console.log(`🚀 [AlgoFlow Sandbox] Compiling active code for: ${sandboxLang}...`);
+        const res = await fetch("/api/execute", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            language: sandboxLang,
+            code: codePayload,
+            stdin: stdinPayload
+          })
+        });
+        
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.error || "Compiler sandbox backend returned a fatal execution error.");
+        }
+        
+        const data = await res.json();
+        console.log("🟢 [AlgoFlow Sandbox] Compilation outputs received successfully.");
+        
+        if (outputView) {
+          const specClass = data.code === 0 ? "success" : "error";
+          const statusText = data.code === 0 ? "Accepted (Compilation Succeeded)" : "Compilation / Runtime Error";
+          
+          let stderrBlock = "";
+          if (data.stderr) {
+            stderrBlock = `
+              <div style="margin-top: 10px;">
+                <span class="sandbox-output-pre-label stderr">Stderr Logs:</span>
+                <pre class="sandbox-output-pre error">${data.stderr}</pre>
+              </div>
+            `;
+          }
+          
+          outputView.innerHTML = `
+            <div class="sandbox-output-spec-header ${specClass}">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="width: 8px; height: 8px; border-radius: 9999px; background: currentColor;"></span>
+                <span style="font-weight: 700; letter-spacing: 0.02em;">${statusText}</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="sandbox-output-spec-val-badge">Time: <b>${data.time || '12ms'}</b></span>
+                <span class="sandbox-output-spec-val-badge">Memory: <b>${data.memory || '18MB'}</b></span>
+              </div>
+            </div>
+            <div class="sandbox-output-pre-container">
+              ${stderrBlock}
+              <div>
+                <span class="sandbox-output-pre-label stdout">Standard Output:</span>
+                <pre class="sandbox-output-pre">${data.stdout || '(Program compiled successfully, but generated no output stream)'}</pre>
+              </div>
+            </div>
+          `;
+        }
+      } catch (err) {
+        console.error("❌ [AlgoFlow Sandbox] Compilation execution failed:", err);
+        if (outputView) {
+          outputView.innerHTML = `
+            <div class="sandbox-output-spec-header error">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="width: 8px; height: 8px; border-radius: 9999px; background: currentColor;"></span>
+                <span style="font-weight: 700; letter-spacing: 0.02em;">Execution Failed</span>
+              </div>
+            </div>
+            <div class="sandbox-output-pre-container" style="margin-top: 10px;">
+              <span class="sandbox-output-pre-label stderr">Stderr Logs:</span>
+              <pre class="sandbox-output-pre error">Error: ${err.message}</pre>
+            </div>
+          `;
+        }
+      } finally {
+        if (runBtn) {
+          runBtn.disabled = false;
+          runBtn.innerHTML = `<i class="fa-solid fa-play"></i> Run Code`;
+        }
+      }
+    };
 
     window.addEventListener("DOMContentLoaded", () => {
       initTheme();
