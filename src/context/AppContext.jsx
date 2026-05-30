@@ -10,6 +10,21 @@ export function AppProvider({ children }) {
   const [notes, setNotes] = useState({});
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [theme, setTheme] = useState(() => localStorage.getItem("dsa_theme") || 'light');
+
+  // Sync visual body classes with theme changes
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.body.classList.add('dark-theme');
+    } else {
+      document.body.classList.remove('dark-theme');
+    }
+    localStorage.setItem("dsa_theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
 
   // Load static catalog metadata or list of problems
   useEffect(() => {
@@ -153,7 +168,9 @@ export function AppProvider({ children }) {
       logoutUser,
       toggleProblemCompletion,
       setProblemNote,
-      upgradeToPro
+      upgradeToPro,
+      theme,
+      toggleTheme
     }}>
       {children}
     </AppContext.Provider>

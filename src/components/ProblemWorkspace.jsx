@@ -9,7 +9,7 @@ import { CloseAction, ErrorAction } from 'vscode-languageclient';
 export default function ProblemWorkspace() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const { completedProblems, toggleProblemCompletion } = useApp();
+  const { completedProblems, toggleProblemCompletion, theme, toggleTheme } = useApp();
 
   const [problem, setProblem] = useState(null);
   const [selectedLanguage, setSelectedLanguage] = useState('cpp');
@@ -184,7 +184,7 @@ export default function ProblemWorkspace() {
     const editor = monaco.editor.create(editorRef.current, {
       value: initialCode,
       language: selectedLanguage === 'python3' ? 'python' : selectedLanguage,
-      theme: 'vs-dark',
+      theme: theme === 'dark' ? 'vs-dark' : 'vs',
       fontSize: fontSize,
       fontFamily: "'JetBrains Mono', monospace",
       minimap: { enabled: false },
@@ -252,6 +252,13 @@ export default function ProblemWorkspace() {
       monacoRef.current.updateOptions({ fontSize: fontSize });
     }
   }, [fontSize]);
+
+  // 7b. Update Monaco Editor Theme dynamically
+  useEffect(() => {
+    if (monacoRef.current) {
+      monaco.editor.setTheme(theme === 'dark' ? 'vs-dark' : 'vs');
+    }
+  }, [theme]);
 
   // 8. Draggable dividers effects
   const handleSplitMouseDown = (e) => {
@@ -476,7 +483,16 @@ export default function ProblemWorkspace() {
           <span className="sandbox-header-title">{problem.title}</span>
         </div>
         <div className="sandbox-header-right">
-          <span className={`sandbox-difficulty-badge ${problem.difficulty.toLowerCase()}`}>
+          <button 
+            className="theme-toggle-btn" 
+            onClick={toggleTheme}
+            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+            style={{ marginRight: '16px' }}
+          >
+            <i className={`fa-solid ${theme === 'light' ? 'fa-moon' : 'fa-sun'}`}></i>
+          </button>
+          
+          <span className={`sandbox-difficulty-badge ${problem.difficulty.toLowerCase()}`} style={{ marginRight: completedProblems.has(slug) ? '12px' : '0' }}>
             {problem.difficulty}
           </span>
           {completedProblems.has(slug) && (

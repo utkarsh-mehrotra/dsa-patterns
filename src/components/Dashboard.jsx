@@ -14,7 +14,9 @@ export default function Dashboard() {
     toggleProblemCompletion,
     loginMockUser,
     logoutUser,
-    upgradeToPro
+    upgradeToPro,
+    theme,
+    toggleTheme
   } = useApp();
 
   const [activeTab, setActiveTab] = useState("patterns");
@@ -160,6 +162,14 @@ export default function Dashboard() {
                 <i className="fa-solid fa-book-bookmark"></i> Study Library
               </button>
             </div>
+
+            <button 
+              className="theme-toggle-btn" 
+              onClick={toggleTheme}
+              title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+            >
+              <i className={`fa-solid ${theme === 'light' ? 'fa-moon' : 'fa-sun'}`}></i>
+            </button>
 
           </div>
         </div>

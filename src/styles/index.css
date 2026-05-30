@@ -50,6 +50,30 @@
   --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+body.dark-theme {
+  --ink: #f7f7f4;
+  --body: #a09c92;
+  --body-strong: #f7f7f4;
+  --muted: #807d72;
+  --muted-soft: #605e55;
+  --hairline: #2e2d27;
+  --hairline-soft: #23221e;
+  --hairline-strong: #3f3d35;
+  --canvas: #0d0d0b;
+  --canvas-soft: #141412;
+  --surface-card: #181816;
+  --surface-strong: #2e2d27;
+  --on-primary: #ffffff;
+  
+  /* Semantic */
+  --semantic-error: #ff4a76;
+  --semantic-success: #26b283;
+  
+  --difficulty-easy: #26b283;
+  --difficulty-medium: #c08532;
+  --difficulty-hard: #ff4a76;
+}
+
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--canvas);
