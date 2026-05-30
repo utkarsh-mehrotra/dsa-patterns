@@ -4400,13 +4400,31 @@
       if (!sandboxProblem) return;
       
       const cacheKey = `dsa_sandbox_code_${sandboxProblem.titleSlug || extractSlugFromUrl(getLeetCodeUrl(sandboxProblem.title))}_${sandboxLang}`;
-      const cached = localStorage.getItem(cacheKey);
+      let cached = localStorage.getItem(cacheKey);
+      
+      // Auto-purge outdated, compiler-broken cached stubs from previous generation iterations
+      if (cached) {
+        if (sandboxLang === "java" && cached.includes("class Solution") && cached.includes("import java.io.*;") && cached.indexOf("import java.io.*;") > cached.indexOf("class Solution")) {
+          console.warn("⚠️ [AlgoFlow Sandbox] Detecting outdated compiler-broken cached Java stub. Auto-resetting...");
+          localStorage.removeItem(cacheKey);
+          cached = null;
+        } else if (sandboxLang === "cpp" && cached.includes("class Solution") && cached.includes("struct ListNode") && cached.indexOf("struct ListNode") > cached.indexOf("class Solution")) {
+          console.warn("⚠️ [AlgoFlow Sandbox] Detecting outdated compiler-broken cached C++ stub. Auto-resetting...");
+          localStorage.removeItem(cacheKey);
+          cached = null;
+        } else if (sandboxLang === "python" && cached.includes("class Solution") && cached.includes("# --- Helper") && cached.indexOf("# --- Helper") > cached.indexOf("class Solution")) {
+          console.warn("⚠️ [AlgoFlow Sandbox] Detecting outdated compiler-broken cached Python stub. Auto-resetting...");
+          localStorage.removeItem(cacheKey);
+          cached = null;
+        }
+      }
       
       let targetCode = "";
       if (cached) {
         targetCode = cached;
       } else {
         let snippetLang = "cpp";
+
         if (sandboxLang === "python") snippetLang = "python3";
         else if (sandboxLang === "java") snippetLang = "java";
         
