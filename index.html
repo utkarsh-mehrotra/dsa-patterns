@@ -1808,14 +1808,34 @@
         background: #09090b;
         color: #fafafa;
         font-family: 'Outfit', sans-serif;
-        height: calc(100vh - 70px);
+        height: 100%;
         margin: 0;
         padding: 0;
         border-radius: 0;
         border: none;
+        flex-grow: 1;
+        overflow: hidden;
       }
       #sandbox-view.active {
         display: flex !important;
+      }
+      
+      /* Full screen sandbox active overrides */
+      body.sandbox-active {
+        overflow: hidden !important;
+      }
+      body.sandbox-active .app-container {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        height: 100vh !important;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden !important;
+      }
+      body.sandbox-active header {
+        display: none !important;
       }
       
       /* TOP BAR (Header) */
@@ -1899,6 +1919,8 @@
       /* LEFT PANEL (Description & Questions) */
       .sandbox-description-panel {
         width: 50%;
+        min-width: 300px;
+        max-width: 85%;
         height: 100%;
         overflow-y: auto;
         padding: 24px;
@@ -2019,13 +2041,42 @@
       
       /* RIGHT PANEL (Monaco & Actions) */
       .sandbox-workspace-panel {
-        width: 50%;
+        flex: 1;
+        min-width: 300px;
         height: 100%;
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        border-left: 1px solid #27272a;
         background: #09090b;
+      }
+      
+      /* DRAGGABLE RESIZER DIVISION BAR */
+      .sandbox-resizer {
+        width: 8px;
+        height: 100%;
+        background: #18181b;
+        cursor: col-resize;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 10;
+        user-select: none;
+        border-left: 1px solid #27272a;
+        border-right: 1px solid #27272a;
+        transition: background 0.2s ease;
+      }
+      .sandbox-resizer:hover, .sandbox-resizer.dragging {
+        background: #27272a;
+      }
+      .sandbox-resizer-line {
+        width: 2px;
+        height: 24px;
+        background: #52525b;
+        border-radius: 9999px;
+      }
+      .sandbox-resizer:hover .sandbox-resizer-line, .sandbox-resizer.dragging .sandbox-resizer-line {
+        background: #f59e0b;
       }
       
       /* Editor Options Bar */
@@ -2458,13 +2509,18 @@
           overflow: visible;
         }
         .sandbox-description-panel {
-          width: 100%;
+          width: 100% !important;
+          max-width: 100% !important;
           height: auto;
           overflow: visible;
           border-bottom: 1px solid #27272a;
         }
+        .sandbox-resizer {
+          display: none !important;
+        }
         .sandbox-workspace-panel {
-          width: 100%;
+          width: 100% !important;
+          max-width: 100% !important;
           height: auto;
           overflow: visible;
           border-left: none;
@@ -2600,11 +2656,16 @@
       </div>
       
       <!-- Sandbox Split Screen Body Workspace -->
-      <div class="sandbox-split-container">
+      <div class="sandbox-split-container" id="sandbox-split-container">
         
         <!-- Left Panel: Scraped problem descriptions & constraints -->
         <div class="sandbox-description-panel" id="sandbox-desc-panel">
           <!-- Dynamically populated or rendered skeleton loading overlay -->
+        </div>
+        
+        <!-- Draggable Resizer Separation Bar -->
+        <div class="sandbox-resizer" id="sandbox-resizer">
+          <div class="sandbox-resizer-line"></div>
         </div>
         
         <!-- Right Panel: Monaco IDE & Terminal Action Console -->
@@ -3363,6 +3424,7 @@
       const sandboxTabBtn = document.getElementById("sandbox-tab-btn");
       
       if (tabId === "sandbox") {
+        document.body.classList.add("sandbox-active");
         if (controlsPanel) controlsPanel.style.display = "none";
         if (statsPanel) statsPanel.style.display = "none";
         if (footer) footer.style.display = "none";
@@ -3375,6 +3437,7 @@
           }
         }, 150);
       } else {
+        document.body.classList.remove("sandbox-active");
         if (controlsPanel) controlsPanel.style.display = "block";
         if (statsPanel) statsPanel.style.display = "flex";
         if (footer) footer.style.display = "block";
@@ -4667,6 +4730,74 @@
         }
       }
     };
+    
+    // Draggable Split Pane Resizer Controller
+    function initSandboxResizer() {
+      const container = document.getElementById("sandbox-split-container");
+      const resizer = document.getElementById("sandbox-resizer");
+      const leftPanel = document.getElementById("sandbox-desc-panel");
+      
+      if (!resizer || !leftPanel || !container) return;
+      
+      let isDragging = false;
+      
+      resizer.addEventListener("mousedown", function(e) {
+        isDragging = true;
+        resizer.classList.add("dragging");
+        document.body.style.cursor = "col-resize";
+        document.body.style.userSelect = "none";
+        
+        // Add temporary overlay to block Monaco iframe capture
+        const overlay = document.createElement("div");
+        overlay.id = "sandbox-drag-overlay";
+        overlay.style.position = "fixed";
+        overlay.style.top = "0";
+        overlay.style.left = "0";
+        overlay.style.width = "100vw";
+        overlay.style.height = "100vh";
+        overlay.style.zIndex = "9999";
+        overlay.style.cursor = "col-resize";
+        document.body.appendChild(overlay);
+      });
+      
+      document.addEventListener("mousemove", function(e) {
+        if (!isDragging) return;
+        
+        const containerRect = container.getBoundingClientRect();
+        const offsetLeft = e.clientX - containerRect.left;
+        
+        // Calculate new percentage width
+        let percentage = (offsetLeft / containerRect.width) * 100;
+        
+        // Apply boundaries (20% to 80%)
+        if (percentage < 20) percentage = 20;
+        if (percentage > 80) percentage = 80;
+        
+        leftPanel.style.width = `${percentage}%`;
+        
+        // Reflow Monaco Editor in real-time
+        if (window.editorInstance) {
+          window.editorInstance.layout();
+        }
+      });
+      
+      document.addEventListener("mouseup", function(e) {
+        if (!isDragging) return;
+        
+        isDragging = false;
+        resizer.classList.remove("dragging");
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+        
+        const overlay = document.getElementById("sandbox-drag-overlay");
+        if (overlay) overlay.remove();
+        
+        // Resize Monaco layout to lock boundaries
+        if (window.editorInstance) {
+          window.editorInstance.layout();
+        }
+      });
+    }
 
     window.addEventListener("DOMContentLoaded", () => {
       initTheme();
@@ -4687,6 +4818,7 @@
       updateProgressStats();
       render();
       initRadialGlow();
+      initSandboxResizer();
       
       // Light-dismiss click outside paywall modal
       const paywallModal = document.getElementById("paywall-modal");
