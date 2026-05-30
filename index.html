@@ -2079,6 +2079,35 @@
         background: #f59e0b;
       }
       
+      /* HORIZONTAL DRAGGABLE RESIZER FOR TERMINAL WINDOW */
+      .sandbox-console-resizer {
+        height: 6px;
+        background: #18181b;
+        cursor: row-resize;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 10;
+        user-select: none;
+        border-top: 1px solid #27272a;
+        border-bottom: 1px solid #27272a;
+        transition: background 0.2s ease;
+      }
+      .sandbox-console-resizer:hover, .sandbox-console-resizer.dragging {
+        background: #27272a;
+      }
+      .sandbox-console-resizer-line {
+        width: 24px;
+        height: 2px;
+        background: #52525b;
+        border-radius: 9999px;
+      }
+      .sandbox-console-resizer:hover .sandbox-console-resizer-line, .sandbox-console-resizer.dragging .sandbox-console-resizer-line {
+        background: #f59e0b;
+      }
+
+      
       /* Editor Options Bar */
       .sandbox-options-bar {
         height: 48px;
@@ -2706,6 +2735,10 @@
           
           <!-- Collapsible Terminal Console -->
           <div class="sandbox-console-dock">
+            <!-- Horizontal Draggable Resizer -->
+            <div class="sandbox-console-resizer" id="sandbox-console-resizer">
+              <div class="sandbox-console-resizer-line"></div>
+            </div>
             
             <!-- Terminal Header Controls -->
             <div class="sandbox-console-header">
@@ -4817,6 +4850,82 @@
       });
     }
 
+    // Draggable Console Terminal Height Resizer Controller
+    function initSandboxConsoleResizer() {
+      const resizer = document.getElementById("sandbox-console-resizer");
+      const drawer = document.getElementById("sandbox-console-drawer");
+      
+      if (!resizer || !drawer) return;
+      
+      let isDragging = false;
+      let startY = 0;
+      let startHeight = 0;
+      
+      resizer.addEventListener("mousedown", function(e) {
+        isDragging = true;
+        resizer.classList.add("dragging");
+        document.body.style.cursor = "row-resize";
+        document.body.style.userSelect = "none";
+        
+        startY = e.clientY;
+        startHeight = parseInt(window.getComputedStyle(drawer).height) || 176;
+        
+        // Auto-expand if collapsed when dragging starts
+        if (drawer.classList.contains("collapsed")) {
+          drawer.classList.remove("collapsed");
+          const toggleBtn = document.getElementById("sandbox-console-toggle-btn");
+          if (toggleBtn) toggleBtn.classList.remove("collapsed");
+        }
+        
+        // Add temporary overlay to block Monaco iframe capture
+        const overlay = document.createElement("div");
+        overlay.id = "sandbox-console-drag-overlay";
+        overlay.style.position = "fixed";
+        overlay.style.top = "0";
+        overlay.style.left = "0";
+        overlay.style.width = "100vw";
+        overlay.style.height = "100vh";
+        overlay.style.zIndex = "9999";
+        overlay.style.cursor = "row-resize";
+        document.body.appendChild(overlay);
+      });
+      
+      document.addEventListener("mousemove", function(e) {
+        if (!isDragging) return;
+        
+        const dY = e.clientY - startY;
+        let newHeight = startHeight - dY;
+        
+        // Apply boundaries (80px to 450px)
+        if (newHeight < 80) newHeight = 80;
+        if (newHeight > 450) newHeight = 450;
+        
+        drawer.style.height = `${newHeight}px`;
+        
+        // Reflow Monaco Editor in real-time to adjust layout bounds
+        if (window.editorInstance) {
+          window.editorInstance.layout();
+        }
+      });
+      
+      document.addEventListener("mouseup", function(e) {
+        if (!isDragging) return;
+        
+        isDragging = false;
+        resizer.classList.remove("dragging");
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+        
+        const overlay = document.getElementById("sandbox-console-drag-overlay");
+        if (overlay) overlay.remove();
+        
+        // Final layout reflow
+        if (window.editorInstance) {
+          window.editorInstance.layout();
+        }
+      });
+    }
+
     window.addEventListener("DOMContentLoaded", () => {
       initTheme();
       
@@ -4837,6 +4946,7 @@
       render();
       initRadialGlow();
       initSandboxResizer();
+      initSandboxConsoleResizer();
       
       // Light-dismiss click outside paywall modal
       const paywallModal = document.getElementById("paywall-modal");
