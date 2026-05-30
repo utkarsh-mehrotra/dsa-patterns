@@ -1,0 +1,42 @@
+{
+  "title": "Palindrome Number",
+  "difficulty": "Easy",
+  "description": "<p>Given an integer <code>x</code>, return <code>true</code><em> if </em><code>x</code><em> is a </em><span data-keyword=\"palindrome-integer\"><em><strong>palindrome</strong></em></span><em>, and </em><code>false</code><em> otherwise</em>.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> x = 121\n<strong>Output:</strong> true\n<strong>Explanation:</strong> 121 reads as 121 from left to right and from right to left.\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> x = -121\n<strong>Output:</strong> false\n<strong>Explanation:</strong> From left to right, it reads -121. From right to left, it becomes 121-. Therefore it is not a palindrome.\n</pre>\n<p><strong class=\"example\">Example 3:</strong></p>\n<pre>\n<strong>Input:</strong> x = 10\n<strong>Output:</strong> false\n<strong>Explanation:</strong> Reads 01 from right to left. Therefore it is not a palindrome.\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>-2<sup>31</sup> &lt;= x &lt;= 2<sup>31</sup> - 1</code></li>\n</ul>\n<p> </p>\n<strong>Follow up:</strong> Could you solve it without converting the integer to a string?",
+  "examples": [
+    {
+      "input": "x = 121",
+      "output": "true",
+      "explanation": "121 reads as 121 from left to right and from right to left."
+    },
+    {
+      "input": "x = -121",
+      "output": "false",
+      "explanation": "From left to right, it reads -121. From right to left, it becomes 121-. Therefore it is not a palindrome."
+    },
+    {
+      "input": "x = 10",
+      "output": "false",
+      "explanation": "Reads 01 from right to left. Therefore it is not a palindrome."
+    }
+  ],
+  "constraints": [
+    "-231 <= x <= 231 - 1"
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    bool isPalindrome(int x) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public boolean isPalindrome(int x) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def isPalindrome(self, x: int) -> bool:\n        "
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "title": "Majority Element",
+  "difficulty": "Easy",
+  "description": "<p>Given an array <code>nums</code> of size <code>n</code>, return <em>the majority element</em>.</p>\n<p>The majority element is the element that appears more than <code>⌊n / 2⌋</code> times. You may assume that the majority element always exists in the array.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre><strong>Input:</strong> nums = [3,2,3]\n<strong>Output:</strong> 3\n</pre><p><strong class=\"example\">Example 2:</strong></p>\n<pre><strong>Input:</strong> nums = [2,2,1,1,1,2,2]\n<strong>Output:</strong> 2\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>n == nums.length</code></li>\n<li><code>1 &lt;= n &lt;= 5 * 10<sup>4</sup></code></li>\n<li><code>-10<sup>9</sup> &lt;= nums[i] &lt;= 10<sup>9</sup></code></li>\n<li>The input is generated such that a majority element will exist in the array.</li>\n</ul>\n<p> </p>\n<strong>Follow-up:</strong> Could you solve the problem in linear time and in <code>O(1)</code> space?",
+  "examples": [
+    {
+      "input": "nums = [3,2,3]",
+      "output": "3",
+      "explanation": ""
+    },
+    {
+      "input": "nums = [2,2,1,1,1,2,2]",
+      "output": "2",
+      "explanation": ""
+    }
+  ],
+  "constraints": [
+    "n == nums.length",
+    "1 <= n <= 5 * 104",
+    "-109 <= nums[i] <= 109",
+    "The input is generated such that a majority element will exist in the array."
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    int majorityElement(vector<int>& nums) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int majorityElement(int[] nums) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def majorityElement(self, nums: List[int]) -> int:\n        "
+    }
+  ]
+}

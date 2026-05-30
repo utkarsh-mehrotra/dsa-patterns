@@ -1,0 +1,46 @@
+{
+  "title": "Word Break",
+  "difficulty": "Medium",
+  "description": "<p>Given a string <code>s</code> and a dictionary of strings <code>wordDict</code>, return <code>true</code> if <code>s</code> can be segmented into a space-separated sequence of one or more dictionary words.</p>\n<p><strong>Note</strong> that the same word in the dictionary may be reused multiple times in the segmentation.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"leetcode\", wordDict = [\"leet\",\"code\"]\n<strong>Output:</strong> true\n<strong>Explanation:</strong> Return true because \"leetcode\" can be segmented as \"leet code\".\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"applepenapple\", wordDict = [\"apple\",\"pen\"]\n<strong>Output:</strong> true\n<strong>Explanation:</strong> Return true because \"applepenapple\" can be segmented as \"apple pen apple\".\nNote that you are allowed to reuse a dictionary word.\n</pre>\n<p><strong class=\"example\">Example 3:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"catsandog\", wordDict = [\"cats\",\"dog\",\"sand\",\"and\",\"cat\"]\n<strong>Output:</strong> false\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= s.length &lt;= 300</code></li>\n<li><code>1 &lt;= wordDict.length &lt;= 1000</code></li>\n<li><code>1 &lt;= wordDict[i].length &lt;= 20</code></li>\n<li><code>s</code> and <code>wordDict[i]</code> consist of only lowercase English letters.</li>\n<li>All the strings of <code>wordDict</code> are <strong>unique</strong>.</li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "s = \"leetcode\", wordDict = [\"leet\",\"code\"]",
+      "output": "true",
+      "explanation": "Return true because \"leetcode\" can be segmented as \"leet code\"."
+    },
+    {
+      "input": "s = \"applepenapple\", wordDict = [\"apple\",\"pen\"]",
+      "output": "true",
+      "explanation": "Return true because \"applepenapple\" can be segmented as \"apple pen apple\".\nNote that you are allowed to reuse a dictionary word."
+    },
+    {
+      "input": "s = \"catsandog\", wordDict = [\"cats\",\"dog\",\"sand\",\"and\",\"cat\"]",
+      "output": "false",
+      "explanation": ""
+    }
+  ],
+  "constraints": [
+    "1 <= s.length <= 300",
+    "1 <= wordDict.length <= 1000",
+    "1 <= wordDict[i].length <= 20",
+    "s and wordDict[i] consist of only lowercase English letters.",
+    "All the strings of wordDict are unique."
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def wordBreak(self, s: str, wordDict: List[str]) -> bool:\n        "
+    }
+  ]
+}

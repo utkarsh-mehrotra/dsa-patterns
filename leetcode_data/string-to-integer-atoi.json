@@ -1,0 +1,27 @@
+{
+  "title": "String to Integer (atoi)",
+  "difficulty": "Medium",
+  "description": "<p>Implement the <code>myAtoi(string s)</code> function, which converts a string to a 32-bit signed integer.</p>\n<p>The algorithm for <code>myAtoi(string s)</code> is as follows:</p>\n<ol>\n<li><strong>Whitespace</strong>: Ignore any leading whitespace (<code>\" \"</code>).</li>\n<li><strong>Signedness</strong>: Determine the sign by checking if the next character is <code>'-'</code> or <code>'+'</code>, assuming positivity if neither present.</li>\n<li><strong>Conversion</strong>: Read the integer by skipping leading zeros until a non-digit character is encountered or the end of the string is reached. If no digits were read, then the result is 0.</li>\n<li><strong>Rounding</strong>: If the integer is out of the 32-bit signed integer range <code>[-2<sup>31</sup>, 2<sup>31</sup> - 1]</code>, then round the integer to remain in the range. Specifically, integers less than <code>-2<sup>31</sup></code> should be rounded to <code>-2<sup>31</sup></code>, and integers greater than <code>2<sup>31</sup> - 1</code> should be rounded to <code>2<sup>31</sup> - 1</code>.</li>\n</ol>\n<p>Return the integer as the final result.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<div class=\"example-block\">\n<p><strong>Input:</strong> <span class=\"example-io\">s = \"42\"</span></p>\n<p><strong>Output:</strong> <span class=\"example-io\">42</span></p>\n<p><strong>Explanation:</strong></p>\n<pre>\nThe underlined characters are what is read in and the caret is the current reader position.\nStep 1: \"42\" (no characters read because there is no leading whitespace)\n         ^\nStep 2: \"42\" (no characters read because there is neither a '-' nor '+')\n         ^\nStep 3: \"<u>42</u>\" (\"42\" is read in)\n           ^\n</pre>\n</div>\n<p><strong class=\"example\">Example 2:</strong></p>\n<div class=\"example-block\">\n<p><strong>Input:</strong> <span class=\"example-io\">s = \" -042\"</span></p>\n<p><strong>Output:</strong> <span class=\"example-io\">-42</span></p>\n<p><strong>Explanation:</strong></p>\n<pre>\nStep 1: \"<u>   </u>-042\" (leading whitespace is read and ignored)\n            ^\nStep 2: \"   <u>-</u>042\" ('-' is read, so the result should be negative)\n             ^\nStep 3: \"   -<u>042</u>\" (\"042\" is read in, leading zeros ignored in the result)\n               ^\n</pre>\n</div>\n<p><strong class=\"example\">Example 3:</strong></p>\n<div class=\"example-block\">\n<p><strong>Input:</strong> <span class=\"example-io\">s = \"1337c0d3\"</span></p>\n<p><strong>Output:</strong> <span class=\"example-io\">1337</span></p>\n<p><strong>Explanation:</strong></p>\n<pre>\nStep 1: \"1337c0d3\" (no characters read because there is no leading whitespace)\n         ^\nStep 2: \"1337c0d3\" (no characters read because there is neither a '-' nor '+')\n         ^\nStep 3: \"<u>1337</u>c0d3\" (\"1337\" is read in; reading stops because the next character is a non-digit)\n             ^\n</pre>\n</div>\n<p><strong class=\"example\">Example 4:</strong></p>\n<div class=\"example-block\">\n<p><strong>Input:</strong> <span class=\"example-io\">s = \"0-1\"</span></p>\n<p><strong>Output:</strong> <span class=\"example-io\">0</span></p>\n<p><strong>Explanation:</strong></p>\n<pre>\nStep 1: \"0-1\" (no characters read because there is no leading whitespace)\n         ^\nStep 2: \"0-1\" (no characters read because there is neither a '-' nor '+')\n         ^\nStep 3: \"<u>0</u>-1\" (\"0\" is read in; reading stops because the next character is a non-digit)\n          ^\n</pre>\n</div>\n<p><strong class=\"example\">Example 5:</strong></p>\n<div class=\"example-block\">\n<p><strong>Input:</strong> <span class=\"example-io\">s = \"words and 987\"</span></p>\n<p><strong>Output:</strong> <span class=\"example-io\">0</span></p>\n<p><strong>Explanation:</strong></p>\n<p>Reading stops at the first non-digit character 'w'.</p>\n</div>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>0 &lt;= s.length &lt;= 200</code></li>\n<li><code>s</code> consists of English letters (lower-case and upper-case), digits (<code>0-9</code>), <code>' '</code>, <code>'+'</code>, <code>'-'</code>, and <code>'.'</code>.</li>\n</ul>\n",
+  "examples": [],
+  "constraints": [
+    "0 <= s.length <= 200",
+    "s consists of English letters (lower-case and upper-case), digits (0-9), ' ', '+', '-', and '.'."
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    int myAtoi(string s) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int myAtoi(String s) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def myAtoi(self, s: str) -> int:\n        "
+    }
+  ]
+}

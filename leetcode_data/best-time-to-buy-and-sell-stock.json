@@ -1,0 +1,38 @@
+{
+  "title": "Best Time to Buy and Sell Stock",
+  "difficulty": "Easy",
+  "description": "<p>You are given an array <code>prices</code> where <code>prices[i]</code> is the price of a given stock on the <code>i<sup>th</sup></code> day.</p>\n<p>You want to maximize your profit by choosing a <strong>single day</strong> to buy one stock and choosing a <strong>different day in the future</strong> to sell that stock.</p>\n<p>Return <em>the maximum profit you can achieve from this transaction</em>. If you cannot achieve any profit, return <code>0</code>.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> prices = [7,1,5,3,6,4]\n<strong>Output:</strong> 5\n<strong>Explanation:</strong> Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5.\nNote that buying on day 2 and selling on day 1 is not allowed because you must buy before you sell.\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> prices = [7,6,4,3,1]\n<strong>Output:</strong> 0\n<strong>Explanation:</strong> In this case, no transactions are done and the max profit = 0.\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= prices.length &lt;= 10<sup>5</sup></code></li>\n<li><code>0 &lt;= prices[i] &lt;= 10<sup>4</sup></code></li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "prices = [7,1,5,3,6,4]",
+      "output": "5",
+      "explanation": "Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5.\nNote that buying on day 2 and selling on day 1 is not allowed because you must buy before you sell."
+    },
+    {
+      "input": "prices = [7,6,4,3,1]",
+      "output": "0",
+      "explanation": "In this case, no transactions are done and the max profit = 0."
+    }
+  ],
+  "constraints": [
+    "1 <= prices.length <= 105",
+    "0 <= prices[i] <= 104"
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int maxProfit(int[] prices) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        "
+    }
+  ]
+}

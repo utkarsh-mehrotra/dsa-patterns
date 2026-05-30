@@ -1,0 +1,45 @@
+{
+  "title": "Find First and Last Position of Element in Sorted Array",
+  "difficulty": "Medium",
+  "description": "<p>Given an array of integers <code>nums</code> sorted in non-decreasing order, find the starting and ending position of a given <code>target</code> value.</p>\n<p>If <code>target</code> is not found in the array, return <code>[-1, -1]</code>.</p>\n<p>You must write an algorithm with <code>O(log n)</code> runtime complexity.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre><strong>Input:</strong> nums = [5,7,7,8,8,10], target = 8\n<strong>Output:</strong> [3,4]\n</pre><p><strong class=\"example\">Example 2:</strong></p>\n<pre><strong>Input:</strong> nums = [5,7,7,8,8,10], target = 6\n<strong>Output:</strong> [-1,-1]\n</pre><p><strong class=\"example\">Example 3:</strong></p>\n<pre><strong>Input:</strong> nums = [], target = 0\n<strong>Output:</strong> [-1,-1]\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>0 &lt;= nums.length &lt;= 10<sup>5</sup></code></li>\n<li><code>-10<sup>9</sup> &lt;= nums[i] &lt;= 10<sup>9</sup></code></li>\n<li><code>nums</code> is a non-decreasing array.</li>\n<li><code>-10<sup>9</sup> &lt;= target &lt;= 10<sup>9</sup></code></li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "nums = [5,7,7,8,8,10], target = 8",
+      "output": "[3,4]",
+      "explanation": ""
+    },
+    {
+      "input": "nums = [5,7,7,8,8,10], target = 6",
+      "output": "[-1,-1]",
+      "explanation": ""
+    },
+    {
+      "input": "nums = [], target = 0",
+      "output": "[-1,-1]",
+      "explanation": ""
+    }
+  ],
+  "constraints": [
+    "0 <= nums.length <= 105",
+    "-109 <= nums[i] <= 109",
+    "nums is a non-decreasing array.",
+    "-109 <= target <= 109"
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    vector<int> searchRange(vector<int>& nums, int target) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int[] searchRange(int[] nums, int target) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def searchRange(self, nums: List[int], target: int) -> List[int]:\n        "
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "title": "Longest Repeating Character Replacement",
+  "difficulty": "Medium",
+  "description": "<p>You are given a string <code>s</code> and an integer <code>k</code>. You can choose any character of the string and change it to any other uppercase English character. You can perform this operation at most <code>k</code> times.</p>\n<p>Return <em>the length of the longest substring containing the same letter you can get after performing the above operations</em>.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"ABAB\", k = 2\n<strong>Output:</strong> 4\n<strong>Explanation:</strong> Replace the two 'A's with two 'B's or vice versa.\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"AABABBA\", k = 1\n<strong>Output:</strong> 4\n<strong>Explanation:</strong> Replace the one 'A' in the middle with 'B' and form \"AABBBBA\".\nThe substring \"BBBB\" has the longest repeating letters, which is 4.\nThere may exists other ways to achieve this answer too.</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= s.length &lt;= 10<sup>5</sup></code></li>\n<li><code>s</code> consists of only uppercase English letters.</li>\n<li><code>0 &lt;= k &lt;= s.length</code></li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "s = \"ABAB\", k = 2",
+      "output": "4",
+      "explanation": "Replace the two 'A's with two 'B's or vice versa."
+    },
+    {
+      "input": "s = \"AABABBA\", k = 1",
+      "output": "4",
+      "explanation": "Replace the one 'A' in the middle with 'B' and form \"AABBBBA\".\nThe substring \"BBBB\" has the longest repeating letters, which is 4.\nThere may exists other ways to achieve this answer too."
+    }
+  ],
+  "constraints": [
+    "1 <= s.length <= 105",
+    "s consists of only uppercase English letters.",
+    "0 <= k <= s.length"
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    int characterReplacement(string s, int k) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int characterReplacement(String s, int k) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def characterReplacement(self, s: str, k: int) -> int:\n        "
+    }
+  ]
+}

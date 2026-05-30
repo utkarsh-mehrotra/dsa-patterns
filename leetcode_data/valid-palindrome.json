@@ -1,0 +1,43 @@
+{
+  "title": "Valid Palindrome",
+  "difficulty": "Easy",
+  "description": "<p>A phrase is a <strong>palindrome</strong> if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers.</p>\n<p>Given a string <code>s</code>, return <code>true</code><em> if it is a <strong>palindrome</strong>, or </em><code>false</code><em> otherwise</em>.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"A man, a plan, a canal: Panama\"\n<strong>Output:</strong> true\n<strong>Explanation:</strong> \"amanaplanacanalpanama\" is a palindrome.\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"race a car\"\n<strong>Output:</strong> false\n<strong>Explanation:</strong> \"raceacar\" is not a palindrome.\n</pre>\n<p><strong class=\"example\">Example 3:</strong></p>\n<pre>\n<strong>Input:</strong> s = \" \"\n<strong>Output:</strong> true\n<strong>Explanation:</strong> s is an empty string \"\" after removing non-alphanumeric characters.\nSince an empty string reads the same forward and backward, it is a palindrome.\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= s.length &lt;= 2 * 10<sup>5</sup></code></li>\n<li><code>s</code> consists only of printable ASCII characters.</li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "s = \"A man, a plan, a canal: Panama\"",
+      "output": "true",
+      "explanation": "\"amanaplanacanalpanama\" is a palindrome."
+    },
+    {
+      "input": "s = \"race a car\"",
+      "output": "false",
+      "explanation": "\"raceacar\" is not a palindrome."
+    },
+    {
+      "input": "s = \" \"",
+      "output": "true",
+      "explanation": "s is an empty string \"\" after removing non-alphanumeric characters.\nSince an empty string reads the same forward and backward, it is a palindrome."
+    }
+  ],
+  "constraints": [
+    "1 <= s.length <= 2 * 105",
+    "s consists only of printable ASCII characters."
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    bool isPalindrome(string s) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public boolean isPalindrome(String s) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def isPalindrome(self, s: str) -> bool:\n        "
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "title": "All Nodes Distance K in Binary Tree",
+  "difficulty": "Medium",
+  "description": "<p>Given the <code>root</code> of a binary tree, the value of a target node <code>target</code>, and an integer <code>k</code>, return <em>an array of the values of all nodes that have a distance </em><code>k</code><em> from the target node.</em></p>\n<p>You can return the answer in <strong>any order</strong>.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<img alt=\"\" src=\"https://s3-lc-upload.s3.amazonaws.com/uploads/2018/06/28/sketch0.png\" style=\"width: 500px; height: 429px;\"/>\n<pre>\n<strong>Input:</strong> root = [3,5,1,6,2,0,8,null,null,7,4], target = 5, k = 2\n<strong>Output:</strong> [7,4,1]\nExplanation: The nodes that are a distance 2 from the target node (with value 5) have values 7, 4, and 1.\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> root = [1], target = 1, k = 3\n<strong>Output:</strong> []\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li>The number of nodes in the tree is in the range <code>[1, 500]</code>.</li>\n<li><code>0 &lt;= Node.val &lt;= 500</code></li>\n<li>All the values <code>Node.val</code> are <strong>unique</strong>.</li>\n<li><code>target</code> is the value of one of the nodes in the tree.</li>\n<li><code>0 &lt;= k &lt;= 1000</code></li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "root = [3,5,1,6,2,0,8,null,null,7,4], target = 5, k = 2",
+      "output": "[7,4,1]",
+      "explanation": "The nodes that are a distance 2 from the target node (with value 5) have values 7, 4, and 1."
+    },
+    {
+      "input": "root = [1], target = 1, k = 3",
+      "output": "[]",
+      "explanation": ""
+    }
+  ],
+  "constraints": [
+    "The number of nodes in the tree is in the range [1, 500].",
+    "0 <= Node.val <= 500",
+    "All the values Node.val are unique.",
+    "target is the value of one of the nodes in the tree.",
+    "0 <= k <= 1000"
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n * };\n */\nclass Solution {\npublic:\n    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n *     int val;\n *     TreeNode left;\n *     TreeNode right;\n *     TreeNode(int x) { val = x; }\n * }\n */\nclass Solution {\n    public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, x):\n#         self.val = x\n#         self.left = None\n#         self.right = None\n\nclass Solution:\n    def distanceK(self, root: TreeNode, target: TreeNode, k: int) -> List[int]:\n        "
+    }
+  ]
+}

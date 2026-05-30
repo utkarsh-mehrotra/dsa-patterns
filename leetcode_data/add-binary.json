@@ -1,0 +1,39 @@
+{
+  "title": "Add Binary",
+  "difficulty": "Easy",
+  "description": "<p>Given two binary strings <code>a</code> and <code>b</code>, return <em>their sum as a binary string</em>.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre><strong>Input:</strong> a = \"11\", b = \"1\"\n<strong>Output:</strong> \"100\"\n</pre><p><strong class=\"example\">Example 2:</strong></p>\n<pre><strong>Input:</strong> a = \"1010\", b = \"1011\"\n<strong>Output:</strong> \"10101\"\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= a.length, b.length &lt;= 10<sup>4</sup></code></li>\n<li><code>a</code> and <code>b</code> consist only of <code>'0'</code> or <code>'1'</code> characters.</li>\n<li>Each string does not contain leading zeros except for the zero itself.</li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "a = \"11\", b = \"1\"",
+      "output": "\"100\"",
+      "explanation": ""
+    },
+    {
+      "input": "a = \"1010\", b = \"1011\"",
+      "output": "\"10101\"",
+      "explanation": ""
+    }
+  ],
+  "constraints": [
+    "1 <= a.length, b.length <= 104",
+    "a and b consist only of '0' or '1' characters.",
+    "Each string does not contain leading zeros except for the zero itself."
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    string addBinary(string a, string b) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public String addBinary(String a, String b) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def addBinary(self, a: str, b: str) -> str:\n        "
+    }
+  ]
+}

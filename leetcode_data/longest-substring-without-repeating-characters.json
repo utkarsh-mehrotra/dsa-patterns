@@ -1,0 +1,43 @@
+{
+  "title": "Longest Substring Without Repeating Characters",
+  "difficulty": "Medium",
+  "description": "<p>Given a string <code>s</code>, find the length of the <strong>longest</strong> <span data-keyword=\"substring-nonempty\"><strong>substring</strong></span> without duplicate characters.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"abcabcbb\"\n<strong>Output:</strong> 3\n<strong>Explanation:</strong> The answer is \"abc\", with the length of 3. Note that <code>\"bca\"</code> and <code>\"cab\"</code> are also correct answers.\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"bbbbb\"\n<strong>Output:</strong> 1\n<strong>Explanation:</strong> The answer is \"b\", with the length of 1.\n</pre>\n<p><strong class=\"example\">Example 3:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"pwwkew\"\n<strong>Output:</strong> 3\n<strong>Explanation:</strong> The answer is \"wke\", with the length of 3.\nNotice that the answer must be a substring, \"pwke\" is a subsequence and not a substring.\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>0 &lt;= s.length &lt;= 5 * 10<sup>4</sup></code></li>\n<li><code>s</code> consists of English letters, digits, symbols and spaces.</li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "s = \"abcabcbb\"",
+      "output": "3",
+      "explanation": "The answer is \"abc\", with the length of 3. Note that \"bca\" and \"cab\" are also correct answers."
+    },
+    {
+      "input": "s = \"bbbbb\"",
+      "output": "1",
+      "explanation": "The answer is \"b\", with the length of 1."
+    },
+    {
+      "input": "s = \"pwwkew\"",
+      "output": "3",
+      "explanation": "The answer is \"wke\", with the length of 3.\nNotice that the answer must be a substring, \"pwke\" is a subsequence and not a substring."
+    }
+  ],
+  "constraints": [
+    "0 <= s.length <= 5 * 104",
+    "s consists of English letters, digits, symbols and spaces."
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    int lengthOfLongestSubstring(string s) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int lengthOfLongestSubstring(String s) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        "
+    }
+  ]
+}

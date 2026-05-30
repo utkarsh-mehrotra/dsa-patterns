@@ -1,0 +1,39 @@
+{
+  "title": "Subarray Sum Equals K",
+  "difficulty": "Medium",
+  "description": "<p>Given an array of integers <code>nums</code> and an integer <code>k</code>, return <em>the total number of subarrays whose sum equals to</em> <code>k</code>.</p>\n<p>A subarray is a contiguous <strong>non-empty</strong> sequence of elements within an array.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre><strong>Input:</strong> nums = [1,1,1], k = 2\n<strong>Output:</strong> 2\n</pre><p><strong class=\"example\">Example 2:</strong></p>\n<pre><strong>Input:</strong> nums = [1,2,3], k = 3\n<strong>Output:</strong> 2\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= nums.length &lt;= 2 * 10<sup>4</sup></code></li>\n<li><code>-1000 &lt;= nums[i] &lt;= 1000</code></li>\n<li><code>-10<sup>7</sup> &lt;= k &lt;= 10<sup>7</sup></code></li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "nums = [1,1,1], k = 2",
+      "output": "2",
+      "explanation": ""
+    },
+    {
+      "input": "nums = [1,2,3], k = 3",
+      "output": "2",
+      "explanation": ""
+    }
+  ],
+  "constraints": [
+    "1 <= nums.length <= 2 * 104",
+    "-1000 <= nums[i] <= 1000",
+    "-107 <= k <= 107"
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    int subarraySum(vector<int>& nums, int k) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int subarraySum(int[] nums, int k) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def subarraySum(self, nums: List[int], k: int) -> int:\n        "
+    }
+  ]
+}

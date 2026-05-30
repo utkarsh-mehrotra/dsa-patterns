@@ -1,0 +1,30 @@
+{
+  "title": "Design Add and Search Words Data Structure",
+  "difficulty": "Medium",
+  "description": "<p>Design a data structure that supports adding new words and finding if a string matches any previously added string.</p>\n<p>Implement the <code>WordDictionary</code> class:</p>\n<ul>\n<li><code>WordDictionary()</code> Initializes the object.</li>\n<li><code>void addWord(word)</code> Adds <code>word</code> to the data structure, it can be matched later.</li>\n<li><code>bool search(word)</code> Returns <code>true</code> if there is any string in the data structure that matches <code>word</code> or <code>false</code> otherwise. <code>word</code> may contain dots <code>'.'</code> where dots can be matched with any letter.</li>\n</ul>\n<p> </p>\n<p><strong class=\"example\">Example:</strong></p>\n<pre>\n<strong>Input</strong>\n[\"WordDictionary\",\"addWord\",\"addWord\",\"addWord\",\"search\",\"search\",\"search\",\"search\"]\n[[],[\"bad\"],[\"dad\"],[\"mad\"],[\"pad\"],[\"bad\"],[\".ad\"],[\"b..\"]]\n<strong>Output</strong>\n[null,null,null,null,false,true,true,true]\n\n<strong>Explanation</strong>\nWordDictionary wordDictionary = new WordDictionary();\nwordDictionary.addWord(\"bad\");\nwordDictionary.addWord(\"dad\");\nwordDictionary.addWord(\"mad\");\nwordDictionary.search(\"pad\"); // return False\nwordDictionary.search(\"bad\"); // return True\nwordDictionary.search(\".ad\"); // return True\nwordDictionary.search(\"b..\"); // return True\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= word.length &lt;= 25</code></li>\n<li><code>word</code> in <code>addWord</code> consists of lowercase English letters.</li>\n<li><code>word</code> in <code>search</code> consist of <code>'.'</code> or lowercase English letters.</li>\n<li>There will be at most <code>2</code> dots in <code>word</code> for <code>search</code> queries.</li>\n<li>At most <code>10<sup>4</sup></code> calls will be made to <code>addWord</code> and <code>search</code>.</li>\n</ul>\n",
+  "examples": [],
+  "constraints": [
+    "1 <= word.length <= 25",
+    "word in addWord consists of lowercase English letters.",
+    "word in search consist of '.' or lowercase English letters.",
+    "There will be at most 2 dots in word for search queries.",
+    "At most 104 calls will be made to addWord and search."
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class WordDictionary {\npublic:\n    WordDictionary() {\n        \n    }\n    \n    void addWord(string word) {\n        \n    }\n    \n    bool search(string word) {\n        \n    }\n};\n\n/**\n * Your WordDictionary object will be instantiated and called as such:\n * WordDictionary* obj = new WordDictionary();\n * obj->addWord(word);\n * bool param_2 = obj->search(word);\n */"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class WordDictionary {\n\n    public WordDictionary() {\n        \n    }\n    \n    public void addWord(String word) {\n        \n    }\n    \n    public boolean search(String word) {\n        \n    }\n}\n\n/**\n * Your WordDictionary object will be instantiated and called as such:\n * WordDictionary obj = new WordDictionary();\n * obj.addWord(word);\n * boolean param_2 = obj.search(word);\n */"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class WordDictionary:\n\n    def __init__(self):\n        \n\n    def addWord(self, word: str) -> None:\n        \n\n    def search(self, word: str) -> bool:\n        \n\n\n# Your WordDictionary object will be instantiated and called as such:\n# obj = WordDictionary()\n# obj.addWord(word)\n# param_2 = obj.search(word)"
+    }
+  ]
+}

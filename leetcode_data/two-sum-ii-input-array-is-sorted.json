@@ -1,0 +1,46 @@
+{
+  "title": "Two Sum II - Input Array Is Sorted",
+  "difficulty": "Medium",
+  "description": "<p>Given a <strong>1-indexed</strong> array of integers <code>numbers</code> that is already <strong><em>sorted in non-decreasing order</em></strong>, find two numbers such that they add up to a specific <code>target</code> number. Let these two numbers be <code>numbers[index<sub>1</sub>]</code> and <code>numbers[index<sub>2</sub>]</code> where <code>1 &lt;= index<sub>1</sub> &lt; index<sub>2</sub> &lt;= numbers.length</code>.</p>\n<p>Return<em> the indices of the two numbers </em><code>index<sub>1</sub></code><em> and </em><code>index<sub>2</sub></code><em>, <strong>each incremented by one,</strong> as an integer array </em><code>[index<sub>1</sub>, index<sub>2</sub>]</code><em> of length 2.</em></p>\n<p>The tests are generated such that there is <strong>exactly one solution</strong>. You <strong>may not</strong> use the same element twice.</p>\n<p>Your solution must use only constant extra space.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> numbers = [<u>2</u>,<u>7</u>,11,15], target = 9\n<strong>Output:</strong> [1,2]\n<strong>Explanation:</strong> The sum of 2 and 7 is 9. Therefore, index<sub>1</sub> = 1, index<sub>2</sub> = 2. We return [1, 2].\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> numbers = [<u>2</u>,3,<u>4</u>], target = 6\n<strong>Output:</strong> [1,3]\n<strong>Explanation:</strong> The sum of 2 and 4 is 6. Therefore index<sub>1</sub> = 1, index<sub>2</sub> = 3. We return [1, 3].\n</pre>\n<p><strong class=\"example\">Example 3:</strong></p>\n<pre>\n<strong>Input:</strong> numbers = [<u>-1</u>,<u>0</u>], target = -1\n<strong>Output:</strong> [1,2]\n<strong>Explanation:</strong> The sum of -1 and 0 is -1. Therefore index<sub>1</sub> = 1, index<sub>2</sub> = 2. We return [1, 2].\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>2 &lt;= numbers.length &lt;= 3 * 10<sup>4</sup></code></li>\n<li><code>-1000 &lt;= numbers[i] &lt;= 1000</code></li>\n<li><code>numbers</code> is sorted in <strong>non-decreasing order</strong>.</li>\n<li><code>-1000 &lt;= target &lt;= 1000</code></li>\n<li>The tests are generated such that there is <strong>exactly one solution</strong>.</li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "numbers = [2,7,11,15], target = 9",
+      "output": "[1,2]",
+      "explanation": "The sum of 2 and 7 is 9. Therefore, index1 = 1, index2 = 2. We return [1, 2]."
+    },
+    {
+      "input": "numbers = [2,3,4], target = 6",
+      "output": "[1,3]",
+      "explanation": "The sum of 2 and 4 is 6. Therefore index1 = 1, index2 = 3. We return [1, 3]."
+    },
+    {
+      "input": "numbers = [-1,0], target = -1",
+      "output": "[1,2]",
+      "explanation": "The sum of -1 and 0 is -1. Therefore index1 = 1, index2 = 2. We return [1, 2]."
+    }
+  ],
+  "constraints": [
+    "2 <= numbers.length <= 3 * 104",
+    "-1000 <= numbers[i] <= 1000",
+    "numbers is sorted in non-decreasing order.",
+    "-1000 <= target <= 1000",
+    "The tests are generated such that there is exactly one solution."
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    vector<int> twoSum(vector<int>& numbers, int target) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int[] twoSum(int[] numbers, int target) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def twoSum(self, numbers: List[int], target: int) -> List[int]:\n        "
+    }
+  ]
+}

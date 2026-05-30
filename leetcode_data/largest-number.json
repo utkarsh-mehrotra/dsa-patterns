@@ -1,0 +1,38 @@
+{
+  "title": "Largest Number",
+  "difficulty": "Medium",
+  "description": "<p>Given a list of non-negative integers <code>nums</code>, arrange them such that they form the largest number and return it.</p>\n<p>Since the result may be very large, so you need to return a string instead of an integer.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> nums = [10,2]\n<strong>Output:</strong> \"210\"\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> nums = [3,30,34,5,9]\n<strong>Output:</strong> \"9534330\"\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= nums.length &lt;= 100</code></li>\n<li><code>0 &lt;= nums[i] &lt;= 10<sup>9</sup></code></li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "nums = [10,2]",
+      "output": "\"210\"",
+      "explanation": ""
+    },
+    {
+      "input": "nums = [3,30,34,5,9]",
+      "output": "\"9534330\"",
+      "explanation": ""
+    }
+  ],
+  "constraints": [
+    "1 <= nums.length <= 100",
+    "0 <= nums[i] <= 109"
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    string largestNumber(vector<int>& nums) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public String largestNumber(int[] nums) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def largestNumber(self, nums: List[int]) -> str:\n        "
+    }
+  ]
+}

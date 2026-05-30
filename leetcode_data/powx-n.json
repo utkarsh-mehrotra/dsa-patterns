@@ -1,0 +1,46 @@
+{
+  "title": "Pow(x, n)",
+  "difficulty": "Medium",
+  "description": "<p>Implement <a href=\"http://www.cplusplus.com/reference/valarray/pow/\" target=\"_blank\">pow(x, n)</a>, which calculates <code>x</code> raised to the power <code>n</code> (i.e., <code>x<sup>n</sup></code>).</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> x = 2.00000, n = 10\n<strong>Output:</strong> 1024.00000\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> x = 2.10000, n = 3\n<strong>Output:</strong> 9.26100\n</pre>\n<p><strong class=\"example\">Example 3:</strong></p>\n<pre>\n<strong>Input:</strong> x = 2.00000, n = -2\n<strong>Output:</strong> 0.25000\n<strong>Explanation:</strong> 2<sup>-2</sup> = 1/2<sup>2</sup> = 1/4 = 0.25\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>-100.0 &lt; x &lt; 100.0</code></li>\n<li><code>-2<sup>31</sup> &lt;= n &lt;= 2<sup>31</sup>-1</code></li>\n<li><code>n</code> is an integer.</li>\n<li>Either <code>x</code> is not zero or <code>n &gt; 0</code>.</li>\n<li><code>-10<sup>4</sup> &lt;= x<sup>n</sup> &lt;= 10<sup>4</sup></code></li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "x = 2.00000, n = 10",
+      "output": "1024.00000",
+      "explanation": ""
+    },
+    {
+      "input": "x = 2.10000, n = 3",
+      "output": "9.26100",
+      "explanation": ""
+    },
+    {
+      "input": "x = 2.00000, n = -2",
+      "output": "0.25000",
+      "explanation": "2-2 = 1/22 = 1/4 = 0.25"
+    }
+  ],
+  "constraints": [
+    "-100.0 < x < 100.0",
+    "-231 <= n <= 231-1",
+    "n is an integer.",
+    "Either x is not zero or n > 0.",
+    "-104 <= xn <= 104"
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    double myPow(double x, int n) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public double myPow(double x, int n) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def myPow(self, x: float, n: int) -> float:\n        "
+    }
+  ]
+}

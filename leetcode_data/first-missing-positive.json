@@ -1,0 +1,43 @@
+{
+  "title": "First Missing Positive",
+  "difficulty": "Hard",
+  "description": "<p>Given an unsorted integer array <code>nums</code>. Return the <em>smallest positive integer</em> that is <em>not present</em> in <code>nums</code>.</p>\n<p>You must implement an algorithm that runs in <code>O(n)</code> time and uses <code>O(1)</code> auxiliary space.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> nums = [1,2,0]\n<strong>Output:</strong> 3\n<strong>Explanation:</strong> The numbers in the range [1,2] are all in the array.\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> nums = [3,4,-1,1]\n<strong>Output:</strong> 2\n<strong>Explanation:</strong> 1 is in the array but 2 is missing.\n</pre>\n<p><strong class=\"example\">Example 3:</strong></p>\n<pre>\n<strong>Input:</strong> nums = [7,8,9,11,12]\n<strong>Output:</strong> 1\n<strong>Explanation:</strong> The smallest positive integer 1 is missing.\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= nums.length &lt;= 10<sup>5</sup></code></li>\n<li><code>-2<sup>31</sup> &lt;= nums[i] &lt;= 2<sup>31</sup> - 1</code></li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "nums = [1,2,0]",
+      "output": "3",
+      "explanation": "The numbers in the range [1,2] are all in the array."
+    },
+    {
+      "input": "nums = [3,4,-1,1]",
+      "output": "2",
+      "explanation": "1 is in the array but 2 is missing."
+    },
+    {
+      "input": "nums = [7,8,9,11,12]",
+      "output": "1",
+      "explanation": "The smallest positive integer 1 is missing."
+    }
+  ],
+  "constraints": [
+    "1 <= nums.length <= 105",
+    "-231 <= nums[i] <= 231 - 1"
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    int firstMissingPositive(vector<int>& nums) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int firstMissingPositive(int[] nums) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def firstMissingPositive(self, nums: List[int]) -> int:\n        "
+    }
+  ]
+}

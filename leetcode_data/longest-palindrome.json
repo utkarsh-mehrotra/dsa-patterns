@@ -1,0 +1,38 @@
+{
+  "title": "Longest Palindrome",
+  "difficulty": "Easy",
+  "description": "<p>Given a string <code>s</code> which consists of lowercase or uppercase letters, return the length of the <strong>longest <span data-keyword=\"palindrome-string\">palindrome</span></strong> that can be built with those letters.</p>\n<p>Letters are <strong>case sensitive</strong>, for example, <code>\"Aa\"</code> is not considered a palindrome.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"abccccdd\"\n<strong>Output:</strong> 7\n<strong>Explanation:</strong> One longest palindrome that can be built is \"dccaccd\", whose length is 7.\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"a\"\n<strong>Output:</strong> 1\n<strong>Explanation:</strong> The longest palindrome that can be built is \"a\", whose length is 1.\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= s.length &lt;= 2000</code></li>\n<li><code>s</code> consists of lowercase <strong>and/or</strong> uppercase English letters only.</li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "s = \"abccccdd\"",
+      "output": "7",
+      "explanation": "One longest palindrome that can be built is \"dccaccd\", whose length is 7."
+    },
+    {
+      "input": "s = \"a\"",
+      "output": "1",
+      "explanation": "The longest palindrome that can be built is \"a\", whose length is 1."
+    }
+  ],
+  "constraints": [
+    "1 <= s.length <= 2000",
+    "s consists of lowercase and/or uppercase English letters only."
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    int longestPalindrome(string s) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int longestPalindrome(String s) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def longestPalindrome(self, s: str) -> int:\n        "
+    }
+  ]
+}

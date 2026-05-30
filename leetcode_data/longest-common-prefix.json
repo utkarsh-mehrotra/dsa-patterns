@@ -1,0 +1,39 @@
+{
+  "title": "Longest Common Prefix",
+  "difficulty": "Easy",
+  "description": "<p>Write a function to find the longest common prefix string amongst an array of strings.</p>\n<p>If there is no common prefix, return an empty string <code>\"\"</code>.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> strs = [\"flower\",\"flow\",\"flight\"]\n<strong>Output:</strong> \"fl\"\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> strs = [\"dog\",\"racecar\",\"car\"]\n<strong>Output:</strong> \"\"\n<strong>Explanation:</strong> There is no common prefix among the input strings.\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= strs.length &lt;= 200</code></li>\n<li><code>0 &lt;= strs[i].length &lt;= 200</code></li>\n<li><code>strs[i]</code> consists of only lowercase English letters if it is non-empty.</li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "strs = [\"flower\",\"flow\",\"flight\"]",
+      "output": "\"fl\"",
+      "explanation": ""
+    },
+    {
+      "input": "strs = [\"dog\",\"racecar\",\"car\"]",
+      "output": "\"\"",
+      "explanation": "There is no common prefix among the input strings."
+    }
+  ],
+  "constraints": [
+    "1 <= strs.length <= 200",
+    "0 <= strs[i].length <= 200",
+    "strs[i] consists of only lowercase English letters if it is non-empty."
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    string longestCommonPrefix(vector<string>& strs) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public String longestCommonPrefix(String[] strs) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def longestCommonPrefix(self, strs: List[str]) -> str:\n        "
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "title": "Counting Bits",
+  "difficulty": "Easy",
+  "description": "<p>Given an integer <code>n</code>, return <em>an array </em><code>ans</code><em> of length </em><code>n + 1</code><em> such that for each </em><code>i</code><em> </em>(<code>0 &lt;= i &lt;= n</code>)<em>, </em><code>ans[i]</code><em> is the <strong>number of </strong></em><code>1</code><em><strong>'s</strong> in the binary representation of </em><code>i</code>.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> n = 2\n<strong>Output:</strong> [0,1,1]\n<strong>Explanation:</strong>\n0 --&gt; 0\n1 --&gt; 1\n2 --&gt; 10\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> n = 5\n<strong>Output:</strong> [0,1,1,2,1,2]\n<strong>Explanation:</strong>\n0 --&gt; 0\n1 --&gt; 1\n2 --&gt; 10\n3 --&gt; 11\n4 --&gt; 100\n5 --&gt; 101\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>0 &lt;= n &lt;= 10<sup>5</sup></code></li>\n</ul>\n<p> </p>\n<p><strong>Follow up:</strong></p>\n<ul>\n<li>It is very easy to come up with a solution with a runtime of <code>O(n log n)</code>. Can you do it in linear time <code>O(n)</code> and possibly in a single pass?</li>\n<li>Can you do it without using any built-in function (i.e., like <code>__builtin_popcount</code> in C++)?</li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "n = 2",
+      "output": "[0,1,1]",
+      "explanation": "0 --> 0\n1 --> 1\n2 --> 10"
+    },
+    {
+      "input": "n = 5",
+      "output": "[0,1,1,2,1,2]",
+      "explanation": "0 --> 0\n1 --> 1\n2 --> 10\n3 --> 11\n4 --> 100\n5 --> 101"
+    }
+  ],
+  "constraints": [
+    "0 <= n <= 105"
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    vector<int> countBits(int n) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int[] countBits(int n) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def countBits(self, n: int) -> List[int]:\n        "
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "title": "Coin Change",
+  "difficulty": "Medium",
+  "description": "<p>You are given an integer array <code>coins</code> representing coins of different denominations and an integer <code>amount</code> representing a total amount of money.</p>\n<p>Return <em>the fewest number of coins that you need to make up that amount</em>. If that amount of money cannot be made up by any combination of the coins, return <code>-1</code>.</p>\n<p>You may assume that you have an infinite number of each kind of coin.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> coins = [1,2,5], amount = 11\n<strong>Output:</strong> 3\n<strong>Explanation:</strong> 11 = 5 + 5 + 1\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> coins = [2], amount = 3\n<strong>Output:</strong> -1\n</pre>\n<p><strong class=\"example\">Example 3:</strong></p>\n<pre>\n<strong>Input:</strong> coins = [1], amount = 0\n<strong>Output:</strong> 0\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= coins.length &lt;= 12</code></li>\n<li><code>1 &lt;= coins[i] &lt;= 2<sup>31</sup> - 1</code></li>\n<li><code>0 &lt;= amount &lt;= 10<sup>4</sup></code></li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "coins = [1,2,5], amount = 11",
+      "output": "3",
+      "explanation": "11 = 5 + 5 + 1"
+    },
+    {
+      "input": "coins = [2], amount = 3",
+      "output": "-1",
+      "explanation": ""
+    },
+    {
+      "input": "coins = [1], amount = 0",
+      "output": "0",
+      "explanation": ""
+    }
+  ],
+  "constraints": [
+    "1 <= coins.length <= 12",
+    "1 <= coins[i] <= 231 - 1",
+    "0 <= amount <= 104"
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    int coinChange(vector<int>& coins, int amount) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int coinChange(int[] coins, int amount) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def coinChange(self, coins: List[int], amount: int) -> int:\n        "
+    }
+  ]
+}

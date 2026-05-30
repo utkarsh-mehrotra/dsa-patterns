@@ -1,0 +1,43 @@
+{
+  "title": "Longest Valid Parentheses",
+  "difficulty": "Hard",
+  "description": "<p>Given a string containing just the characters <code>'('</code> and <code>')'</code>, return <em>the length of the longest valid (well-formed) parentheses </em><span data-keyword=\"substring-nonempty\"><em>substring</em></span>.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"(()\"\n<strong>Output:</strong> 2\n<strong>Explanation:</strong> The longest valid parentheses substring is \"()\".\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> s = \")()())\"\n<strong>Output:</strong> 4\n<strong>Explanation:</strong> The longest valid parentheses substring is \"()()\".\n</pre>\n<p><strong class=\"example\">Example 3:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"\"\n<strong>Output:</strong> 0\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>0 &lt;= s.length &lt;= 3 * 10<sup>4</sup></code></li>\n<li><code>s[i]</code> is <code>'('</code>, or <code>')'</code>.</li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "s = \"(()\"",
+      "output": "2",
+      "explanation": "The longest valid parentheses substring is \"()\"."
+    },
+    {
+      "input": "s = \")()())\"",
+      "output": "4",
+      "explanation": "The longest valid parentheses substring is \"()()\"."
+    },
+    {
+      "input": "s = \"\"",
+      "output": "0",
+      "explanation": ""
+    }
+  ],
+  "constraints": [
+    "0 <= s.length <= 3 * 104",
+    "s[i] is '(', or ')'."
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    int longestValidParentheses(string s) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int longestValidParentheses(String s) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def longestValidParentheses(self, s: str) -> int:\n        "
+    }
+  ]
+}

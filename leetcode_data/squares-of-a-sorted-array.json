@@ -1,0 +1,39 @@
+{
+  "title": "Squares of a Sorted Array",
+  "difficulty": "Easy",
+  "description": "<p>Given an integer array <code>nums</code> sorted in <strong>non-decreasing</strong> order, return <em>an array of <strong>the squares of each number</strong> sorted in non-decreasing order</em>.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> nums = [-4,-1,0,3,10]\n<strong>Output:</strong> [0,1,9,16,100]\n<strong>Explanation:</strong> After squaring, the array becomes [16,1,0,9,100].\nAfter sorting, it becomes [0,1,9,16,100].\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> nums = [-7,-3,2,3,11]\n<strong>Output:</strong> [4,9,9,49,121]\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code><span>1 &lt;= nums.length &lt;= </span>10<sup>4</sup></code></li>\n<li><code>-10<sup>4</sup> &lt;= nums[i] &lt;= 10<sup>4</sup></code></li>\n<li><code>nums</code> is sorted in <strong>non-decreasing</strong> order.</li>\n</ul>\n<p> </p>\n<strong>Follow up:</strong> Squaring each element and sorting the new array is very trivial, could you find an <code>O(n)</code> solution using a different approach?",
+  "examples": [
+    {
+      "input": "nums = [-4,-1,0,3,10]",
+      "output": "[0,1,9,16,100]",
+      "explanation": "After squaring, the array becomes [16,1,0,9,100].\nAfter sorting, it becomes [0,1,9,16,100]."
+    },
+    {
+      "input": "nums = [-7,-3,2,3,11]",
+      "output": "[4,9,9,49,121]",
+      "explanation": ""
+    }
+  ],
+  "constraints": [
+    "1 <= nums.length <= 104",
+    "-104 <= nums[i] <= 104",
+    "nums is sorted in non-decreasing order."
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    vector<int> sortedSquares(vector<int>& nums) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int[] sortedSquares(int[] nums) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def sortedSquares(self, nums: List[int]) -> List[int]:\n        "
+    }
+  ]
+}

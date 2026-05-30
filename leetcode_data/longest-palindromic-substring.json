@@ -1,0 +1,38 @@
+{
+  "title": "Longest Palindromic Substring",
+  "difficulty": "Medium",
+  "description": "<p>Given a string <code>s</code>, return <em>the longest</em> <span data-keyword=\"palindromic-string\"><em>palindromic</em></span> <span data-keyword=\"substring-nonempty\"><em>substring</em></span> in <code>s</code>.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"babad\"\n<strong>Output:</strong> \"bab\"\n<strong>Explanation:</strong> \"aba\" is also a valid answer.\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> s = \"cbbd\"\n<strong>Output:</strong> \"bb\"\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= s.length &lt;= 1000</code></li>\n<li><code>s</code> consist of only digits and English letters.</li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "s = \"babad\"",
+      "output": "\"bab\"",
+      "explanation": "\"aba\" is also a valid answer."
+    },
+    {
+      "input": "s = \"cbbd\"",
+      "output": "\"bb\"",
+      "explanation": ""
+    }
+  ],
+  "constraints": [
+    "1 <= s.length <= 1000",
+    "s consist of only digits and English letters."
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    string longestPalindrome(string s) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public String longestPalindrome(String s) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def longestPalindrome(self, s: str) -> str:\n        "
+    }
+  ]
+}

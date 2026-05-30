@@ -1,0 +1,43 @@
+{
+  "title": "Capacity To Ship Packages Within D Days",
+  "difficulty": "Medium",
+  "description": "<p>A conveyor belt has packages that must be shipped from one port to another within <code>days</code> days.</p>\n<p>The <code>i<sup>th</sup></code> package on the conveyor belt has a weight of <code>weights[i]</code>. Each day, we load the ship with packages on the conveyor belt (in the order given by <code>weights</code>). We may not load more weight than the maximum weight capacity of the ship.</p>\n<p>Return the least weight capacity of the ship that will result in all the packages on the conveyor belt being shipped within <code>days</code> days.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> weights = [1,2,3,4,5,6,7,8,9,10], days = 5\n<strong>Output:</strong> 15\n<strong>Explanation:</strong> A ship capacity of 15 is the minimum to ship all the packages in 5 days like this:\n1st day: 1, 2, 3, 4, 5\n2nd day: 6, 7\n3rd day: 8\n4th day: 9\n5th day: 10\n\nNote that the cargo must be shipped in the order given, so using a ship of capacity 14 and splitting the packages into parts like (2, 3, 4, 5), (1, 6, 7), (8), (9), (10) is not allowed.\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> weights = [3,2,2,4,1,4], days = 3\n<strong>Output:</strong> 6\n<strong>Explanation:</strong> A ship capacity of 6 is the minimum to ship all the packages in 3 days like this:\n1st day: 3, 2\n2nd day: 2, 4\n3rd day: 1, 4\n</pre>\n<p><strong class=\"example\">Example 3:</strong></p>\n<pre>\n<strong>Input:</strong> weights = [1,2,3,1,1], days = 4\n<strong>Output:</strong> 3\n<strong>Explanation:</strong>\n1st day: 1\n2nd day: 2\n3rd day: 3\n4th day: 1, 1\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= days &lt;= weights.length &lt;= 5 * 10<sup>4</sup></code></li>\n<li><code>1 &lt;= weights[i] &lt;= 500</code></li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "weights = [1,2,3,4,5,6,7,8,9,10], days = 5",
+      "output": "15",
+      "explanation": "A ship capacity of 15 is the minimum to ship all the packages in 5 days like this:\n1st day: 1, 2, 3, 4, 5\n2nd day: 6, 7\n3rd day: 8\n4th day: 9\n5th day: 10\n\nNote that the cargo must be shipped in the order given, so using a ship of capacity 14 and splitting the packages into parts like (2, 3, 4, 5), (1, 6, 7), (8), (9), (10) is not allowed."
+    },
+    {
+      "input": "weights = [3,2,2,4,1,4], days = 3",
+      "output": "6",
+      "explanation": "A ship capacity of 6 is the minimum to ship all the packages in 3 days like this:\n1st day: 3, 2\n2nd day: 2, 4\n3rd day: 1, 4"
+    },
+    {
+      "input": "weights = [1,2,3,1,1], days = 4",
+      "output": "3",
+      "explanation": "1st day: 1\n2nd day: 2\n3rd day: 3\n4th day: 1, 1"
+    }
+  ],
+  "constraints": [
+    "1 <= days <= weights.length <= 5 * 104",
+    "1 <= weights[i] <= 500"
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    int shipWithinDays(vector<int>& weights, int days) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int shipWithinDays(int[] weights, int days) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def shipWithinDays(self, weights: List[int], days: int) -> int:\n        "
+    }
+  ]
+}

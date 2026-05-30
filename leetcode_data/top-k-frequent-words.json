@@ -1,0 +1,40 @@
+{
+  "title": "Top K Frequent Words",
+  "difficulty": "Medium",
+  "description": "<p>Given an array of strings <code>words</code> and an integer <code>k</code>, return <em>the </em><code>k</code><em> most frequent strings</em>.</p>\n<p>Return the answer <strong>sorted</strong> by <strong>the frequency</strong> from highest to lowest. Sort the words with the same frequency by their <strong>lexicographical order</strong>.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> words = [\"i\",\"love\",\"leetcode\",\"i\",\"love\",\"coding\"], k = 2\n<strong>Output:</strong> [\"i\",\"love\"]\n<strong>Explanation:</strong> \"i\" and \"love\" are the two most frequent words.\nNote that \"i\" comes before \"love\" due to a lower alphabetical order.\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> words = [\"the\",\"day\",\"is\",\"sunny\",\"the\",\"the\",\"the\",\"sunny\",\"is\",\"is\"], k = 4\n<strong>Output:</strong> [\"the\",\"is\",\"sunny\",\"day\"]\n<strong>Explanation:</strong> \"the\", \"is\", \"sunny\" and \"day\" are the four most frequent words, with the number of occurrence being 4, 3, 2 and 1 respectively.\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= words.length &lt;= 500</code></li>\n<li><code>1 &lt;= words[i].length &lt;= 10</code></li>\n<li><code>words[i]</code> consists of lowercase English letters.</li>\n<li><code>k</code> is in the range <code>[1, The number of <strong>unique</strong> words[i]]</code></li>\n</ul>\n<p> </p>\n<p><strong>Follow-up:</strong> Could you solve it in <code>O(n log(k))</code> time and <code>O(n)</code> extra space?</p>\n",
+  "examples": [
+    {
+      "input": "words = [\"i\",\"love\",\"leetcode\",\"i\",\"love\",\"coding\"], k = 2",
+      "output": "[\"i\",\"love\"]",
+      "explanation": "\"i\" and \"love\" are the two most frequent words.\nNote that \"i\" comes before \"love\" due to a lower alphabetical order."
+    },
+    {
+      "input": "words = [\"the\",\"day\",\"is\",\"sunny\",\"the\",\"the\",\"the\",\"sunny\",\"is\",\"is\"], k = 4",
+      "output": "[\"the\",\"is\",\"sunny\",\"day\"]",
+      "explanation": "\"the\", \"is\", \"sunny\" and \"day\" are the four most frequent words, with the number of occurrence being 4, 3, 2 and 1 respectively."
+    }
+  ],
+  "constraints": [
+    "1 <= words.length <= 500",
+    "1 <= words[i].length <= 10",
+    "words[i] consists of lowercase English letters.",
+    "k is in the range [1, The number of unique words[i]]"
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    vector<string> topKFrequent(vector<string>& words, int k) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public List<String> topKFrequent(String[] words, int k) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def topKFrequent(self, words: List[str], k: int) -> List[str]:\n        "
+    }
+  ]
+}

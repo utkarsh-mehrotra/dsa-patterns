@@ -1,0 +1,42 @@
+{
+  "title": "Bus Routes",
+  "difficulty": "Hard",
+  "description": "<p>You are given an array <code>routes</code> representing bus routes where <code>routes[i]</code> is a bus route that the <code>i<sup>th</sup></code> bus repeats forever.</p>\n<ul>\n<li>For example, if <code>routes[0] = [1, 5, 7]</code>, this means that the <code>0<sup>th</sup></code> bus travels in the sequence <code>1 -&gt; 5 -&gt; 7 -&gt; 1 -&gt; 5 -&gt; 7 -&gt; 1 -&gt; ...</code> forever.</li>\n</ul>\n<p>You will start at the bus stop <code>source</code> (You are not on any bus initially), and you want to go to the bus stop <code>target</code>. You can travel between bus stops by buses only.</p>\n<p>Return <em>the least number of buses you must take to travel from </em><code>source</code><em> to </em><code>target</code>. Return <code>-1</code> if it is not possible.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> routes = [[1,2,7],[3,6,7]], source = 1, target = 6\n<strong>Output:</strong> 2\n<strong>Explanation:</strong> The best strategy is take the first bus to the bus stop 7, then take the second bus to the bus stop 6.\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> routes = [[7,12],[4,5,15],[6],[15,19],[9,12,13]], source = 15, target = 12\n<strong>Output:</strong> -1\n</pre>\n<p> </p>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= routes.length &lt;= 500</code>.</li>\n<li><code>1 &lt;= routes[i].length &lt;= 10<sup>5</sup></code></li>\n<li>All the values of <code>routes[i]</code> are <strong>unique</strong>.</li>\n<li><code>sum(routes[i].length) &lt;= 10<sup>5</sup></code></li>\n<li><code>0 &lt;= routes[i][j] &lt; 10<sup>6</sup></code></li>\n<li><code>0 &lt;= source, target &lt; 10<sup>6</sup></code></li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "routes = [[1,2,7],[3,6,7]], source = 1, target = 6",
+      "output": "2",
+      "explanation": "The best strategy is take the first bus to the bus stop 7, then take the second bus to the bus stop 6."
+    },
+    {
+      "input": "routes = [[7,12],[4,5,15],[6],[15,19],[9,12,13]], source = 15, target = 12",
+      "output": "-1",
+      "explanation": ""
+    }
+  ],
+  "constraints": [
+    "1 <= routes.length <= 500.",
+    "1 <= routes[i].length <= 105",
+    "All the values of routes[i] are unique.",
+    "sum(routes[i].length) <= 105",
+    "0 <= routes[i][j] < 106",
+    "0 <= source, target < 106"
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    int numBusesToDestination(vector<vector<int>>& routes, int source, int target) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int numBusesToDestination(int[][] routes, int source, int target) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def numBusesToDestination(self, routes: List[List[int]], source: int, target: int) -> int:\n        "
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "title": "Binary Search",
+  "difficulty": "Easy",
+  "description": "<p>Given an array of integers <code>nums</code> which is sorted in ascending order, and an integer <code>target</code>, write a function to search <code>target</code> in <code>nums</code>. If <code>target</code> exists, then return its index. Otherwise, return <code>-1</code>.</p>\n<p>You must write an algorithm with <code>O(log n)</code> runtime complexity.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> nums = [-1,0,3,5,9,12], target = 9\n<strong>Output:</strong> 4\n<strong>Explanation:</strong> 9 exists in nums and its index is 4\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> nums = [-1,0,3,5,9,12], target = 2\n<strong>Output:</strong> -1\n<strong>Explanation:</strong> 2 does not exist in nums so return -1\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= nums.length &lt;= 10<sup>4</sup></code></li>\n<li><code>-10<sup>4</sup> &lt; nums[i], target &lt; 10<sup>4</sup></code></li>\n<li>All the integers in <code>nums</code> are <strong>unique</strong>.</li>\n<li><code>nums</code> is sorted in ascending order.</li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "nums = [-1,0,3,5,9,12], target = 9",
+      "output": "4",
+      "explanation": "9 exists in nums and its index is 4"
+    },
+    {
+      "input": "nums = [-1,0,3,5,9,12], target = 2",
+      "output": "-1",
+      "explanation": "2 does not exist in nums so return -1"
+    }
+  ],
+  "constraints": [
+    "1 <= nums.length <= 104",
+    "-104 < nums[i], target < 104",
+    "All the integers in nums are unique.",
+    "nums is sorted in ascending order."
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    int search(vector<int>& nums, int target) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int search(int[] nums, int target) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def search(self, nums: List[int], target: int) -> int:\n        "
+    }
+  ]
+}

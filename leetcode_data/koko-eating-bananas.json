@@ -1,0 +1,44 @@
+{
+  "title": "Koko Eating Bananas",
+  "difficulty": "Medium",
+  "description": "<p>Koko loves to eat bananas. There are <code>n</code> piles of bananas, the <code>i<sup>th</sup></code> pile has <code>piles[i]</code> bananas. The guards have gone and will come back in <code>h</code> hours.</p>\n<p>Koko can decide her bananas-per-hour eating speed of <code>k</code>. Each hour, she chooses some pile of bananas and eats <code>k</code> bananas from that pile. If the pile has less than <code>k</code> bananas, she eats all of them instead and will not eat any more bananas during this hour.</p>\n<p>Koko likes to eat slowly but still wants to finish eating all the bananas before the guards return.</p>\n<p>Return <em>the minimum integer</em> <code>k</code> <em>such that she can eat all the bananas within</em> <code>h</code> <em>hours</em>.</p>\n<p> </p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre>\n<strong>Input:</strong> piles = [3,6,7,11], h = 8\n<strong>Output:</strong> 4\n</pre>\n<p><strong class=\"example\">Example 2:</strong></p>\n<pre>\n<strong>Input:</strong> piles = [30,11,23,4,20], h = 5\n<strong>Output:</strong> 30\n</pre>\n<p><strong class=\"example\">Example 3:</strong></p>\n<pre>\n<strong>Input:</strong> piles = [30,11,23,4,20], h = 6\n<strong>Output:</strong> 23\n</pre>\n<p> </p>\n<p><strong>Constraints:</strong></p>\n<ul>\n<li><code>1 &lt;= piles.length &lt;= 10<sup>4</sup></code></li>\n<li><code>piles.length &lt;= h &lt;= 10<sup>9</sup></code></li>\n<li><code>1 &lt;= piles[i] &lt;= 10<sup>9</sup></code></li>\n</ul>\n",
+  "examples": [
+    {
+      "input": "piles = [3,6,7,11], h = 8",
+      "output": "4",
+      "explanation": ""
+    },
+    {
+      "input": "piles = [30,11,23,4,20], h = 5",
+      "output": "30",
+      "explanation": ""
+    },
+    {
+      "input": "piles = [30,11,23,4,20], h = 6",
+      "output": "23",
+      "explanation": ""
+    }
+  ],
+  "constraints": [
+    "1 <= piles.length <= 104",
+    "piles.length <= h <= 109",
+    "1 <= piles[i] <= 109"
+  ],
+  "code_stubs": [
+    {
+      "language": "C++",
+      "lang_slug": "cpp",
+      "code": "class Solution {\npublic:\n    int minEatingSpeed(vector<int>& piles, int h) {\n        \n    }\n};"
+    },
+    {
+      "language": "Java",
+      "lang_slug": "java",
+      "code": "class Solution {\n    public int minEatingSpeed(int[] piles, int h) {\n        \n    }\n}"
+    },
+    {
+      "language": "Python3",
+      "lang_slug": "python3",
+      "code": "class Solution:\n    def minEatingSpeed(self, piles: List[int], h: int) -> int:\n        "
+    }
+  ]
+}
