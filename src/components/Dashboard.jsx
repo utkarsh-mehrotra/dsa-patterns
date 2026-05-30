@@ -22,6 +22,7 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedPatterns, setExpandedPatterns] = useState({});
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [mockName, setMockName] = useState("");
   const [mockEmail, setMockEmail] = useState("");
 
@@ -37,8 +38,8 @@ export default function Dashboard() {
   const getProblemSlug = (title) => {
     return title.toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-');
+      .trim()
+      .replace(/[\s-]+/g, '-');
   };
 
   // Filter patterns and problems based on search and category
@@ -50,10 +51,7 @@ export default function Dashboard() {
     const filteredPatterns = category.patterns.map(pattern => {
       // Filter examples based on search term
       const matchedExamples = pattern.examples.filter(ex => {
-        const slug = getProblemSlug(ex);
         const matchesSearch = ex.toLowerCase().includes(searchTerm.toLowerCase());
-        // Verify if we actually have this problem scraped locally
-        const isScraped = problems.some(p => p.slug === slug);
         return matchesSearch;
       });
 
@@ -87,222 +85,259 @@ export default function Dashboard() {
   const completedCount = completedProblems.size;
   const completionPercentage = totalProblemsCount > 0 ? Math.round((completedCount / totalProblemsCount) * 100) : 0;
 
-  const handleOpenProblem = (title) => {
-    const slug = getProblemSlug(title);
-    navigate(`/problem/${slug}`);
-  };
-
   return (
-    <div className="dsa-app-layout">
-      {/* Dynamic Glow Overlay */}
-      <div className="radial-glow" id="radial-glow"></div>
-
-      {/* HEADER NAVBAR */}
-      <header className="dsa-header">
-        <div className="dsa-header-left">
-          <div className="dsa-logo">
-            <i className="fa-solid fa-code-fork"></i>
+    <div className="app-container">
+      {/* 1. GLASSMORPHISM NAVBAR HEADER */}
+      <header>
+        <div className="header-backdrop-glow"></div>
+        <div className="header-content">
+          <div className="title-area">
+            <h1 className="glow-title">
+              <span className="logo-icon-wrap"><i className="fa-solid fa-diagram-project"></i></span>
+              <span className="brand-name">AlgoFlow</span>
+            </h1>
+            <p>Elevate your problem-solving. Master <span className="highlight-accent">algorithmic patterns</span> and crack the coding <span className="highlight-accent">interview</span>.</p>
           </div>
-          <span className="brand-name">AlgoFlow</span>
-          <div className="dsa-header-divider"></div>
-          <span className="brand-tagline">DSA Reference Catalog</span>
-        </div>
 
-        <div className="dsa-header-right">
-          {isPro ? (
-            <span className="pro-badge-active">
-              <i className="fa-solid fa-crown"></i> Pro Active
-            </span>
-          ) : (
-            <button className="pro-upgrade-btn" onClick={upgradeToPro}>
-              <i className="fa-solid fa-bolt"></i> Upgrade to Pro
-            </button>
-          )}
-
-          {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div className="user-profile-avatar" title={user.email}>
-                {user.displayName.charAt(0).toUpperCase()}
+          <div className="right-header-controls">
+            
+            {/* User Info / Profile Avatar dropdown */}
+            {user ? (
+              <div 
+                className={`user-profile ${showProfileDropdown ? 'active' : ''}`}
+                onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                style={{ position: 'relative' }}
+              >
+                <div className="user-avatar" style={{ background: '#ffa116', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#121212', fontWeight: 'bold', fontSize: '13px' }}>
+                  {user.displayName.charAt(0).toUpperCase()}
+                </div>
+                <span className="user-name">{user.displayName}</span>
+                <i className="fa-solid fa-chevron-down user-chevron"></i>
+                
+                {showProfileDropdown && (
+                  <div className="profile-dropdown" style={{ display: 'flex' }} onClick={(e) => e.stopPropagation()}>
+                    <div className="dropdown-user-info">
+                      <span className="dropdown-user-name">{user.displayName}</span>
+                      <span className="dropdown-user-email">{user.email}</span>
+                    </div>
+                    <div className="dropdown-sync-status">
+                      <span className="status-dot green"></span>
+                      <span>Cloud Status Synced</span>
+                    </div>
+                    {isPro ? (
+                      <div className="pro-banner">
+                        <i className="fa-solid fa-crown"></i> Pro Premium Active
+                      </div>
+                    ) : (
+                      <button className="dropdown-item" onClick={() => { upgradeToPro(); setShowProfileDropdown(false); }}>
+                        <i className="fa-solid fa-bolt" style={{ color: '#ffa116' }}></i> Upgrade to Pro
+                      </button>
+                    )}
+                    <button className="dropdown-item logout" onClick={() => { logoutUser(); setShowProfileDropdown(false); }}>
+                      <i className="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+                    </button>
+                  </div>
+                )}
               </div>
-              <button className="dsa-header-action-btn" onClick={logoutUser}>
-                Sign Out
+            ) : (
+              <button className="auth-btn" onClick={() => setShowAuthModal(true)}>
+                <i className="fa-solid fa-circle-user"></i> Guest Sign In
+              </button>
+            )}
+
+            {/* View Tabs Controller */}
+            <div className="tabs-controller">
+              <button 
+                className={`tab-btn ${activeTab === 'patterns' ? 'active' : ''}`}
+                onClick={() => setActiveTab("patterns")}
+              >
+                <i className="fa-solid fa-folder-tree"></i> DSA Patterns
+              </button>
+              <button 
+                className={`tab-btn ${activeTab === 'books' ? 'active' : ''}`}
+                onClick={() => setActiveTab("books")}
+              >
+                <i className="fa-solid fa-book-bookmark"></i> Study Library
               </button>
             </div>
-          ) : (
-            <button className="dsa-header-action-btn" onClick={() => setShowAuthModal(true)}>
-              Sign In
-            </button>
-          )}
+
+          </div>
         </div>
       </header>
 
-      {/* STATS BREADCRUMB HERO BLOCK */}
-      <section className="dashboard-stats-card">
-        <div className="stats-header-row">
-          <div>
-            <h1 className="stats-hero-title">Master the Technical Interview</h1>
-            <p className="stats-hero-subtitle">Visual dynamic roadmap mapping key algorithmic categories and textbook patterns.</p>
-          </div>
-          <div className="stats-numeric-progress-circle">
-            <span className="stats-numeric-val">{completionPercentage}%</span>
-            <span className="stats-numeric-label">Completed</span>
-          </div>
-        </div>
-
-        <div className="stats-grid-row">
-          <div className="stats-mini-card">
-            <span className="stats-mini-label">Overall Progress</span>
-            <span className="stats-mini-val">{completedCount} / {totalProblemsCount}</span>
-            <span className="stats-mini-caption">Curated high-frequency LeetCode templates</span>
-          </div>
-          <div className="stats-mini-card">
-            <span className="stats-mini-label">Active Patterns</span>
-            <span className="stats-mini-val">
-              {patternsData.reduce((acc, cat) => acc + cat.patterns.length, 0)} Patterns
-            </span>
-            <span className="stats-mini-caption">Spanning {patternsData.length} core DSA categories</span>
-          </div>
-          <div className="stats-mini-card">
-            <span className="stats-mini-label">PDF Textbook Vault</span>
-            <span className="stats-mini-val">{booksData.length} Handbooks</span>
-            <span className="stats-mini-caption">{isPro ? "All fully unlocked" : "Requires premium upgrade"}</span>
+      {/* 2. STATS PREPARATION WIDGET PANEL */}
+      <div className="stats-panel" id="stats-panel">
+        <div className="stat-card">
+          <div className="stat-icon"><i className="fa-solid fa-percent"></i></div>
+          <div className="stat-info">
+            <div className="stat-val">{completionPercentage}%</div>
+            <div className="stat-label">Overall Solved</div>
+            <div className="progress-bar-container">
+              <div className="progress-fill" style={{ width: `${completionPercentage}%` }}></div>
+            </div>
           </div>
         </div>
-      </section>
-
-      {/* FILTER CONTROLS TAB BAR */}
-      <div className="dsa-tab-filters-row">
-        <div className="tab-filters-left">
-          <button 
-            className={`dsa-tab-btn ${activeTab === 'patterns' ? 'active' : ''}`}
-            onClick={() => setActiveTab("patterns")}
-          >
-            <i className="fa-solid fa-cubes"></i> Patterns catalog
-          </button>
-          <button 
-            className={`dsa-tab-btn ${activeTab === 'books' ? 'active' : ''}`}
-            onClick={() => setActiveTab("books")}
-          >
-            <i className="fa-solid fa-book"></i> Textbook Vault
-          </button>
+        
+        <div className="stat-card">
+          <div className="stat-icon"><i className="fa-solid fa-code"></i></div>
+          <div className="stat-info">
+            <div className="stat-val">{completedCount} / {totalProblemsCount}</div>
+            <div className="stat-label">Problems Solved</div>
+          </div>
         </div>
+        
+        <div className="stat-card">
+          <div className="stat-icon"><i className="fa-solid fa-list-check"></i></div>
+          <div className="stat-info">
+            <div className="stat-val">
+              {patternsData.reduce((acc, cat) => acc + cat.patterns.length, 0)}
+            </div>
+            <div className="stat-label">Patterns Mastered</div>
+          </div>
+        </div>
+        
+        <div className="stat-card">
+          <div className="stat-icon"><i className="fa-solid fa-bookmark"></i></div>
+          <div className="stat-info">
+            <div className="stat-val">{booksData.length}</div>
+            <div className="stat-label">Reference Books</div>
+          </div>
+        </div>
+      </div>
 
+      {/* 3. CONTROLS PANEL (SEARCH & PILL FILTERS) */}
+      <div className="controls-panel">
+        <div className="search-wrapper">
+          <i className="fa-solid fa-magnifying-glass"></i>
+          <input 
+            id="search" 
+            type="text" 
+            placeholder="Search patterns, details, canonical questions or books..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            autoComplete="off"
+          />
+        </div>
+        
         {activeTab === "patterns" && (
-          <div className="tab-filters-right">
-            <div className="dsa-search-wrapper">
-              <i className="fa-solid fa-magnifying-glass search-icon"></i>
-              <input 
-                type="text" 
-                placeholder="Search patterns or problems..." 
-                className="dsa-search-input"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+          <div className="filters-row" id="filters-row">
+            <span className="filter-label">Categories:</span>
+            <div className="filters">
+              {categories.map(cat => (
+                <button 
+                  key={cat} 
+                  className={`filter-btn ${activeCategory === cat ? 'active' : ''}`}
+                  onClick={() => setActiveCategory(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
             </div>
           </div>
         )}
       </div>
 
-      {/* CATEGORY PILL ROW (For Patterns Tab) */}
-      {activeTab === "patterns" && (
-        <div className="dsa-category-pills-row">
-          {categories.map(cat => (
-            <button 
-              key={cat} 
-              className={`cat-pill ${activeCategory === cat ? 'active' : ''}`}
-              onClick={() => setActiveCategory(cat)}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* MAIN VIEWPORT LAYOUT */}
-      <main className="dsa-main-content">
+      {/* 4. MAIN VIEWS LAYOUT PORTPORTS */}
+      <main style={{ marginTop: '24px' }}>
         {activeTab === "patterns" ? (
+          /* PATTERNS SECTION CATALOG GRID */
           <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
             {filteredPatternsData.map(category => (
-              <div key={category.cat} className="dsa-category-section">
-                <div className="category-section-title-row">
-                  <span className="category-indicator-dot" style={{ background: category.color }}></span>
-                  <h2 className="category-section-title">{category.cat}</h2>
+              <div key={category.cat} className="category-section">
+                <div className="cat-header">
+                  <span className="cat-dot-large" style={{ background: category.color, boxShadow: `0 0 10px ${category.color}` }}></span>
+                  <h2 className="cat-title">{category.cat}</h2>
+                  <span className="cat-count">
+                    {category.patterns.length} {category.patterns.length === 1 ? 'Pattern' : 'Patterns'}
+                  </span>
                 </div>
 
-                <div className="patterns-card-grid">
+                <div className="patterns-grid">
                   {category.patterns.map(pattern => {
                     const isExpanded = !!expandedPatterns[pattern.name];
                     const numExamples = pattern.examples.length;
                     const matchedCount = pattern.matchedExamples ? pattern.matchedExamples.length : numExamples;
-
+                    
                     return (
-                      <div key={pattern.name} className="pattern-card">
-                        <div className="pattern-card-header-row">
-                          <div>
-                            <span className="pattern-difficulty-badge">{pattern.difficulty}</span>
-                            <h3 className="pattern-card-title">{pattern.name}</h3>
+                      <div 
+                        key={pattern.name} 
+                        className={`pattern-card ${isExpanded ? 'expanded' : ''}`}
+                        onClick={() => handleTogglePatternExpand(pattern.name)}
+                      >
+                        <div className="card-top">
+                          <div className="pattern-meta" onClick={(e) => e.stopPropagation()}>
+                            <span className="pattern-name">{pattern.name}</span>
                           </div>
-                          <span className="pattern-complexity-label">{pattern.complexity}</span>
+                          <span className="expand-icon">
+                            <i className="fa-solid fa-chevron-down"></i>
+                          </span>
                         </div>
 
-                        <p className="pattern-core-idea">
-                          <strong>Core Concept:</strong> {pattern.idea}
-                        </p>
+                        <p className="pattern-idea">{pattern.idea}</p>
 
-                        <div className="pattern-meta-block">
-                          <strong>When to Use:</strong> {pattern.when}
+                        <div className="badges-row">
+                          <span className={`badge ${
+                            pattern.difficulty.toLowerCase() === 'easy' ? 'badge-easy' : 
+                            pattern.difficulty.toLowerCase() === 'medium' ? 'badge-medium' : 'badge-hard'
+                          }`}>
+                            {pattern.difficulty}
+                          </span>
+                          <span className="badge badge-complexity">{pattern.complexity}</span>
                         </div>
 
-                        <div className="interviewer-tip-callout">
-                          <i className="fa-solid fa-lightbulb"></i>
-                          <span><strong>Interviewer Tip:</strong> {pattern.tip}</span>
-                        </div>
+                        <div className="card-details" onClick={(e) => e.stopPropagation()}>
+                          <div className="detail-section">
+                            <div className="detail-title"><i className="fa-solid fa-circle-question"></i> When to Use</div>
+                            <div className="detail-body">{pattern.when}</div>
+                          </div>
 
-                        {/* Expandable problems list */}
-                        <div className="patterns-examples-section">
-                          <button 
-                            className="expand-examples-btn"
-                            onClick={() => handleTogglePatternExpand(pattern.name)}
-                          >
-                            <span>Examples ({matchedCount})</span>
-                            <i className={`fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
-                          </button>
-
-                          {isExpanded && (
-                            <div className="examples-dropdown-list">
+                          <div className="detail-section">
+                            <div className="detail-title"><i className="fa-solid fa-terminal"></i> Examples & stubs ({matchedCount})</div>
+                            <div className="example-pills">
                               {(pattern.matchedExamples || pattern.examples).map(ex => {
                                 const slug = getProblemSlug(ex);
                                 const isCompleted = completedProblems.has(slug);
                                 const isScraped = problems.some(p => p.slug === slug);
 
                                 return (
-                                  <div key={ex} className="example-item-row">
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                      <input 
-                                        type="checkbox" 
-                                        className="example-complete-checkbox"
-                                        checked={isCompleted}
-                                        onChange={() => toggleProblemCompletion(slug, pattern.name)}
-                                      />
-                                      <span className={`example-name ${isCompleted ? 'completed' : ''}`}>
-                                        {ex}
-                                      </span>
-                                    </div>
+                                  <div key={ex} className={`example-pill ${isCompleted ? 'solved' : ''}`}>
+                                    <span 
+                                      className={`problem-checkbox ${isCompleted ? 'checked' : ''}`}
+                                      onClick={() => toggleProblemCompletion(slug, pattern.name)}
+                                      style={{ cursor: 'pointer' }}
+                                    >
+                                      <i className={`fa-solid ${isCompleted ? 'fa-square-check' : 'fa-square'}`}></i>
+                                    </span>
                                     {isScraped ? (
-                                      <button 
-                                        className="example-workspace-launch-btn"
-                                        onClick={() => handleOpenProblem(ex)}
+                                      <span 
+                                        className="problem-link"
+                                        onClick={() => navigate(`/problem/${slug}`)}
+                                        style={{ cursor: 'pointer' }}
                                       >
-                                        <i className="fa-solid fa-terminal"></i> Open Workspace
-                                      </button>
-                                    ) : (
-                                      <span className="example-external-reference-label">
-                                        Reference Only
+                                        {ex} <i className="fa-solid fa-arrow-up-right-from-square" style={{ fontSize: '10px' }}></i>
                                       </span>
+                                    ) : (
+                                      <a 
+                                        href={`https://leetcode.com/problems/${slug}`} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        className="problem-link"
+                                      >
+                                        {ex} <i className="fa-solid fa-arrow-up-right-from-square" style={{ fontSize: '10px' }}></i>
+                                      </a>
                                     )}
                                   </div>
                                 );
                               })}
+                            </div>
+                          </div>
+
+                          {pattern.tip && (
+                            <div className="pro-tip">
+                              <div className="pro-tip-title">
+                                <i className="fa-solid fa-lightbulb"></i> Interviewer Tip
+                              </div>
+                              <div className="pro-tip-body">{pattern.tip}</div>
                             </div>
                           )}
                         </div>
@@ -314,52 +349,59 @@ export default function Dashboard() {
             ))}
           </div>
         ) : (
-          /* HANDBOOKS LIBRARY VAULT VIEW */
-          <div className="books-section-grid">
-            {booksData.map(book => (
-              <div key={book.title} className="book-card">
-                <div className="book-cover-mock">
-                  <i className="fa-solid fa-file-pdf pdf-mock-icon"></i>
-                  <span className="book-cover-mock-title">{book.title}</span>
-                  <span className="book-cover-mock-author">{book.author}</span>
-                </div>
-                <div className="book-card-details">
-                  <h3 className="book-card-title">{book.title}</h3>
-                  <span className="book-card-tagline">{book.tagline}</span>
-                  <p className="book-card-desc">{book.desc}</p>
-                  <div className="book-tags-row">
-                    {book.tags.map(t => (
-                      <span key={t} className="book-tag-pill">{t}</span>
-                    ))}
+          /* STUDY HANDBOOKS LIBRARY VAULT VIEW */
+          <div className="library-list">
+            {booksData.map(book => {
+              const hasAccess = isPro;
+              return (
+                <div 
+                  key={book.title} 
+                  className={`book-list-item ${!hasAccess ? 'locked' : ''}`}
+                >
+                  <div className="book-list-meta">
+                    <div className="book-list-icon">
+                      <i className="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <div className="book-list-details">
+                      <h3 className="book-list-title">
+                        {book.title}
+                        {!hasAccess && <span className="book-locked-tag"><i className="fa-solid fa-lock"></i> Locked</span>}
+                      </h3>
+                      <span className="book-list-author">{book.author}</span>
+                      <p className="book-list-desc">{book.desc}</p>
+                    </div>
                   </div>
-                  {isPro ? (
-                    <a 
-                      href={`/${book.path}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="book-access-btn"
-                    >
-                      <i className="fa-solid fa-download"></i> View / Download Textbook
-                    </a>
-                  ) : (
-                    <button className="book-locked-btn" onClick={upgradeToPro}>
-                      <i className="fa-solid fa-lock"></i> Upgrade to Unlock Handbooks
-                    </button>
-                  )}
+                  
+                  <div className="book-list-actions">
+                    {hasAccess ? (
+                      <a 
+                        href={`/${book.path}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="book-list-btn primary"
+                      >
+                        <i className="fa-solid fa-download"></i> View PDF
+                      </a>
+                    ) : (
+                      <button 
+                        className="unlock-pro-btn"
+                        onClick={upgradeToPro}
+                      >
+                        <i className="fa-solid fa-lock"></i> Unlock Vault
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </main>
 
-      {/* AUTHENTICATION MODAL */}
+      {/* 5. GUEST AUTHENTICATION MODAL */}
       {showAuthModal && (
-        <div className="mock-auth-modal-overlay">
-          <div className="mock-auth-modal-content">
-            <button className="modal-close-btn" onClick={() => setShowAuthModal(false)}>
-              <i className="fa-solid fa-xmark"></i>
-            </button>
+        <div className="mock-modal-overlay" style={{ display: 'flex' }}>
+          <div className="mock-modal">
             <h3 className="mock-modal-title">Sign In to Save Progress</h3>
             <div className="mock-modal-subtitle">Save progress to your personal dashboard</div>
             
@@ -370,6 +412,7 @@ export default function Dashboard() {
                 className="mock-auth-input"
                 value={mockName}
                 onChange={(e) => setMockName(e.target.value)}
+                style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px', color: '#fff', outline: 'none' }}
               />
               <input 
                 type="email" 
@@ -377,16 +420,26 @@ export default function Dashboard() {
                 className="mock-auth-input"
                 value={mockEmail}
                 onChange={(e) => setMockEmail(e.target.value)}
+                style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px', color: '#fff', outline: 'none' }}
               />
-              <button 
-                className="mock-auth-submit-btn"
-                onClick={() => {
-                  loginMockUser(mockName, mockEmail);
-                  setShowAuthModal(false);
-                }}
-              >
-                Sign In Guest Session
-              </button>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
+                <button 
+                  className="mock-auth-submit-btn"
+                  onClick={() => {
+                    loginMockUser(mockName, mockEmail);
+                    setShowAuthModal(false);
+                  }}
+                  style={{ flex: 1, padding: '10px', background: '#ffa116', color: '#121212', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+                >
+                  Sign In
+                </button>
+                <button 
+                  onClick={() => setShowAuthModal(false)}
+                  style={{ padding: '10px 16px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '6px', color: '#a1a1aa', cursor: 'pointer' }}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>
