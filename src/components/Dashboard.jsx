@@ -512,8 +512,9 @@ export default function Dashboard() {
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="book-list-btn"
+                          title="View PDF Book"
                         >
-                          <i className="fa-solid fa-eye"></i> View
+                          <i className="fa-solid fa-eye"></i>
                         </a>
                         <a 
                           href={`/${book.path}`} 
@@ -524,8 +525,9 @@ export default function Dashboard() {
                             color: 'var(--ink)',
                             border: '1px solid var(--hairline-strong)'
                           }}
+                          title="Download PDF"
                         >
-                          <i className="fa-solid fa-download"></i> Download
+                          <i className="fa-solid fa-download"></i>
                         </a>
                       </div>
                     ) : (
