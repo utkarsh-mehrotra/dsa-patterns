@@ -520,11 +520,6 @@ export default function Dashboard() {
                           href={`/${book.path}`} 
                           download
                           className="book-list-btn"
-                          style={{
-                            background: 'transparent',
-                            color: 'var(--ink)',
-                            border: '1px solid var(--hairline-strong)'
-                          }}
                           title="Download PDF"
                         >
                           <i className="fa-solid fa-download"></i>
