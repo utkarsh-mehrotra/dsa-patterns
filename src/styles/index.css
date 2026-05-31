@@ -901,16 +901,17 @@ header {
   font-size: 0.95rem;
   font-weight: 500;
   text-decoration: none;
-  background: var(--ink);
-  color: var(--canvas);
-  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--hairline-strong);
   transition: var(--transition);
   cursor: pointer;
 }
 
 .book-list-btn:hover {
-  background: transparent;
-  color: var(--ink);
+  background: var(--ink);
+  color: var(--canvas);
+  border-color: var(--ink);
 }
 
 .book-list-item.locked .book-list-desc,
