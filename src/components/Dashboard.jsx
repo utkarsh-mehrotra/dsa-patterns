@@ -4,6 +4,8 @@ import { useApp } from '../context/AppContext';
 import patternsData from '../data/patternsData.json';
 import booksData from '../data/booksData.json';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const {
@@ -37,7 +39,7 @@ export default function Dashboard() {
 
     try {
       console.log("⚡ [AlgoFlow Frontend] Fetching Razorpay configurations...");
-      const configRes = await fetch("/api/config");
+      const configRes = await fetch(`${BACKEND_URL}/api/config`);
       if (!configRes.ok) throw new Error("API server dynamic config offline.");
       
       const configData = await configRes.json();
@@ -45,7 +47,7 @@ export default function Dashboard() {
 
       if (keyId) {
         console.log("⚡ [AlgoFlow Frontend] Contacting full-stack server for order token...");
-        const orderRes = await fetch("/api/create-order", {
+        const orderRes = await fetch(`${BACKEND_URL}/api/create-order`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -74,7 +76,7 @@ export default function Dashboard() {
           handler: async function (response) {
             console.log("🟢 [AlgoFlow Frontend] Checkout successful. Verifying payment...");
             try {
-              const verifyRes = await fetch("/api/verify-payment", {
+              const verifyRes = await fetch(`${BACKEND_URL}/api/verify-payment`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

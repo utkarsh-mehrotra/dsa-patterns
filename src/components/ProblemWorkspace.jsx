@@ -6,6 +6,8 @@ import { WebSocketMessageReader, WebSocketMessageWriter, toSocket } from 'vscode
 import { MonacoLanguageClient } from 'monaco-languageclient';
 import { CloseAction, ErrorAction } from 'vscode-languageclient';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
+
 export default function ProblemWorkspace() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -127,8 +129,14 @@ export default function ProblemWorkspace() {
     const socketLanguage = lang === 'python3' ? 'python' : lang;
     if (!['cpp', 'python', 'java'].includes(socketLanguage)) return;
 
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/lsp/${socketLanguage}`;
+    let wsUrl = "";
+    if (BACKEND_URL) {
+      const base = BACKEND_URL.replace(/^http/, 'ws');
+      wsUrl = `${base}/lsp/${socketLanguage}`;
+    } else {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      wsUrl = `${protocol}//${window.location.host}/lsp/${socketLanguage}`;
+    }
 
     console.log(`[Monaco LSP] Connecting to WebSocket: ${wsUrl}`);
     const webSocket = new WebSocket(wsUrl);
@@ -398,7 +406,7 @@ export default function ProblemWorkspace() {
     const currentInput = testCases[activeTestCaseIndex] || '';
 
     try {
-      const response = await fetch('/api/execute', {
+      const response = await fetch(`${BACKEND_URL}/api/execute`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
