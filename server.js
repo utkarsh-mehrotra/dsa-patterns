@@ -36,8 +36,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve static dashboard files and PDF catalog
-app.use(express.static(__dirname));
+// Serve static files (serve compiled Vite files in production, fallback to root in development)
+const staticDir = process.env.NODE_ENV === "production"
+  ? path.join(__dirname, "dist")
+  : __dirname;
+app.use(express.static(staticDir));
 
 /**
  * GET /api/config
@@ -354,9 +357,9 @@ app.get("/api/problems-metadata", (req, res) => {
   }
 });
 
-// Fallback: serve index.html for all other routes
+// Fallback: serve index.html for SPA client-side routing
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(staticDir, "index.html"));
 });
 
 // Start Express Listener
