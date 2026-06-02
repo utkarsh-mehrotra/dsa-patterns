@@ -236,7 +236,7 @@ app.post("/api/execute", async (req, res) => {
       }
 
       // Build docker command with network, RAM, and CPU restrictions
-      const dockerRunCmd = `docker run --rm --network none --memory 256m --cpus 0.5 --read-only --tmpfs /tmp -v "${tempDir}":/sandbox:ro algoflow-compiler-sandbox sh -c "${containerCmd.replace(/"/g, '\\"')}"`;
+      const dockerRunCmd = `docker run --rm --network none --memory 256m --cpus 0.5 --read-only --tmpfs /tmp:exec -v "${tempDir}":/sandbox:ro algoflow-compiler-sandbox sh -c "${containerCmd.replace(/"/g, '\\"')}"`;
 
       console.log(`[AlgoFlow Sandbox] Executing Docker: ${dockerRunCmd}`);
 

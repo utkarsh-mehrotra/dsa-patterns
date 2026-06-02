@@ -66,15 +66,11 @@ function initLspServer(server) {
         return message;
       });
 
-      serverProcess.onExit((code, signal) => {
-        console.log(`⚠️ [LSP WebSocket] ${lang.toUpperCase()} server process exited with code ${code}, signal ${signal}`);
+      serverProcess.onClose(() => {
+        console.log(`🔌 [LSP WebSocket] ${lang.toUpperCase()} server process connection closed.`);
         try {
-          webSocket.close(1011, `LSP process exited with code ${code}`);
+          webSocket.close(1011, `LSP process closed`);
         } catch (e) {}
-      });
-
-      serverProcess.onError((err) => {
-        console.error(`❌ [LSP WebSocket] ${lang.toUpperCase()} server process error:`, err);
       });
 
     } catch (err) {
