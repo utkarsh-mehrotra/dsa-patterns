@@ -33,7 +33,7 @@ export function AppProvider({ children }) {
   useEffect(() => {
     const loadProblems = async () => {
       try {
-        const res = await fetch('/api/problems-metadata');
+        const res = await fetch('/leetcode_data/problems-metadata.json');
         if (res.ok) {
           const data = await res.json();
           setProblems(data);
@@ -41,7 +41,7 @@ export function AppProvider({ children }) {
           setProblems([]);
         }
       } catch (e) {
-        console.warn("API Problems metadata offline, loading client defaults.");
+        console.warn("Static problems metadata offline, loading client defaults.");
       }
     };
     loadProblems();

@@ -341,31 +341,13 @@ app.get("/api/problems-metadata", (req, res) => {
   try {
     const fs = require('fs');
     const path = require('path');
-    const dataDir = path.join(__dirname, "leetcode_data");
+    const metadataFile = path.join(__dirname, "leetcode_data", "problems-metadata.json");
     
-    if (!fs.existsSync(dataDir)) {
-      return res.status(200).json([]);
+    if (fs.existsSync(metadataFile)) {
+      const content = fs.readFileSync(metadataFile, 'utf-8');
+      return res.status(200).json(JSON.parse(content));
     }
-
-    const files = fs.readdirSync(dataDir).filter(f => f.endsWith(".json"));
-    const problemsList = [];
-    
-    for (const file of files) {
-      try {
-        const fileContent = fs.readFileSync(path.join(dataDir, file), 'utf-8');
-        const problemData = JSON.parse(fileContent);
-        problemsList.push({
-          title: problemData.title || file.replace(".json", ""),
-          slug: file.replace(".json", ""),
-          difficulty: problemData.difficulty || "Medium",
-          constraints: problemData.constraints || []
-        });
-      } catch (err) {
-        console.error(`Error parsing problem file ${file}:`, err);
-      }
-    }
-    
-    return res.status(200).json(problemsList);
+    return res.status(200).json([]);
   } catch (error) {
     console.error("❌ [AlgoFlow Server] Failed to fetch problems metadata:", error);
     return res.status(500).json({ error: "Failed to fetch problems metadata" });

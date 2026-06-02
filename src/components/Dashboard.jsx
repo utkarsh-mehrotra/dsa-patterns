@@ -441,13 +441,39 @@ export default function Dashboard() {
                                       <i className={`fa-solid ${isCompleted ? 'fa-square-check' : 'fa-square'}`}></i>
                                     </span>
                                     {isScraped ? (
-                                      <span 
-                                        className="problem-link"
-                                        onClick={() => navigate(`/problem/${slug}`)}
-                                        style={{ cursor: 'pointer' }}
-                                      >
-                                        {ex} <i className="fa-solid fa-arrow-up-right-from-square" style={{ fontSize: '10px' }}></i>
-                                      </span>
+                                      <>
+                                        <span 
+                                          className="problem-link"
+                                          onClick={() => navigate(`/problem/${slug}`)}
+                                          style={{ cursor: 'pointer', paddingRight: '2px' }}
+                                        >
+                                          {ex}
+                                        </span>
+                                        <a 
+                                          href={`https://leetcode.com/problems/${slug}`} 
+                                          target="_blank" 
+                                          rel="noopener noreferrer" 
+                                          title="View on LeetCode"
+                                          style={{
+                                            padding: '4px 8px 4px 2px',
+                                            color: 'var(--muted)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            opacity: 0.6,
+                                            transition: 'opacity 0.2s, color 0.2s'
+                                          }}
+                                          onMouseEnter={(e) => {
+                                            e.currentTarget.style.opacity = '1';
+                                            e.currentTarget.style.color = 'var(--primary)';
+                                          }}
+                                          onMouseLeave={(e) => {
+                                            e.currentTarget.style.opacity = '0.6';
+                                            e.currentTarget.style.color = 'var(--muted)';
+                                          }}
+                                        >
+                                          <i className="fa-solid fa-arrow-up-right-from-square" style={{ fontSize: '10px' }}></i>
+                                        </a>
+                                      </>
                                     ) : (
                                       <a 
                                         href={`https://leetcode.com/problems/${slug}`} 
