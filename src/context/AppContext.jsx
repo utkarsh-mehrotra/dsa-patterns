@@ -14,6 +14,12 @@ export function AppProvider({ children }) {
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [theme, setTheme] = useState(() => localStorage.getItem("dsa_theme") || 'light');
+  
+  // Dashboard persistent states
+  const [activeTab, setActiveTab] = useState("patterns");
+  const [selectedCategories, setSelectedCategories] = useState(["All"]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [expandedPatterns, setExpandedPatterns] = useState({});
 
   // Sync visual body classes with theme changes
   useEffect(() => {
@@ -356,7 +362,15 @@ export function AppProvider({ children }) {
       upgradeToPro,
       resetProStatus,
       theme,
-      toggleTheme
+      toggleTheme,
+      activeTab,
+      setActiveTab,
+      selectedCategories,
+      setSelectedCategories,
+      searchTerm,
+      setSearchTerm,
+      expandedPatterns,
+      setExpandedPatterns
     }}>
       {children}
     </AppContext.Provider>

@@ -21,11 +21,16 @@ export default function Dashboard() {
     upgradeToPro,
     resetProStatus,
     theme,
-    toggleTheme
+    toggleTheme,
+    activeTab,
+    setActiveTab,
+    selectedCategories,
+    setSelectedCategories,
+    searchTerm,
+    setSearchTerm,
+    expandedPatterns,
+    setExpandedPatterns
   } = useApp();
-
-  const [activeTab, setActiveTab] = useState("patterns");
-  const [selectedCategories, setSelectedCategories] = useState(["All"]);
 
   const handleCategoryClick = (cat) => {
     if (cat === "All") {
@@ -43,8 +48,6 @@ export default function Dashboard() {
       }
     });
   };
-  const [searchTerm, setSearchTerm] = useState("");
-  const [expandedPatterns, setExpandedPatterns] = useState({});
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
