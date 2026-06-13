@@ -25,7 +25,24 @@ export default function Dashboard() {
   } = useApp();
 
   const [activeTab, setActiveTab] = useState("patterns");
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [selectedCategories, setSelectedCategories] = useState(["All"]);
+
+  const handleCategoryClick = (cat) => {
+    if (cat === "All") {
+      setSelectedCategories(["All"]);
+      return;
+    }
+
+    setSelectedCategories(prev => {
+      const filtered = prev.filter(c => c !== "All");
+      if (filtered.includes(cat)) {
+        const next = filtered.filter(c => c !== cat);
+        return next.length === 0 ? ["All"] : next;
+      } else {
+        return [...filtered, cat];
+      }
+    });
+  };
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedPatterns, setExpandedPatterns] = useState({});
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -156,7 +173,8 @@ export default function Dashboard() {
 
   // Filter patterns and problems based on search and category
   const filteredPatternsData = patternsData.map(category => {
-    if (activeCategory !== "All" && category.cat !== activeCategory) {
+    const hasAll = selectedCategories.includes("All");
+    if (!hasAll && !selectedCategories.includes(category.cat)) {
       return null;
     }
 
@@ -346,15 +364,18 @@ export default function Dashboard() {
           <div className="filters-row" id="filters-row">
             <span className="filter-label">Categories:</span>
             <div className="filters">
-              {categories.map(cat => (
-                <button 
-                  key={cat} 
-                  className={`filter-btn ${activeCategory === cat ? 'active' : ''}`}
-                  onClick={() => setActiveCategory(cat)}
-                >
-                  {cat}
-                </button>
-              ))}
+              {categories.map(cat => {
+                const isSelected = selectedCategories.includes(cat);
+                return (
+                  <button 
+                    key={cat} 
+                    className={`filter-btn ${isSelected ? 'active' : ''}`}
+                    onClick={() => handleCategoryClick(cat)}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
