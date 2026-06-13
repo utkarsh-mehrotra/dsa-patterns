@@ -1,0 +1,234 @@
+openapi: 3.0.3
+info:
+  title: AlgoFlow Full-Stack API
+  description: >
+    REST API backend supporting secure Razorpay standard checkout payments, 
+    isolated multi-language compiler sandboxing, and dynamic study handbook catalogs.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Local development VM server
+  - url: https://algoflow.web.app
+    description: Production serverless CDN deployment
+paths:
+  /api/config:
+    get:
+      summary: Retrieve Razorpay Configuration
+      description: Returns the public Razorpay Key ID needed by the frontend checkout widgets.
+      responses:
+        '200':
+          description: Configuration retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  keyId:
+                    type: string
+                    example: rzp_test_SuoPBJ2avHN000
+        '404':
+          description: Configuration missing or not set.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Razorpay Key ID not configured on the server.
+
+  /api/problems-metadata:
+    get:
+      summary: Retrieve Problem Catalog Metadata
+      description: Scans available DSA patterns and returns a list of scraped coding problems.
+      responses:
+        '200':
+          description: List of problem metadata retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProblemMetadata'
+
+  /api/create-order:
+    post:
+      summary: Generate Razorpay Transaction Order
+      description: Contacts Razorpay API servers to generate a secure order ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+              properties:
+                amount:
+                  type: integer
+                  description: Order value in subunit paise (e.g. 29900 for ₹299.00)
+                  example: 29900
+                currency:
+                  type: string
+                  default: INR
+                  example: INR
+                receipt:
+                  type: string
+                  description: Unique identifier token for backend tracking
+                  example: rzp_receipt_abc123
+      responses:
+        '200':
+          description: Order created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order_id:
+                    type: string
+                    example: order_Okp93jG92sK1ld
+                  amount:
+                    type: integer
+                    example: 29900
+                  currency:
+                    type: string
+                    example: INR
+        '400':
+          description: Missing or invalid request parameters.
+        '500':
+          description: Razorpay API integration failure.
+
+  /api/verify-payment:
+    post:
+      summary: Cryptographically Verify Transaction Signature
+      description: Performs HMAC-SHA256 signature verification to prevent transaction spoofing.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - razorpay_order_id
+                - razorpay_payment_id
+                - razorpay_signature
+              properties:
+                razorpay_order_id:
+                  type: string
+                  example: order_Okp93jG92sK1ld
+                razorpay_payment_id:
+                  type: string
+                  example: pay_Okp93mE81sN02z
+                razorpay_signature:
+                  type: string
+                  description: HMAC-SHA256 hex signature returned from checkout iframe
+                  example: ad84c3e8006e8b4e7df09c3a3bcf8e1d25c35f8b9e59d873d9e830e2f5b40cfb
+      responses:
+        '200':
+          description: Transaction signature verified successfully. Unlock membership.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Payment successfully verified.
+        '400':
+          description: Signature mismatch or invalid validation credentials.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: Signature mismatch. Unverified transaction rejected.
+
+  /api/execute:
+    post:
+      summary: Compile and Execute Code Sandbox
+      description: Compiles and runs user-submitted code inside a secure Docker container or local fallback.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - language
+                - code
+              properties:
+                language:
+                  type: string
+                  enum: [cpp, python, java]
+                  example: cpp
+                code:
+                  type: string
+                  description: Raw source code text content
+                  example: |
+                    #include <iostream>
+                    int main() {
+                        std::cout << "Hello World" << std::endl;
+                        return 0;
+                    }
+                stdin:
+                  type: string
+                  description: Custom test case input parameters passed to stdin
+                  example: 7, [2,3,1,2,4,3]
+      responses:
+        '200':
+          description: Execution completed successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stdout:
+                    type: string
+                    description: Standard output stream of the execution
+                    example: "Hello World\n"
+                  stderr:
+                    type: string
+                    description: Standard error logs or compilation outputs
+                    example: ""
+                  code:
+                    type: integer
+                    description: Process exit code (0 for success)
+                    example: 0
+                  time:
+                    type: string
+                    description: Execution duration label
+                    example: 18ms
+                  memory:
+                    type: string
+                    description: Approximate peak RAM consumption
+                    example: 12MB
+        '400':
+          description: Missing required parameters.
+
+components:
+  schemas:
+    ProblemMetadata:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Two Sum
+        slug:
+          type: string
+          example: two-sum
+        difficulty:
+          type: string
+          example: Easy
+        constraints:
+          type: array
+          items:
+            type: string
+            example: "2 <= nums.length <= 10^4"
