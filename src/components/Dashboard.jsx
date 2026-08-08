@@ -302,7 +302,7 @@ export default function Dashboard() {
               onClick={toggleTheme}
               title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
             >
-              <i className={`fa-solid ${theme === 'light' ? 'fa-moon' : 'fa-sun'}`}></i>
+              <i className="fa-solid fa-circle-half-stroke"></i>
             </button>
 
           </div>

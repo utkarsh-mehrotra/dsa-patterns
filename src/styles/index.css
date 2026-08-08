@@ -985,6 +985,27 @@ header {
   color: var(--ink);
 }
 
+.theme-toggle-btn {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-card);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-md);
+  color: var(--body);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.theme-toggle-btn:hover {
+  color: var(--ink);
+  background: var(--hairline-soft);
+  border-color: var(--muted-soft);
+}
+
 .sandbox-header-divider {
   width: 1px;
   height: 18px;
@@ -1058,6 +1079,32 @@ header {
   font-weight: 400;
   letter-spacing: -0.8px;
   color: var(--ink);
+}
+
+.sandbox-leetcode-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  margin-top: 6px;
+  background: var(--surface-strong);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.44px;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: var(--radius-pill);
+  transition: var(--transition);
+}
+
+.sandbox-leetcode-link i {
+  font-size: 10px;
+}
+
+.sandbox-leetcode-link:hover {
+  background: var(--primary);
+  color: var(--on-primary);
 }
 
 .sandbox-body-content {
