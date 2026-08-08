@@ -8,6 +8,48 @@ import { CloseAction, ErrorAction } from 'vscode-languageclient';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
 
+// Splits a LeetCode-style example input string ("nums = [2,7,11,15], target = 9")
+// into its top-level parameters, treating "," and "\n" as delimiters only
+// when they occur outside array/object brackets and quoted strings - so a
+// single array-typed parameter's own internal commas are never mistaken for
+// parameter boundaries.
+function splitTopLevelParams(str) {
+  const parts = [];
+  let depth = 0;
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < str.length; i++) {
+    const c = str[i];
+    if (c === '"' && (i === 0 || str[i - 1] !== '\\')) {
+      inQuotes = !inQuotes;
+    }
+    if (!inQuotes) {
+      if (c === '[' || c === '{') depth++;
+      if (c === ']' || c === '}') depth--;
+    }
+    if (!inQuotes && depth === 0 && (c === ',' || c === '\n')) {
+      parts.push(current);
+      current = '';
+    } else {
+      current += c;
+    }
+  }
+  if (current.trim() !== '') parts.push(current);
+  return parts;
+}
+
+// Converts a LeetCode example's "input" field into the newline-per-parameter
+// stdin format the compiler backend expects, stripping each "name =" prefix.
+function toTestcaseStdin(input) {
+  return splitTopLevelParams(input)
+    .map(tok => {
+      tok = tok.trim();
+      const eqIdx = tok.indexOf('=');
+      return eqIdx !== -1 ? tok.slice(eqIdx + 1).trim() : tok;
+    })
+    .join('\n');
+}
+
 export default function ProblemWorkspace() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -55,19 +97,7 @@ export default function ProblemWorkspace() {
 
           // Populate default testcases from problem examples
           if (data.examples && data.examples.length > 0) {
-            const initialCases = data.examples.map(ex => {
-              // Extract the value part if there is an equals sign, otherwise keep as is
-              let stdin = ex.input;
-              if (stdin.includes('\n')) {
-                stdin = stdin.split('\n').map(l => l.includes('=') ? l.split('=')[1].trim() : l).join('\n');
-              } else if (stdin.includes(',')) {
-                // If it's a comma-separated inputs line e.g., nums = [2,7,11,15], target = 9
-                stdin = stdin.split(',').map(tok => tok.includes('=') ? tok.split('=')[1].trim() : tok).join('\n');
-              } else if (stdin.includes('=')) {
-                stdin = stdin.split('=')[1].trim();
-              }
-              return stdin;
-            });
+            const initialCases = data.examples.map(ex => toTestcaseStdin(ex.input));
             setTestCases(initialCases);
           } else {
             setTestCases(['']);
