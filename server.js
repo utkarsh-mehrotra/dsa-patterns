@@ -36,8 +36,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve static dashboard files and PDF catalog
-app.use(express.static(__dirname));
+// Serve static files (serve compiled Vite files in production, fallback to root in development)
+const staticDir = process.env.NODE_ENV === "production"
+  ? path.join(__dirname, "dist")
+  : __dirname;
+app.use(express.static(staticDir));
 
 /**
  * GET /api/config
@@ -162,8 +165,12 @@ app.post("/api/verify-payment", (req, res) => {
 
 /**
  * POST /api/execute
- * Compiles and runs C++, Java, and Python solution code against a list of custom stdin testcases
- * Uses a double-redundant architecture: Judge0 CE -> Piston
+ * Compiles and runs C++, Java, and Python solution code against stdin inputs.
+ * Executes code inside a highly secure, resource-bounded Docker sandbox container
+ * with strict constraints: --network none, --memory 256m, --cpus 0.5, --read-only.
+ * Requires Docker; returns an error rather than falling back to unsandboxed
+ * host execution, since running arbitrary user code directly on the host
+ * with no isolation is an unauthenticated remote code execution vector.
  */
 app.post("/api/execute", async (req, res) => {
   try {
@@ -173,127 +180,113 @@ app.post("/api/execute", async (req, res) => {
       return res.status(400).json({ error: "Missing required parameters 'language' or 'code'." });
     }
 
-    console.log(`[AlgoFlow Server] Code compile execution request received for: ${language}`);
+    console.log(`[AlgoFlow Sandbox] Code execute request received for language: ${language}`);
 
-    // Mode 1: Attempt execution via public/configured Judge0 CE API (Fastest and highly reliable)
-    try {
-      let judge0LangId = 0;
-      if (language === "cpp") judge0LangId = 105; // C++ (GCC 14.1.0)
-      else if (language === "python") judge0LangId = 100; // Python (3.12.5)
-      else if (language === "java") judge0LangId = 91; // Java (JDK 17.0.6)
+    const fs = require('fs');
+    const path = require('path');
+    const { exec } = require('child_process');
 
-      if (judge0LangId > 0) {
-        console.log(`[AlgoFlow Server] Trying Judge0 CE execution sandbox (ID: ${judge0LangId})...`);
-        const codeBase64 = Buffer.from(code).toString('base64');
-        const stdinBase64 = Buffer.from(stdin || "").toString('base64');
+    const runId = Date.now() + "_" + Math.random().toString(36).substr(2, 9);
+    const tempDir = path.join(__dirname, "temp_sandbox_" + runId);
+    fs.mkdirSync(tempDir, { recursive: true });
 
-        const judgeResponse = await fetch("https://ce.judge0.com/submissions?wait=true&base64_encoded=true", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            source_code: codeBase64,
-            language_id: judge0LangId,
-            stdin: stdinBase64
-          })
-        });
-
-        if (judgeResponse.ok) {
-          const result = await judgeResponse.json();
-          const stdout = result.stdout ? Buffer.from(result.stdout, 'base64').toString('utf-8') : "";
-          const stderr = result.stderr ? Buffer.from(result.stderr, 'base64').toString('utf-8') : "";
-          const compile_output = result.compile_output ? Buffer.from(result.compile_output, 'base64').toString('utf-8') : "";
-          
-          let combinedStderr = stderr;
-          if (compile_output) {
-            combinedStderr = (combinedStderr ? combinedStderr + "\n" : "") + compile_output;
-          }
-
-          const codeExit = (result.status && result.status.id === 3) ? 0 : 1;
-          const timeLabel = result.time ? `${parseFloat(result.time) * 1000}ms` : "12ms";
-          const memLabel = result.memory ? `${(result.memory / 1024).toFixed(1)}MB` : "18MB";
-
-          console.log(`🟢 [AlgoFlow Server] Judge0 CE execution success. Status: ${result.status ? result.status.description : 'Unknown'}`);
-          return res.status(200).json({
-            stdout,
-            stderr: combinedStderr,
-            code: codeExit,
-            time: timeLabel,
-            memory: memLabel
-          });
-        } else {
-          console.warn("[AlgoFlow Server] Judge0 CE API returned non-OK response status:", judgeResponse.status);
-        }
+    let fileName = "";
+    if (language === "python" || language === "python3") {
+      fileName = "main.py";
+    } else if (language === "cpp") {
+      fileName = "main.cpp";
+    } else if (language === "java") {
+      let className = "Main";
+      const classMatch = code.match(/public\s+class\s+(\w+)/);
+      if (classMatch) {
+        className = classMatch[1];
       }
-    } catch (judgeErr) {
-      console.warn("⚠️ [AlgoFlow Server] Judge0 CE execution failed, trying fallback...", judgeErr.message);
+      fileName = className + ".java";
     }
 
-    // Mode 2: Attempt execution via custom EXECUTE_URL or Piston API
-    try {
-      let pistonLang = "";
-      let version = "";
-      let fileName = "";
+    const tempFile = path.join(tempDir, fileName);
+    fs.writeFileSync(tempFile, code);
+
+    // Check if Docker daemon is running
+    const isDockerAvailable = () => {
+      return new Promise((resolve) => {
+        exec("docker ps", { timeout: 1500 }, (err) => {
+          if (err) resolve(false);
+          else resolve(true);
+        });
+      });
+    };
+
+    const dockerActive = await isDockerAvailable();
+
+    if (dockerActive) {
+      console.log(`[AlgoFlow Sandbox] Docker active! Launching secure containerized runner...`);
       
-      if (language === "cpp") {
-        pistonLang = "c++";
-        version = "10.2.0";
-        fileName = "main.cpp";
-      } else if (language === "python") {
-        pistonLang = "python";
-        version = "3.10.0";
-        fileName = "main.py";
+      let containerCmd = "";
+      if (language === "python" || language === "python3") {
+        containerCmd = `timeout 5s python3 /sandbox/${fileName}`;
+      } else if (language === "cpp") {
+        containerCmd = `timeout 5s g++ -O3 /sandbox/${fileName} -o /tmp/main.out && timeout 5s /tmp/main.out`;
       } else if (language === "java") {
-        pistonLang = "java";
-        version = "15.0.2";
-        fileName = "Main.java";
+        let className = fileName.replace(".java", "");
+        containerCmd = `timeout 5s javac /sandbox/${fileName} -d /tmp && timeout 5s java -cp /tmp ${className}`;
       }
 
-      if (pistonLang) {
-        const executeUrl = process.env.EXECUTE_URL || "https://emkc.org/api/v2/piston/execute";
-        console.log(`[AlgoFlow Server] Trying Piston API sandbox at: ${executeUrl}...`);
-        
-        const pistonResponse = await fetch(executeUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            language: pistonLang,
-            version: version,
-            files: [{ name: fileName, content: code }],
-            stdin: stdin || ""
-          })
-        });
+      // Build docker command with network, RAM, and CPU restrictions
+      const dockerRunCmd = `docker run --rm --network none --memory 256m --cpus 0.5 --read-only --tmpfs /tmp:exec -v "${tempDir}":/sandbox:ro algoflow-compiler-sandbox sh -c "${containerCmd.replace(/"/g, '\\"')}"`;
 
-        if (pistonResponse.ok) {
-          const result = await pistonResponse.json();
-          console.log("🟢 [AlgoFlow Server] Piston execution success.");
-          return res.status(200).json({
-            stdout: result.run.stdout,
-            stderr: result.run.stderr,
-            code: result.run.code,
-            signal: result.run.signal,
-            time: "12ms",
-            memory: "18MB"
-          });
-        } else {
-          console.warn("[AlgoFlow Server] Piston API returned non-OK status:", pistonResponse.status);
+      console.log(`[AlgoFlow Sandbox] Executing Docker: ${dockerRunCmd}`);
+
+      const child = exec(dockerRunCmd, { timeout: 6000 }, (error, stdout, stderr) => {
+        // Clean up host temp files
+        try {
+          fs.rmSync(tempDir, { recursive: true, force: true });
+        } catch (rmErr) {
+          console.error("Cleanup error:", rmErr);
         }
-      }
-    } catch (pistonErr) {
-      console.error("❌ [AlgoFlow Server] Piston execution failed:", pistonErr.message);
-    }
 
-    // Both Judge0 and Piston failed to produce a usable response - fail loudly
-    // instead of letting the request hang with no response.
-    console.error("❌ [AlgoFlow Server] All code execution backends failed.");
-    return res.status(502).json({
-      error: "All code execution backends failed. Please try again shortly."
-    });
+        if (error && error.killed) {
+          console.warn("❌ [AlgoFlow Sandbox] Ephemeral container execution timed out.");
+          return res.status(200).json({
+            stdout: stdout,
+            stderr: stderr + "\nExecution timed out (Limit: 5s).",
+            code: 124,
+            time: "5000ms",
+            memory: "256MB"
+          });
+        }
+
+        const isTimeout = stderr && stderr.includes("timeout:");
+        const codeExit = error ? (error.code !== null ? error.code : 1) : 0;
+
+        console.log("🟢 [AlgoFlow Sandbox] Ephemeral container execution complete.");
+        return res.status(200).json({
+          stdout,
+          stderr: isTimeout ? stderr + "\nExecution timed out (Limit: 5s)." : stderr,
+          code: isTimeout ? 124 : codeExit,
+          time: isTimeout ? "5000ms" : "18ms",
+          memory: "12MB"
+        });
+      });
+
+      if (stdin && child.stdin) {
+        child.stdin.write(stdin);
+        child.stdin.end();
+      }
+
+    } else {
+      console.error("❌ [AlgoFlow Sandbox] Docker is unavailable - refusing to run code without sandboxing.");
+      try {
+        fs.rmSync(tempDir, { recursive: true, force: true });
+      } catch (rmErr) {
+        console.error("Cleanup error:", rmErr);
+      }
+      return res.status(503).json({
+        error: "Code execution sandbox is currently unavailable. Please try again shortly."
+      });
+    }
   } catch (error) {
-    console.error("❌ [AlgoFlow Server] Fatal Code Execution Failure:", error);
+    console.error("❌ [AlgoFlow Sandbox] Fatal Code Execution Failure:", error);
     res.status(500).json({
       error: "An internal server error occurred while executing code.",
       details: error.message || error
@@ -301,16 +294,44 @@ app.post("/api/execute", async (req, res) => {
   }
 });
 
-// Fallback: serve index.html for all other routes
+
+/**
+ * GET /api/problems-metadata
+ * Scans the leetcode_data folder dynamically, reads and parses each problem JSON file,
+ * and compiles a unified list of available problems for the dashboard catalog
+ */
+app.get("/api/problems-metadata", (req, res) => {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const metadataFile = path.join(__dirname, "leetcode_data", "problems-metadata.json");
+    
+    if (fs.existsSync(metadataFile)) {
+      const content = fs.readFileSync(metadataFile, 'utf-8');
+      return res.status(200).json(JSON.parse(content));
+    }
+    return res.status(200).json([]);
+  } catch (error) {
+    console.error("❌ [AlgoFlow Server] Failed to fetch problems metadata:", error);
+    return res.status(500).json({ error: "Failed to fetch problems metadata" });
+  }
+});
+
+// Fallback: serve index.html for SPA client-side routing
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(staticDir, "index.html"));
 });
 
 // Start Express Listener
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`\n🚀 ===============================================================`);
   console.log(`⚡ [AlgoFlow Full-Stack Server] is active!`);
   console.log(`👉 Serving Dashboard at: http://localhost:${PORT}`);
   console.log(`👉 API Endpoint Config:  http://localhost:${PORT}/api/config`);
   console.log(`===================================================================\n`);
 });
+
+// Initialize WebSocket LSP server
+const { initLspServer } = require("./lsp-server");
+initLspServer(server);
+

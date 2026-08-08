@@ -1,7 +1,7 @@
 {
   "hosting": {
     "site": "algoflow",
-    "public": ".",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",

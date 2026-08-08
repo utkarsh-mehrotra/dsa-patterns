@@ -1,0 +1,75 @@
+[
+  {
+    "title": "Coding Interview Patterns",
+    "author": "Alex Xu & Shaun Gunawardane",
+    "tagline": "Nail Your Next Coding Interview (ByteByteGo)",
+    "desc": "A highly visual guide that walks you through core algorithmic patterns using intuitive illustrations, dry runs, and practical coding exercises.",
+    "path": "books/Alex Xu & Shaun Gunawardane - Coding Interview Patterns.pdf",
+    "tags": [
+      "DSA",
+      "LeetCode",
+      "ByteByteGo",
+      "2024 Release"
+    ]
+  },
+  {
+    "title": "Coding Interview Patterns (Bonus)",
+    "author": "Alex Xu & Shaun Gunawardane",
+    "tagline": "Advanced Patterns & Heuristics (ByteByteGo)",
+    "desc": "A compilation of advanced problem-solving techniques and bonus patterns to tackle highly complex algorithmic puzzles in top-tier interviews.",
+    "path": "books/Alex Xu & Shaun Gunawardane - Coding Interview Patterns (Bonus).pdf",
+    "tags": [
+      "Advanced",
+      "DSA",
+      "Interview Prep"
+    ]
+  },
+  {
+    "title": "AlgoTutor - LeetCode Patterns",
+    "author": "AlgoTutor",
+    "tagline": "Structured Learning Syllabus",
+    "desc": "A structured syllabus mapped directly to core patterns and high-frequency LeetCode questions, sorting problems systematically from Easy to Hard.",
+    "path": "books/AlgoTutor - LeetCode Patterns.pdf",
+    "tags": [
+      "Syllabus",
+      "Curated Problems",
+      "Targeted Prep"
+    ]
+  },
+  {
+    "title": "System Design Interview (Volume 2)",
+    "author": "Alex Xu & Sahn Lam",
+    "tagline": "An Insider's Guide (Byte Code)",
+    "desc": "Deep-dives into real-world system design questions including distributed caches, search autocompletes, payment systems, and gaming backends.",
+    "path": "books/Alex Xu & Sahn Lam - System Design Interview (Volume 2).pdf",
+    "tags": [
+      "System Design",
+      "Architecture",
+      "ByteByteGo"
+    ]
+  },
+  {
+    "title": "Designing Data-Intensive Applications",
+    "author": "Martin Kleppmann",
+    "tagline": "The Definitive Distributed Systems Guide",
+    "desc": "The bible for engineering data systems. Covers storage engines, transactions, partition keys, replication, consensus, and system trade-offs.",
+    "path": "books/Martin Kleppmann - Designing Data-Intensive Applications.pdf",
+    "tags": [
+      "Systems",
+      "Databases",
+      "Distributed Systems"
+    ]
+  },
+  {
+    "title": "GAMAM Technical Interview Guide",
+    "author": "GAMAM Prep Consortium",
+    "tagline": "FAANG Interview Playbook",
+    "desc": "Comprehensive cheatsheets, behavioral guidelines, and dynamic problem roadmaps targeted specifically at top-tier FAANG/GAMAM interviews.",
+    "path": "books/GAMAM Technical Interview Guide.pdf",
+    "tags": [
+      "Interview Cheat Sheet",
+      "Behavioral",
+      "FAANG Guide"
+    ]
+  }
+]
