@@ -1580,68 +1580,6 @@ header {
   cursor: not-allowed;
 }
 
-/* 7. Premium Multi-stage AI Compiler timeline visualization */
-.timeline-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 12px 0 24px;
-  width: 100%;
-  overflow-x: auto;
-  padding: 4px 0;
-}
-
-.timeline-pill {
-  font-size: 0.65rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  border-radius: var(--radius-pill);
-  padding: 4px 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  border: 1px solid transparent;
-  opacity: 0.45;
-  transition: var(--transition);
-}
-
-.timeline-pill.active {
-  opacity: 1;
-}
-
-.timeline-pill-thinking {
-  background: var(--timeline-thinking);
-  color: var(--ink);
-}
-.timeline-pill-grep {
-  background: var(--timeline-grep);
-  color: var(--ink);
-}
-.timeline-pill-read {
-  background: var(--timeline-read);
-  color: var(--ink);
-}
-.timeline-pill-edit {
-  background: var(--timeline-edit);
-  color: var(--ink);
-}
-.timeline-pill-done {
-  background: var(--timeline-done);
-  color: var(--on-primary);
-}
-
-.timeline-connector {
-  width: 20px;
-  height: 1px;
-  background: var(--hairline-strong);
-  flex-shrink: 0;
-}
-
-.timeline-connector.highlight {
-  background: var(--ink);
-}
-
 /* Pulse animation */
 .sandbox-skeleton-pulse {
   background: var(--hairline);

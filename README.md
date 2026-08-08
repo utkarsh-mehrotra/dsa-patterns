@@ -6,11 +6,15 @@ An interactive reference dashboard and curated library designed to help you mast
 
 ## 🚀 Features
 
-* **Interactive Reference Board (`index.html`)**: A lightweight, responsive, single-page web app to:
+* **Interactive Reference Board**: A React SPA to:
   * Browse core DSA patterns categorized by topics (e.g., Two Pointers, Sliding Window, Fast/Slow Pointers, Binary Search on Answer, Monotonic Stacks, Heap Streams).
   * Filter patterns dynamically by category or search across names, conceptual ideas, and specific LeetCode examples.
   * Expand pattern cards to view **when to spot them** (heuristics) and **canonical examples**.
   * Keep rich, custom heuristics notes in your dashboard.
+
+* **In-Browser Code Sandbox** (`/problem/:slug`):
+  * Monaco-based editor (C++, Java, Python) that shows **only the code you're meant to write** — parsing harnesses, helper structs, and driver code are hidden and reassembled server-side before compilation. See [System Design](#-system-design--architecture) below.
+  * Real compilation and execution via a Judge0-backed API, with per-language, per-problem starter code that runs cleanly out of the box.
 
 * **Google Authentication & Cloud Sync**:
   * Real-time sync with Google Auth or mock login triggers for immediate, multi-user sandbox testing.
@@ -32,9 +36,24 @@ An interactive reference dashboard and curated library designed to help you mast
 ## 📂 Repository Structure
 
 ```text
-├── index.html       # Single-page interactive DSA reference dashboard
-├── README.md        # Project documentation
-└── books/           # Curated technical interview & DSA library
+├── src/                  # React SPA source
+│   ├── components/
+│   │   ├── Dashboard.jsx        # Pattern browser, library, auth, Razorpay checkout
+│   │   └── ProblemWorkspace.jsx # Monaco sandbox: editor, run/submit, LSP wiring
+│   ├── context/AppContext.jsx   # Auth/progress/theme state shared across views
+│   ├── config/firebase.js       # Firebase app init (Auth + Firestore)
+│   └── data/                    # Bundled patternsData.json / booksData.json
+├── leetcode_data/*.json  # One file per problem: description + per-language
+│                         # code_stubs, each split into {prefix, body, suffix}
+├── functions/index.js    # Firebase Cloud Function: /api/execute, /api/create-order,
+│                         # /api/verify-payment (what's actually deployed)
+├── server.js             # Express server for local dev / VM hosting - adds a
+│                         # Docker-sandboxed /api/execute + WebSocket LSP bridge
+├── lsp-server.js          # Language server (pyright etc.) over WebSocket
+├── generate-metadata.js   # Build step: derives problems-metadata.json from leetcode_data/
+├── firebase.json / .firebaserc  # Hosting (site: "algoflow") + Functions config
+├── DESIGN.md              # Visual design system (color, type, spacing)
+└── books/                 # Curated technical interview & DSA library
 ```
 
 ---
@@ -58,12 +77,153 @@ The `books/` directory contains highly comprehensive guides covering algorithmic
 
 ---
 
+## 🏗️ System Design & Architecture
+
+### Overview
+
+```
+Browser (React SPA, Vite build)
+   │
+   ├── Firebase Hosting ("algoflow" site) — serves the static build
+   │      rewrites /api/** ────────────────┐
+   │                                        ▼
+   │                          Firebase Cloud Function (functions/index.js)
+   │                          Express app: /api/execute, /api/create-order,
+   │                          /api/verify-payment
+   │                                        │
+   │                                        ├──▶ Judge0 CE (primary compiler)
+   │                                        └──▶ Piston API (fallback)
+   │
+   └── Firebase Auth + Firestore — login, progress sync, Pro entitlement
+```
+
+Two Firebase Hosting **sites** exist under the same project (`algoflow-dsa`):
+`algoflow` (the real one — bound to the Web App ID this SPA actually uses)
+and `algoflow-dsa` (orphaned, no App ID attached). `firebase.json` pins
+`"site": "algoflow"` explicitly so `firebase deploy --only hosting` can't
+silently land on the wrong one again.
+
+### Code execution pipeline
+
+`/api/execute` takes `{ language, code, stdin }` and tries, in order:
+
+1. **Judge0 CE** (`ce.judge0.com`) — free community instance, fast, but
+   rate-limited and occasionally down.
+2. **Piston** (`emkc.org`) — fallback. (As of Feb 2026 Piston's public API
+   requires a whitelist; this path is effectively dead for unwhitelisted
+   callers, kept as a no-op fallback in case that changes.)
+3. **Terminal response.** If neither succeeds, the handler returns an
+   explicit `502` rather than falling through with no response — see
+   *Key Decisions* below for why this matters.
+
+`server.js` (used for local dev / VM hosting, **not** what's deployed to
+Cloud Functions) additionally supports a Docker-sandboxed executor
+(`--network none`, memory/CPU caps, read-only) as a third option when a
+`algoflow-compiler-sandbox` image is available locally.
+
+### Problem stub data model
+
+Each `leetcode_data/<slug>.json` holds, per language, a `code_stubs` entry
+shaped as:
+
+```json
+{
+  "lang_slug": "cpp",
+  "prefix": "// includes, ListNode/TreeNode structs, parsing helpers...",
+  "body":   "class Solution {\npublic:\n    ... // what the user sees and edits",
+  "suffix": "int main() { ... }  // reads stdin, calls Solution, prints result"
+}
+```
+
+`ProblemWorkspace.jsx` only ever shows `body` in Monaco. On Run/Submit it
+sends `prefix + body + suffix` to `/api/execute` as one file. This keeps
+the editor focused on the actual algorithm instead of ~150 lines of JSON
+parsing boilerplate, while the compiled program is unchanged from the
+user's point of view.
+
+**Stateful ("design") problems** — `MinStack`, `LRUCache`, `Trie`, and
+similar — don't fit the single-call model above. Their `suffix` instead
+dispatches an *operation sequence*: input is `["ClassName","op1","op2"],
+[[ctorArgs],[op1Args],[op2Args]]`, and the generated driver instantiates
+the class once, then calls each `opN` by name in order, collecting a
+`results` array (`null` for `void` calls) that's printed as JSON. The
+dispatcher is generated **generically** from the class's own method
+signatures (name, params, return type) rather than hand-written per
+problem — see *Key Decisions*.
+
+---
+
+## 🛠️ Key Decisions & Trade-offs
+
+A running log of non-obvious engineering calls made in this codebase, and why.
+
+- **Removed the unsandboxed local `child_process.exec` compiler fallback.**
+  It ran user-submitted code directly on the host with no isolation and no
+  auth check — an unauthenticated RCE vector. The tradeoff: when Docker
+  (or Judge0/Piston) isn't available, `/api/execute` now returns a clean
+  `503`/`502` instead of silently degrading to something insecure.
+
+- **Every code-execution failure path must send a terminal HTTP response.**
+  The original handler fell through silently when both Judge0 and Piston
+  failed (neither `return`s nor throws on a non-`200` response), leaving
+  the request hanging forever with the frontend spinner stuck. Every
+  branch now either returns a result or an explicit error status.
+
+- **Stub data is generated, not hand-authored, and the generator had
+  several distinct bugs** discovered while making every problem runnable
+  out-of-the-box: empty method bodies (undefined behavior in C++, hard
+  compile errors in Java, `IndentationError` in Python), a systemic Python
+  bug that substituted `ListNode`/`TreeNode`'s own constructor signature
+  for the real method's parameters, wrong parser functions selected for
+  `char[]`/`char[][]`/`ListNode[]` params, and missing `Printer` overloads
+  for some array types. All were root-caused and fixed at the generator
+  level (`migrate.py`-style pass over `leetcode_data/`), not patched
+  per-file, so the fix generalizes to future scraped problems too.
+
+- **The "design" problem driver is generated from the class's own method
+  signatures, not hardcoded per problem.** A hand-written dispatcher per
+  problem (12 problems × 3 languages) would be more code and would drift
+  out of sync with the actual class. The generic version reads whatever
+  methods exist in the `Solution`/named class and only proceeds if every
+  param/return type is one it knows how to (de)serialize — safe types are
+  handled automatically; unsupported ones are left untouched rather than
+  guessed at.
+
+- **Explicitly out of scope, documented rather than silently left broken:**
+  - `serialize-and-deserialize-binary-tree` — tested via roundtrip
+    (serialize your own output, deserialize it back), not the operation-
+    sequence pattern above; needs a different driver shape entirely.
+  - `clone-graph`, `flatten-a-multilevel-doubly-linked-list`,
+    `populating-next-right-pointers-in-each-node` — each uses a `Node`
+    shape with a bespoke LeetCode-specific serialization format (graph
+    adjacency list, multilevel-list-with-child markers, tree-with-next-
+    pointers). Getting these subtly wrong would produce silently
+    incorrect judged output, which is worse than a visible compile error,
+    so they're left as a known gap pending verification against real
+    LeetCode test cases.
+  - A handful of problems (`alien-dictionary`, `meeting-rooms`, etc.) have
+    **zero** scraped `code_stubs` — nothing to fix, they were never
+    generated in the first place.
+
+- **Upgraded `firebase-functions` 5→7 and the Cloud Functions runtime
+  Node 20→24** ahead of Node 20's Google Cloud deprecation
+  (EOL 2026-10-30). Verified no breaking change in that range affects this
+  codebase (already using the explicit `v2/https` import, no
+  `functions.config()` or v1-event usage) via the Firebase emulator before
+  deploying.
+
+---
+
 ## ⚙️ Configuration & Live Deployment
 
-To activate live real-world Google Auth, Firestore background sync, and Razorpay payment triggers, update the following configurations near the bottom of `index.html`:
+To activate live real-world Google Auth, Firestore background sync, and Razorpay payment triggers, update the following configurations:
 
 ### 1. Firebase API Configuration
-Replace placeholder credentials in the `firebaseConfig` object:
+Credentials live in `src/config/firebase.js` and are currently hardcoded to
+the live `algoflow-dsa` project (Firebase web API keys are meant to be
+public — they're scoped by Firebase Auth domain restrictions and Firestore
+security rules, not secrecy). To point at a different project, replace the
+`firebaseConfig` object there:
 ```javascript
 const firebaseConfig = {
   apiKey: "YOUR_REAL_API_KEY",
@@ -76,12 +236,16 @@ const firebaseConfig = {
 ```
 
 ### 2. Razorpay API Key ID
-Replace `"YOUR_RAZORPAY_KEY_ID"` inside the `razorpayConfig` block:
-```javascript
-const razorpayConfig = {
-  keyId: "rzp_live_YOUR_LIVE_KEY_ID" // Paste your live Razorpay Key ID here
-};
+The frontend no longer hardcodes a Razorpay key — it fetches the public
+`keyId` at runtime from `GET /api/config` (see `functions/index.js` /
+`server.js`), which reads `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET` from
+the environment. Set these via Firebase Secret Manager for the deployed
+function:
+```bash
+firebase functions:secrets:set RAZORPAY_KEY_ID
+firebase functions:secrets:set RAZORPAY_KEY_SECRET
 ```
+or in a local `.env` file next to `server.js` for local dev.
 
 > [!NOTE]
 > If these credentials are not set up or configured, the application automatically runs in **Offline / Sandbox Demo Mode**, enabling full mock checkout testing, local segregated data persistence, and simulated Pro unlock confirmations.
@@ -90,23 +254,31 @@ const razorpayConfig = {
 
 ## 🛠️ How to Use
 
-### 1. Servicing the Dashboard Locally
-Since the dashboard is built purely with vanilla HTML, CSS, and JavaScript, you can open and run it locally without installing complex build pipelines.
+### 1. Running the Dashboard Locally
+The dashboard is a React + Vite SPA and needs a build step.
 
-* **Option A: Direct Open**  
-  Simply double-click the `index.html` file to open it in your preferred web browser.
+```bash
+npm install
+npm run dev       # Vite dev server (hot reload), talks to /api/** via BACKEND_URL
+```
 
-* **Option B: Run a Local Server**  
-  To serve the application locally (highly recommended to enable proper cross-origin PDF embedding), run one of the following commands in the project directory:
+By default the frontend calls the deployed compiler backend
+(`VITE_BACKEND_URL`, empty = same-origin relative path). To also run the
+compiler locally instead of hitting the live Cloud Function:
 
-  ```bash
-  # Using Python 3
-  python3 -m http.server 8000
-  
-  # Or using Node.js / npx
-  npx -y http-server -p 8000
-  ```
-  Then, navigate to `http://localhost:8000` in your web browser.
+```bash
+npm start          # node server.js — Express server with /api/execute,
+                    # Razorpay endpoints, and a WebSocket LSP bridge
+```
+
+To produce a production build (what actually gets deployed to Firebase
+Hosting):
+```bash
+npm run build       # runs generate-metadata.js, vite build, then copies
+                     # leetcode_data/ and books/ into dist/
+firebase deploy --only hosting   # deploys dist/ to the "algoflow" site
+firebase deploy --only functions # deploys functions/index.js (the compiler API)
+```
 
 ### 2. Reading Guides
 You can find all PDF resources locally in the `books/` directory or unlock access in the interactive library view upon upgrading your dashboard profile.

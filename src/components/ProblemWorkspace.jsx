@@ -35,7 +35,6 @@ export default function ProblemWorkspace() {
   const [showNotes, setShowNotes] = useState(false);
   const [notesText, setNotesText] = useState('');
   const [notesStatus, setNotesStatus] = useState('Saved');
-  const [compilationStage, setCompilationStage] = useState('none');
 
   const editorRef = useRef(null);
   const monacoRef = useRef(null);
@@ -186,7 +185,7 @@ export default function ProblemWorkspace() {
 
     // Load initial code stub for language
     const currentStubObj = problem.code_stubs.find(stub => stub.lang_slug === selectedLanguage) || problem.code_stubs[0];
-    const initialCode = savedCodesRef.current[selectedLanguage] || currentStubObj.code;
+    const initialCode = savedCodesRef.current[selectedLanguage] || currentStubObj.body || currentStubObj.code;
 
     // Create editor instance
     const editor = monaco.editor.create(editorRef.current, {
@@ -243,7 +242,7 @@ export default function ProblemWorkspace() {
 
     // Load stub for new language
     const stubObj = problem.code_stubs.find(stub => stub.lang_slug === lang) || problem.code_stubs[0];
-    const targetCode = savedCodesRef.current[lang] || stubObj.code;
+    const targetCode = savedCodesRef.current[lang] || stubObj.body || stubObj.code;
 
     // Update Monaco editor model language and value
     const model = monacoRef.current.getModel();
@@ -383,8 +382,9 @@ export default function ProblemWorkspace() {
   const handleResetCode = () => {
     if (!problem || !monacoRef.current) return;
     const originalStubObj = problem.code_stubs.find(stub => stub.lang_slug === selectedLanguage) || problem.code_stubs[0];
-    monacoRef.current.setValue(originalStubObj.code);
-    savedCodesRef.current[selectedLanguage] = originalStubObj.code;
+    const originalCode = originalStubObj.body || originalStubObj.code;
+    monacoRef.current.setValue(originalCode);
+    savedCodesRef.current[selectedLanguage] = originalCode;
   };
 
   // 10. Execute Code Sandbox Endpoint
@@ -395,15 +395,13 @@ export default function ProblemWorkspace() {
     setRunResult(null);
     setActiveConsoleTab('result');
     setIsConsoleCollapsed(false);
-    
-    // Cycle AI compilation timeline pastels
-    setCompilationStage('thinking');
-    const t1 = setTimeout(() => setCompilationStage('grep'), 300);
-    const t2 = setTimeout(() => setCompilationStage('read'), 600);
-    const t3 = setTimeout(() => setCompilationStage('edit'), 900);
 
     const userCode = monacoRef.current.getValue();
     const currentInput = testCases[activeTestCaseIndex] || '';
+    const activeStubObj = problem.code_stubs.find(stub => stub.lang_slug === selectedLanguage) || problem.code_stubs[0];
+    const fullCode = (activeStubObj.prefix != null && activeStubObj.suffix != null)
+      ? activeStubObj.prefix + userCode + activeStubObj.suffix
+      : userCode;
 
     try {
       const response = await fetch(`${BACKEND_URL}/api/execute`, {
@@ -413,13 +411,10 @@ export default function ProblemWorkspace() {
         },
         body: JSON.stringify({
           language: selectedLanguage === 'python3' ? 'python' : selectedLanguage,
-          code: userCode,
+          code: fullCode,
           stdin: currentInput
         })
       });
-
-      // Brief padding delay to allow visual timeline stages to be fully visible
-      await new Promise(resolve => setTimeout(resolve, 1100));
 
       if (response.ok) {
         const data = await response.json();
@@ -456,14 +451,7 @@ export default function ProblemWorkspace() {
         code: 500
       });
     } finally {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-      setCompilationStage('done');
-      setTimeout(() => {
-        setIsRunning(false);
-        setCompilationStage('none');
-      }, 300);
+      setIsRunning(false);
     }
   };
 
@@ -746,34 +734,9 @@ export default function ProblemWorkspace() {
                 <div className="sandbox-output-view">
                   {isRunning ? (
                     <div className="sandbox-output-loading-container" style={{ padding: '24px 0' }}>
-                      <div className="timeline-container">
-                        <span className={`timeline-pill timeline-pill-thinking ${compilationStage === 'thinking' ? 'active' : ''}`}>
-                          <i className="fa-solid fa-gear fa-spin"></i> Thinking
-                        </span>
-                        <div className={`timeline-connector ${['grep', 'read', 'edit', 'done'].includes(compilationStage) ? 'highlight' : ''}`}></div>
-                        <span className={`timeline-pill timeline-pill-grep ${compilationStage === 'grep' ? 'active' : ''}`}>
-                          <i className="fa-solid fa-magnifying-glass"></i> Grep
-                        </span>
-                        <div className={`timeline-connector ${['read', 'edit', 'done'].includes(compilationStage) ? 'highlight' : ''}`}></div>
-                        <span className={`timeline-pill timeline-pill-read ${compilationStage === 'read' ? 'active' : ''}`}>
-                          <i className="fa-solid fa-book-open"></i> Read
-                        </span>
-                        <div className={`timeline-connector ${['edit', 'done'].includes(compilationStage) ? 'highlight' : ''}`}></div>
-                        <span className={`timeline-pill timeline-pill-edit ${compilationStage === 'edit' ? 'active' : ''}`}>
-                          <i className="fa-solid fa-pen-nib"></i> Edit
-                        </span>
-                        <div className={`timeline-connector ${compilationStage === 'done' ? 'highlight' : ''}`}></div>
-                        <span className={`timeline-pill timeline-pill-done ${compilationStage === 'done' ? 'active' : ''}`}>
-                          <i className="fa-solid fa-check"></i> Done
-                        </span>
-                      </div>
-                      
+                      <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '20px', color: 'var(--primary)' }}></i>
                       <div style={{ color: 'var(--ink)', fontSize: '0.85rem', fontWeight: '500' }}>
-                        {compilationStage === 'thinking' && "Analyzing code syntactical structures..."}
-                        {compilationStage === 'grep' && "Scanning symbols and function parameters..."}
-                        {compilationStage === 'read' && "Feeding custom standard input stream..."}
-                        {compilationStage === 'edit' && "Evaluating runtime execution bounds..."}
-                        {compilationStage === 'done' && "Process finished!"}
+                        Compiling solution...
                       </div>
                     </div>
                   ) : runResult ? (
