@@ -165,15 +165,12 @@ app.post("/api/verify-payment", (req, res) => {
 
 /**
  * POST /api/execute
- * Compiles and runs C++, Java, and Python solution code against a list of custom stdin testcases
- * Uses a triple-redundant architecture: Judge0 CE -> Piston -> Local ChildProcess Sandbox fallback
- */
-/**
- * POST /api/execute
  * Compiles and runs C++, Java, and Python solution code against stdin inputs.
  * Executes code inside a highly secure, resource-bounded Docker sandbox container
  * with strict constraints: --network none, --memory 256m, --cpus 0.5, --read-only.
- * Seamlessly falls back to local macOS system compilers when Docker is offline.
+ * Requires Docker; returns an error rather than falling back to unsandboxed
+ * host execution, since running arbitrary user code directly on the host
+ * with no isolation is an unauthenticated remote code execution vector.
  */
 app.post("/api/execute", async (req, res) => {
   try {
@@ -278,52 +275,15 @@ app.post("/api/execute", async (req, res) => {
       }
 
     } else {
-      console.log("⚠️ [AlgoFlow Sandbox] Docker offline. Spawning high-performance local system fallback...");
-      
-      let execCmd = "";
-      if (language === "python" || language === "python3") {
-        execCmd = `python3 "${tempFile}"`;
-      } else if (language === "cpp") {
-        const outFile = path.join(tempDir, "main.out");
-        execCmd = `g++ -O3 "${tempFile}" -o "${outFile}" && "${outFile}"`;
-      } else if (language === "java") {
-        let className = fileName.replace(".java", "");
-        execCmd = `javac "${tempFile}" && java -cp "${tempDir}" ${className}`;
+      console.error("❌ [AlgoFlow Sandbox] Docker is unavailable - refusing to run code without sandboxing.");
+      try {
+        fs.rmSync(tempDir, { recursive: true, force: true });
+      } catch (rmErr) {
+        console.error("Cleanup error:", rmErr);
       }
-
-      const child = exec(execCmd, { timeout: 5000 }, (error, stdout, stderr) => {
-        // Clean up host temp files
-        try {
-          fs.rmSync(tempDir, { recursive: true, force: true });
-        } catch (rmErr) {
-          console.error("Cleanup error:", rmErr);
-        }
-
-        if (error && error.killed) {
-          console.warn("❌ [AlgoFlow Sandbox] Local compiler sandbox execution timed out.");
-          return res.status(200).json({
-            stdout: stdout,
-            stderr: stderr + "\nExecution timed out (Limit: 5s).",
-            code: 124,
-            time: "5000ms",
-            memory: "0MB"
-          });
-        }
-
-        console.log("🟢 [AlgoFlow Sandbox] Local sandbox execution complete.");
-        return res.status(200).json({
-          stdout,
-          stderr,
-          code: error ? (error.code !== null ? error.code : 1) : 0,
-          time: "12ms",
-          memory: "6MB"
-        });
+      return res.status(503).json({
+        error: "Code execution sandbox is currently unavailable. Please try again shortly."
       });
-
-      if (stdin && child.stdin) {
-        child.stdin.write(stdin);
-        child.stdin.end();
-      }
     }
   } catch (error) {
     console.error("❌ [AlgoFlow Sandbox] Fatal Code Execution Failure:", error);
