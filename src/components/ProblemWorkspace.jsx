@@ -557,22 +557,10 @@ export default function ProblemWorkspace() {
           {!showNotes ? (
             /* Problem details */
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div 
-                className="sandbox-body-content" 
+              <div
+                className="sandbox-body-content"
                 dangerouslySetInnerHTML={{ __html: problem.description }}
               />
-              
-              {/* Constraints container */}
-              {problem.constraints && problem.constraints.length > 0 && (
-                <div className="sandbox-constraints-block">
-                  <div className="sandbox-constraints-title">Constraints:</div>
-                  <ul className="sandbox-constraints-list">
-                    {problem.constraints.map((c, idx) => (
-                      <li key={idx} dangerouslySetInnerHTML={{ __html: c }}></li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </div>
           ) : (
             /* Notes text area panel */
