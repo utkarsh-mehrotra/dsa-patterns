@@ -477,25 +477,23 @@ export default function ProblemWorkspace() {
           </button>
           <div className="sandbox-header-divider"></div>
           <span className="sandbox-header-title">{problem.title}</span>
-        </div>
-        <div className="sandbox-header-right">
-          <button 
-            className="theme-toggle-btn" 
-            onClick={toggleTheme}
-            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
-            style={{ marginRight: '16px' }}
-          >
-            <i className={`fa-solid ${theme === 'light' ? 'fa-moon' : 'fa-sun'}`}></i>
-          </button>
-          
-          <span className={`sandbox-difficulty-badge ${problem.difficulty.toLowerCase()}`} style={{ marginRight: completedProblems.has(slug) ? '12px' : '0' }}>
+          <span className={`sandbox-difficulty-badge ${problem.difficulty.toLowerCase()}`} style={{ marginLeft: '12px' }}>
             {problem.difficulty}
           </span>
           {completedProblems.has(slug) && (
-            <span style={{ fontSize: '12px', color: 'var(--semantic-success)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span style={{ fontSize: '12px', color: 'var(--semantic-success)', display: 'flex', alignItems: 'center', gap: '4px', marginLeft: '12px' }}>
               <i className="fa-solid fa-circle-check"></i> Solved
             </span>
           )}
+        </div>
+        <div className="sandbox-header-right">
+          <button
+            className="theme-toggle-btn"
+            onClick={toggleTheme}
+            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+          >
+            <i className="fa-solid fa-circle-half-stroke"></i>
+          </button>
         </div>
       </header>
 
@@ -511,29 +509,14 @@ export default function ProblemWorkspace() {
           <div className="sandbox-title-section">
             <div className="sandbox-title-row" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <h2 className="sandbox-problem-title" style={{ margin: 0 }}>{problem.title}</h2>
-              <a 
-                href={`https://leetcode.com/problems/${slug}`} 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href={`https://leetcode.com/problems/${slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 title="View on LeetCode"
-                style={{
-                  color: 'var(--muted)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  opacity: 0.6,
-                  transition: 'opacity 0.2s, color 0.2s',
-                  marginTop: '4px'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.opacity = '1';
-                  e.currentTarget.style.color = 'var(--primary)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.opacity = '0.6';
-                  e.currentTarget.style.color = 'var(--muted)';
-                }}
+                className="sandbox-leetcode-link"
               >
-                <i className="fa-solid fa-arrow-up-right-from-square" style={{ fontSize: '12px' }}></i>
+                View on LeetCode <i className="fa-solid fa-arrow-up-right-from-square"></i>
               </a>
             </div>
             
