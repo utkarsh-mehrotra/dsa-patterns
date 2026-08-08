@@ -163,7 +163,7 @@ app.post("/api/verify-payment", (req, res) => {
 /**
  * POST /api/execute
  * Compiles and runs C++, Java, and Python solution code against a list of custom stdin testcases
- * Uses a triple-redundant architecture: Judge0 CE -> Piston -> Local ChildProcess Sandbox fallback
+ * Uses a double-redundant architecture: Judge0 CE -> Piston
  */
 app.post("/api/execute", async (req, res) => {
   try {
@@ -283,82 +283,15 @@ app.post("/api/execute", async (req, res) => {
         }
       }
     } catch (pistonErr) {
-      console.warn("⚠️ [AlgoFlow Server] Piston API execution failed, trying local fallback...", pistonErr.message);
+      console.error("❌ [AlgoFlow Server] Piston execution failed:", pistonErr.message);
     }
 
-    // Mode 3: Local system compiler/interpreter execution fallback (Guaranteed offline fallback)
-    try {
-      console.log("[AlgoFlow Server] Running local compiler/interpreter sandbox fallback...");
-      const fs = require('fs');
-      const path = require('path');
-      const { exec } = require('child_process');
-
-      const runId = Date.now() + "_" + Math.random().toString(36).substr(2, 9);
-      const tempDir = path.join(__dirname, "temp_sandbox_" + runId);
-      fs.mkdirSync(tempDir, { recursive: true });
-
-      let execCmd = "";
-      let tempFile = "";
-
-      if (language === "python") {
-        tempFile = path.join(tempDir, "main.py");
-        fs.writeFileSync(tempFile, code);
-        execCmd = `python3 "${tempFile}"`;
-      } else if (language === "cpp") {
-        tempFile = path.join(tempDir, "main.cpp");
-        const outFile = path.join(tempDir, "main.out");
-        fs.writeFileSync(tempFile, code);
-        execCmd = `g++ -O3 "${tempFile}" -o "${outFile}" && "${outFile}"`;
-      } else if (language === "java") {
-        let className = "Main";
-        const classMatch = code.match(/public\s+class\s+(\w+)/);
-        if (classMatch) {
-          className = classMatch[1];
-        }
-        tempFile = path.join(tempDir, className + ".java");
-        fs.writeFileSync(tempFile, code);
-        execCmd = `javac "${tempFile}" && java -cp "${tempDir}" ${className}`;
-      }
-
-      const child = exec(execCmd, { timeout: 5000 }, (error, stdout, stderr) => {
-        try {
-          fs.rmSync(tempDir, { recursive: true, force: true });
-        } catch (rmErr) {
-          console.error("Cleanup error:", rmErr);
-        }
-
-        if (error && error.killed) {
-          console.warn("❌ [AlgoFlow Server] Local execution timed out.");
-          return res.status(200).json({
-            stdout: stdout,
-            stderr: stderr + "\nExecution timed out (Limit: 5s).",
-            code: 124,
-            time: "5000ms",
-            memory: "0MB"
-          });
-        }
-
-        console.log("🟢 [AlgoFlow Server] Local sandbox execution completed.");
-        return res.status(200).json({
-          stdout,
-          stderr,
-          code: error ? (error.code !== null ? error.code : 1) : 0,
-          time: "4ms",
-          memory: "2MB"
-        });
-      });
-
-      if (stdin && child.stdin) {
-        child.stdin.write(stdin);
-        child.stdin.end();
-      }
-    } catch (localErr) {
-      console.error("❌ [AlgoFlow Server] All compilation execution methods failed:", localErr);
-      res.status(500).json({
-        error: "All code execution backends failed. Please check compiler configurations.",
-        details: localErr.message || localErr
-      });
-    }
+    // Both Judge0 and Piston failed to produce a usable response - fail loudly
+    // instead of letting the request hang with no response.
+    console.error("❌ [AlgoFlow Server] All code execution backends failed.");
+    return res.status(502).json({
+      error: "All code execution backends failed. Please try again shortly."
+    });
   } catch (error) {
     console.error("❌ [AlgoFlow Server] Fatal Code Execution Failure:", error);
     res.status(500).json({

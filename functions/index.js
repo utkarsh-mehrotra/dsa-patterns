@@ -250,12 +250,15 @@ app.post("/api/execute", async (req, res) => {
         }
       }
     } catch (pistonErr) {
-      console.error("❌ [AlgoFlow Cloud Function] All serverless compilation execution methods failed:", pistonErr);
-      return res.status(500).json({
-        error: "All code execution backends failed. Please check compiler configurations.",
-        details: pistonErr.message || pistonErr
-      });
+      console.error("❌ [AlgoFlow Cloud Function] Piston execution failed:", pistonErr);
     }
+
+    // Both Judge0 and Piston failed to produce a usable response - fail loudly
+    // instead of letting the request hang with no response.
+    console.error("❌ [AlgoFlow Cloud Function] All serverless compilation execution methods failed.");
+    return res.status(502).json({
+      error: "All code execution backends failed. Please try again shortly."
+    });
   } catch (error) {
     console.error("❌ [AlgoFlow Cloud Function] Fatal Code Execution Failure:", error);
     return res.status(500).json({
