@@ -38,8 +38,11 @@ function splitTopLevelParams(str) {
   return parts;
 }
 
-// Converts a LeetCode example's "input" field into the newline-per-parameter
-// stdin format the compiler backend expects, stripping each "name =" prefix.
+// Converts a LeetCode example's "input" field into a newline-per-parameter
+// value for display/editing in the testcase textarea (one clean line per
+// parameter, stripped of each "name =" prefix). This is a *display* format
+// only - see stdinForExecution() for why it can't be sent to the backend
+// as-is.
 function toTestcaseStdin(input) {
   return splitTopLevelParams(input)
     .map(tok => {
@@ -48,6 +51,19 @@ function toTestcaseStdin(input) {
       return eqIdx !== -1 ? tok.slice(eqIdx + 1).trim() : tok;
     })
     .join('\n');
+}
+
+// The compiler backend's drivers read stdin via a single getline/readLine
+// call and split *that one line* on top-level commas - they were never
+// designed to read one parameter per line. Converts the testcase textarea's
+// newline-per-parameter display format into the single comma-joined line
+// the backend actually expects.
+function stdinForExecution(testcaseValue) {
+  return testcaseValue
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l => l !== '')
+    .join(',');
 }
 
 export default function ProblemWorkspace() {
@@ -427,7 +443,7 @@ export default function ProblemWorkspace() {
     setIsConsoleCollapsed(false);
 
     const userCode = monacoRef.current.getValue();
-    const currentInput = testCases[activeTestCaseIndex] || '';
+    const currentInput = stdinForExecution(testCases[activeTestCaseIndex] || '');
     const activeStubObj = problem.code_stubs.find(stub => stub.lang_slug === selectedLanguage) || problem.code_stubs[0];
     const fullCode = (activeStubObj.prefix != null && activeStubObj.suffix != null)
       ? activeStubObj.prefix + userCode + activeStubObj.suffix
