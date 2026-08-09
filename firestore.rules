@@ -7,8 +7,19 @@ service cloud.firestore {
       
       // Users can write progress checklists and heuristics notes, 
       // but CANNOT modify the 'isPro' status directly!
-      allow write: if request.auth != null && request.auth.uid == userId 
+      allow write: if request.auth != null && request.auth.uid == userId
         && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['isPro']));
+    }
+
+    match /submissions/{submissionId} {
+      // Users can only read their own submission history.
+      allow read: if request.auth != null && request.auth.uid == resource.data.uid;
+
+      // Users can only create submissions attributed to themselves.
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.uid;
+
+      // Append-only log: no edits or deletes after the fact.
+      allow update, delete: if false;
     }
   }
 }
