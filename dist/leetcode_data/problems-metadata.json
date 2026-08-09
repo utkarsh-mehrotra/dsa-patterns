@@ -67,7 +67,11 @@
     "title": "Alien Dictionary",
     "slug": "alien-dictionary",
     "difficulty": "Hard",
-    "constraints": []
+    "constraints": [
+      "1 <= words.length <= 100",
+      "1 <= words[i].length <= 100",
+      "words[i] consists of only lowercase English letters."
+    ]
   },
   {
     "title": "All Nodes Distance K in Binary Tree",
@@ -420,13 +424,24 @@
     "title": "Design Hit Counter",
     "slug": "design-hit-counter",
     "difficulty": "Medium",
-    "constraints": []
+    "constraints": [
+      "1 <= timestamp <= 2 * 10^9",
+      "All calls are made in chronological order (timestamp is monotonically increasing).",
+      "At most 300 calls will be made to hit and getHits."
+    ]
   },
   {
     "title": "Design In-Memory File System",
     "slug": "design-in-memory-file-system",
     "difficulty": "Hard",
-    "constraints": []
+    "constraints": [
+      "1 <= path.length, filePath.length <= 100",
+      "path and filePath are absolute paths which begin with '/' and do not end with '/' except that the path is just \"/\".",
+      "You can assume that all directory names and file names only contain lowercase letters, and the same names will not exist in the same directory.",
+      "You can assume that all operations will be passed valid parameters, and users will not attempt to retrieve file content or list a directory or file that does not exist.",
+      "1 <= content.length <= 50",
+      "At most 300 calls will be made to ls, mkdir, addContentToFile, and readContentFromFile."
+    ]
   },
   {
     "title": "Diameter of Binary Tree",
@@ -441,13 +456,20 @@
     "title": "Employee Free Time",
     "slug": "employee-free-time",
     "difficulty": "Hard",
-    "constraints": []
+    "constraints": [
+      "1 <= schedule.length, schedule[i].length <= 50",
+      "0 <= schedule[i][j].start < schedule[i][j].end <= 10^8"
+    ]
   },
   {
     "title": "Encode and Decode Strings",
     "slug": "encode-and-decode-strings",
     "difficulty": "Medium",
-    "constraints": []
+    "constraints": [
+      "1 <= strs.length <= 200",
+      "0 <= strs[i].length <= 200",
+      "strs[i] contains any possible characters out of 256 valid ASCII characters."
+    ]
   },
   {
     "title": "Evaluate Reverse Polish Notation",
@@ -625,7 +647,14 @@
     "title": "Graph Valid Tree",
     "slug": "graph-valid-tree",
     "difficulty": "Medium",
-    "constraints": []
+    "constraints": [
+      "1 <= n <= 2000",
+      "0 <= edges.length <= 5000",
+      "edges[i].length == 2",
+      "0 <= ai, bi < n",
+      "ai != bi",
+      "There are no self-loops or repeated edges."
+    ]
   },
   {
     "title": "Group Anagrams",
@@ -670,7 +699,11 @@
     "title": "Inorder Successor in BST",
     "slug": "inorder-successor-in-bst",
     "difficulty": "Medium",
-    "constraints": []
+    "constraints": [
+      "The number of nodes in the tree is in the range [1, 10^4].",
+      "-10^5 <= Node.val <= 10^5",
+      "All Nodes will have unique values."
+    ]
   },
   {
     "title": "Insert Delete GetRandom O(1)",
@@ -1014,13 +1047,20 @@
     "title": "Meeting Rooms II",
     "slug": "meeting-rooms-ii",
     "difficulty": "Medium",
-    "constraints": []
+    "constraints": [
+      "1 <= intervals.length <= 10^4",
+      "0 <= starti < endi <= 10^6"
+    ]
   },
   {
     "title": "Meeting Rooms",
     "slug": "meeting-rooms",
     "difficulty": "Easy",
-    "constraints": []
+    "constraints": [
+      "0 <= intervals.length <= 10^4",
+      "intervals[i].length == 2",
+      "0 <= starti < endi <= 10^6"
+    ]
   },
   {
     "title": "Merge Intervals",
@@ -1091,7 +1131,10 @@
     "title": "Minimum Knight Moves",
     "slug": "minimum-knight-moves",
     "difficulty": "Medium",
-    "constraints": []
+    "constraints": [
+      "-300 <= x, y <= 300",
+      "0 <= |x| + |y| <= 300"
+    ]
   },
   {
     "title": "Minimum Size Subarray Sum",
@@ -1184,7 +1227,14 @@
     "title": "Number of Connected Components in an Undirected Graph",
     "slug": "number-of-connected-components-in-an-undirected-graph",
     "difficulty": "Medium",
-    "constraints": []
+    "constraints": [
+      "1 <= n <= 2000",
+      "1 <= edges.length <= 5000",
+      "edges[i].length == 2",
+      "0 <= ai <= bi < n",
+      "ai != bi",
+      "There are no repeated edges."
+    ]
   },
   {
     "title": "Number of Islands",
@@ -1577,7 +1627,13 @@
     "title": "Shortest Path to Get Food",
     "slug": "shortest-path-to-get-food",
     "difficulty": "Medium",
-    "constraints": []
+    "constraints": [
+      "m == grid.length",
+      "n == grid[i].length",
+      "1 <= m, n <= 200",
+      "grid[row][col] is '*', 'X', 'O', or '#'.",
+      "The grid contains exactly one '*'."
+    ]
   },
   {
     "title": "Shortest Subarray with Sum at Least K",
