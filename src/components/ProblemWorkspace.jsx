@@ -66,6 +66,93 @@ function stdinForExecution(testcaseValue) {
     .join(',');
 }
 
+// Extracts the class name and every method name from a problem's pristine
+// starter body. Python only: single-line `class X:` / `def y(` patterns are
+// reliable to detect via regex, unlike C++/Java where multi-line signatures,
+// templates, and overloads make static extraction too fragile to safely act
+// on without risking false positives against genuinely correct code.
+function getPythonRequiredIdentifiers(stubBody) {
+  const classMatch = stubBody.match(/class\s+(\w+)/);
+  const className = classMatch ? classMatch[1] : null;
+  const methodNames = Array.from(stubBody.matchAll(/def\s+(\w+)\s*\(/g)).map(m => m[1]);
+  return { className, methodNames };
+}
+
+// Proactively checks that the user's edited body still defines the expected
+// class and every required method, *before* sending it to the judge. Catches
+// the most common source of confusing "AttributeError: no attribute" /
+// "NameError: name not defined" tracebacks: a missing or renamed class/method.
+// Python happily parses that as valid (just structurally wrong) rather than
+// raising a clear error the way a missing brace in C++/Java would, so the
+// failure only ever surfaced at runtime, several steps removed from the
+// actual mistake. Returns a human-readable explanation, or null if the
+// required class and methods are all present.
+function checkPythonStructure(userCode, stubBody) {
+  const { className, methodNames } = getPythonRequiredIdentifiers(stubBody);
+  if (!className) return null;
+
+  const classRe = new RegExp(`class\\s+${className}\\b`);
+  if (!classRe.test(userCode)) {
+    return `Your code doesn't define \`class ${className}:\` — this judge calls your solution through that exact class. Make sure you kept (or restored) the class declaration from the starter code.`;
+  }
+
+  const missing = methodNames.filter(name => !(new RegExp(`def\\s+${name}\\s*\\(`)).test(userCode));
+  if (missing.length > 0) {
+    const list = missing.map(m => `\`${m}\``).join(', ');
+    const noun = missing.length > 1 ? 'methods' : 'a method named';
+    const pronoun = missing.length > 1 ? 'these methods' : 'this method';
+    return `Your \`${className}\` class is missing ${noun} ${list}. The judge calls ${pronoun} directly, so the name (and capitalization) must match the starter code exactly.`;
+  }
+  return null;
+}
+
+// Best-effort rewrite of a handful of well-known "structural mismatch" error
+// shapes (missing/misnamed method or class) into a clear one-line
+// explanation. Runs after a real failed execution, across all three
+// languages - unlike checkPythonStructure(), this never blocks anything, it
+// only adds context on top of an error that already happened, so an
+// imprecise or missed match just falls back to the unmodified raw error.
+function friendlyStructureHint(stderr, language) {
+  if (!stderr) return null;
+
+  if (language === 'python3') {
+    let m = stderr.match(/AttributeError: '(\w+)' object has no attribute '(\w+)'/);
+    if (m) {
+      return `Your \`${m[1]}\` class doesn't define a method named \`${m[2]}\`. Double-check the method name matches the starter code exactly (including capitalization) — the judge calls it directly.`;
+    }
+    m = stderr.match(/NameError: name '(\w+)' is not defined/);
+    if (m) {
+      return `Your code doesn't define \`${m[1]}\` — make sure you kept the \`class ${m[1]}:\` line from the starter code.`;
+    }
+    if (/IndentationError/.test(stderr)) {
+      return `There's an indentation problem in your code. Python needs your method(s) to stay indented inside the class body — a method starting at column 0 is no longer part of the class.`;
+    }
+  }
+
+  if (language === 'java') {
+    let m = stderr.match(/symbol:\s+method\s+(\w+)/);
+    if (m) {
+      return `Your class doesn't define a method named \`${m[1]}\` with the expected parameters — check the exact method name and signature against the starter code.`;
+    }
+    if (/class \w+ is public, should be declared in a file named/.test(stderr)) {
+      return `Remove the \`public\` keyword before \`class\` — this judge compiles your class alongside its own \`Main\` class in the same file, so only one class per file can be \`public\`.`;
+    }
+  }
+
+  if (language === 'cpp') {
+    let m = stderr.match(/has no member named ['"]?(\w+)['"]?/);
+    if (m) {
+      return `Your class doesn't define a member named \`${m[1]}\` — check the exact method name against the starter code.`;
+    }
+    m = stderr.match(/'(\w+)' was not declared in this scope/);
+    if (m) {
+      return `\`${m[1]}\` isn't declared — check the exact class/method name against the starter code.`;
+    }
+  }
+
+  return null;
+}
+
 export default function ProblemWorkspace() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -449,6 +536,15 @@ export default function ProblemWorkspace() {
       ? activeStubObj.prefix + userCode + activeStubObj.suffix
       : userCode;
 
+    if (selectedLanguage === 'python3' && activeStubObj.body) {
+      const structureIssue = checkPythonStructure(userCode, activeStubObj.body);
+      if (structureIssue) {
+        setRunResult({ stdout: '', stderr: structureIssue, code: 1 });
+        setIsRunning(false);
+        return;
+      }
+    }
+
     try {
       const response = await fetch(`${BACKEND_URL}/api/execute`, {
         method: 'POST',
@@ -464,6 +560,12 @@ export default function ProblemWorkspace() {
 
       if (response.ok) {
         const data = await response.json();
+        if (data.code !== 0 && data.stderr) {
+          const hint = friendlyStructureHint(data.stderr, selectedLanguage);
+          if (hint) {
+            data.stderr = `Hint: ${hint}\n\n--- Raw error ---\n${data.stderr}`;
+          }
+        }
         setRunResult(data);
         console.log('[Runner Result]', data);
         
