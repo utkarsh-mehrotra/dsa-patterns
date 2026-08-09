@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import { auth, db } from '../config/firebase';
+import { collection, addDoc, query, where, orderBy, limit, getDocs, serverTimestamp } from 'firebase/firestore';
 import * as monaco from 'monaco-editor';
 import { WebSocketMessageReader, WebSocketMessageWriter, toSocket } from 'vscode-ws-jsonrpc';
 import { MonacoLanguageClient } from 'monaco-languageclient';
@@ -153,10 +155,32 @@ function friendlyStructureHint(stderr, language) {
   return null;
 }
 
+// Classifies a finished /api/execute response into one of four verdicts for
+// the submission history log. The backend's exit code alone can't tell a
+// compile error apart from a runtime error (Judge0/Piston both just report
+// "non-zero"), so this leans on the same textual signals used by
+// friendlyStructureHint() above - a Python traceback header, a Syntax/
+// IndentationError, or a gcc/javac-style ": error:" diagnostic - to make
+// that distinction for display purposes only. It's a best-effort label, not
+// a judge: the actual pass/fail decision still comes from the stdout/
+// expected-output comparison already done in handleRunCode.
+function classifyVerdict(data, passed, language) {
+  if (data.code === 0) {
+    return passed ? 'accepted' : 'wrong_answer';
+  }
+  const stderr = data.stderr || '';
+  if (language === 'python3') {
+    if (/SyntaxError|IndentationError/.test(stderr)) return 'compile_error';
+    return 'runtime_error';
+  }
+  if (/:\s*error:/.test(stderr) || /cannot find symbol/.test(stderr)) return 'compile_error';
+  return 'runtime_error';
+}
+
 export default function ProblemWorkspace() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const { completedProblems, toggleProblemCompletion, theme, toggleTheme } = useApp();
+  const { user, completedProblems, toggleProblemCompletion, theme, toggleTheme } = useApp();
 
   const [problem, setProblem] = useState(null);
   const [selectedLanguage, setSelectedLanguage] = useState('cpp');
@@ -171,7 +195,13 @@ export default function ProblemWorkspace() {
   const [activeTestCaseIndex, setActiveTestCaseIndex] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [runResult, setRunResult] = useState(null);
-  
+
+  // Submission history
+  const [submissions, setSubmissions] = useState([]);
+  const [submissionsLoading, setSubmissionsLoading] = useState(false);
+  const [submissionsLoaded, setSubmissionsLoaded] = useState(false);
+  const [expandedSubmissionId, setExpandedSubmissionId] = useState(null);
+
   // Solved state and modal
   const [isSolved, setIsSolved] = useState(false);
   const [showSolvedModal, setShowSolvedModal] = useState(false);
@@ -521,6 +551,60 @@ export default function ProblemWorkspace() {
   };
 
   // 10. Execute Code Sandbox Endpoint
+  // Writes one submission record for the current user/problem. Guests (no
+  // auth.currentUser) don't get submission history synced, same limitation
+  // completedProblems already has for unauthenticated sessions. Fire-and-
+  // forget: a failed save shouldn't block or alter the Submit flow the user
+  // is actually watching (matches the pattern used everywhere else in this
+  // app for Firestore writes - see toggleProblemCompletion/setProblemNote).
+  const saveSubmission = async ({ userCode, language, data, passed }) => {
+    if (!auth.currentUser || !problem) return;
+    const verdict = classifyVerdict(data, passed, language);
+    try {
+      await addDoc(collection(db, 'submissions'), {
+        uid: auth.currentUser.uid,
+        problemSlug: slug,
+        problemTitle: problem.title,
+        language,
+        code: userCode,
+        verdict,
+        runtimeLabel: data.time || null,
+        memoryLabel: data.memory || null,
+        stdout: (data.stdout || '').slice(0, 2000),
+        stderr: (data.stderr || '').slice(0, 2000),
+        submittedAt: serverTimestamp()
+      });
+      // Invalidate the cached list so the Submissions tab refetches next open.
+      setSubmissionsLoaded(false);
+    } catch (err) {
+      console.error('❌ [AlgoFlow Submissions] Failed to save submission:', err);
+    }
+  };
+
+  // Loads this user's submission history for this problem, newest first.
+  // Lazily called when the Submissions tab is opened (or reopened after a
+  // fresh Submit invalidates the cache) rather than on every render.
+  const fetchSubmissions = async () => {
+    if (!auth.currentUser || !problem) return;
+    setSubmissionsLoading(true);
+    try {
+      const q = query(
+        collection(db, 'submissions'),
+        where('uid', '==', auth.currentUser.uid),
+        where('problemSlug', '==', slug),
+        orderBy('submittedAt', 'desc'),
+        limit(50)
+      );
+      const snap = await getDocs(q);
+      setSubmissions(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      setSubmissionsLoaded(true);
+    } catch (err) {
+      console.error('❌ [AlgoFlow Submissions] Failed to fetch submissions:', err);
+    } finally {
+      setSubmissionsLoading(false);
+    }
+  };
+
   const handleRunCode = async (isSubmit = false) => {
     if (!monacoRef.current || !problem) return;
     
@@ -568,16 +652,20 @@ export default function ProblemWorkspace() {
         }
         setRunResult(data);
         console.log('[Runner Result]', data);
-        
-        // If they click Submit and code runs successfully without compile error
-        if (isSubmit && data.code === 0) {
+
+        if (isSubmit) {
           // Verify code output equals expected output for the selected case
-          const expectedOut = problem.examples[activeTestCaseIndex] 
-            ? problem.examples[activeTestCaseIndex].output.trim() 
+          const expectedOut = problem.examples[activeTestCaseIndex]
+            ? problem.examples[activeTestCaseIndex].output.trim()
             : '';
           const actualOut = data.stdout ? data.stdout.trim() : '';
+          const passed = data.code === 0 && (actualOut === expectedOut || expectedOut === '' || actualOut.includes(expectedOut));
 
-          if (actualOut === expectedOut || expectedOut === '' || actualOut.includes(expectedOut)) {
+          // Record every Submit attempt - accepted, wrong answer, or error -
+          // to the user's submission history, not just successful ones.
+          saveSubmission({ userCode, language: selectedLanguage, data, passed });
+
+          if (passed) {
             // Mark solved!
             toggleProblemCompletion(slug, problem.title);
             setIsSolved(true);
@@ -794,7 +882,7 @@ export default function ProblemWorkspace() {
                 >
                   Testcase
                 </button>
-                <button 
+                <button
                   className={`sandbox-console-tab ${activeConsoleTab === 'result' ? 'active' : ''}`}
                   onClick={() => {
                     setActiveConsoleTab('result');
@@ -802,6 +890,16 @@ export default function ProblemWorkspace() {
                   }}
                 >
                   Result
+                </button>
+                <button
+                  className={`sandbox-console-tab ${activeConsoleTab === 'submissions' ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveConsoleTab('submissions');
+                    setIsConsoleCollapsed(false);
+                    if (!submissionsLoaded) fetchSubmissions();
+                  }}
+                >
+                  Submissions
                 </button>
               </div>
             </div>
@@ -812,7 +910,72 @@ export default function ProblemWorkspace() {
               id="sandbox-console-drawer"
               style={{ height: `${consoleHeight}px` }}
             >
-              {activeConsoleTab === 'testcase' ? (
+              {activeConsoleTab === 'submissions' ? (
+                /* Submission history view */
+                <div className="sandbox-submissions-view">
+                  {!user ? (
+                    <div style={{ color: '#71717a', textAlign: 'center', paddingTop: '20px' }}>
+                      Sign in to track your submission history for this problem.
+                    </div>
+                  ) : submissionsLoading ? (
+                    <div className="sandbox-output-loading-container" style={{ padding: '24px 0' }}>
+                      <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '20px', color: 'var(--primary)' }}></i>
+                      <div style={{ color: 'var(--ink)', fontSize: '0.85rem', fontWeight: '500' }}>
+                        Loading submissions...
+                      </div>
+                    </div>
+                  ) : submissions.length === 0 ? (
+                    <div style={{ color: '#71717a', textAlign: 'center', paddingTop: '20px' }}>
+                      No submissions yet. Click "Submit Code" to record your first attempt.
+                    </div>
+                  ) : (
+                    <div className="sandbox-submissions-list">
+                      {submissions.map((sub) => {
+                        const isExpanded = expandedSubmissionId === sub.id;
+                        const verdictLabel = {
+                          accepted: 'Accepted',
+                          wrong_answer: 'Wrong Answer',
+                          runtime_error: 'Runtime Error',
+                          compile_error: 'Compile Error'
+                        }[sub.verdict] || sub.verdict;
+                        const submittedLabel = sub.submittedAt && sub.submittedAt.toDate
+                          ? sub.submittedAt.toDate().toLocaleString()
+                          : 'Just now';
+                        return (
+                          <div key={sub.id} className="sandbox-submission-item">
+                            <button
+                              className="sandbox-submission-row"
+                              onClick={() => setExpandedSubmissionId(isExpanded ? null : sub.id)}
+                            >
+                              <span className={`sandbox-submission-verdict ${sub.verdict === 'accepted' ? 'success' : 'error'}`}>
+                                {verdictLabel}
+                              </span>
+                              <span className="sandbox-submission-lang">{sub.language}</span>
+                              <span className="sandbox-submission-time">{submittedLabel}</span>
+                              <i className={`fa-solid fa-chevron-${isExpanded ? 'up' : 'down'}`} style={{ fontSize: '11px', color: '#71717a' }}></i>
+                            </button>
+                            {isExpanded && (
+                              <div className="sandbox-submission-detail">
+                                <pre className="sandbox-output-pre">{sub.code}</pre>
+                                <button
+                                  className="sandbox-action-btn-secondary"
+                                  style={{ marginTop: '8px' }}
+                                  onClick={() => {
+                                    if (sub.language !== selectedLanguage) handleLanguageChange(sub.language);
+                                    setTimeout(() => monacoRef.current && monacoRef.current.setValue(sub.code), sub.language !== selectedLanguage ? 150 : 0);
+                                  }}
+                                >
+                                  Load into editor
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              ) : activeConsoleTab === 'testcase' ? (
                 /* Edit custom inputs view */
                 <div className="sandbox-stdin-view">
                   <div className="sandbox-testcase-tabs-row">

@@ -1555,6 +1555,74 @@ header {
   border-color: rgba(207, 45, 86, 0.2);
 }
 
+/* Submission history tab */
+.sandbox-submissions-view {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--ink);
+  height: 100%;
+}
+
+.sandbox-submissions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sandbox-submission-item {
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.sandbox-submission-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--canvas-soft);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.sandbox-submission-row:hover {
+  background: var(--hairline-soft);
+}
+
+.sandbox-submission-verdict {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.sandbox-submission-verdict.success {
+  color: var(--semantic-success);
+}
+
+.sandbox-submission-verdict.error {
+  color: var(--semantic-error);
+}
+
+.sandbox-submission-lang {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.sandbox-submission-time {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-left: auto;
+}
+
+.sandbox-submission-detail {
+  padding: 12px;
+  border-top: 1px solid var(--hairline);
+  background: var(--surface-card);
+}
+
 .sandbox-console-actions-row {
   height: 48px;
   border-top: 1px solid var(--hairline);
