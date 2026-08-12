@@ -1,10 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import patternsData from '../data/patternsData.json';
 import booksData from '../data/booksData.json';
-
-const slugifyCategory = (cat) => cat.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
 
@@ -52,26 +50,6 @@ export default function Dashboard() {
   };
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-
-  // Category jump-rail + collapsible sections
-  const [collapsedOverrides, setCollapsedOverrides] = useState({});
-  const [activeCategoryId, setActiveCategoryId] = useState(null);
-  const categorySectionRefs = useRef({});
-
-  const toggleCategoryCollapse = (catName, forceExpand) => {
-    setCollapsedOverrides(prev => ({
-      ...prev,
-      [catName]: forceExpand ? false : !isCategoryCollapsed(catName, prev)
-    }));
-  };
-
-  const jumpToCategory = (catName) => {
-    toggleCategoryCollapse(catName, true);
-    requestAnimationFrame(() => {
-      const el = categorySectionRefs.current[catName];
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  };
 
   const handleUpgradeClick = async () => {
     if (!user) {
@@ -182,22 +160,6 @@ export default function Dashboard() {
 
   const categories = ["All", ...patternsData.map(c => c.cat)];
 
-  const getCategoryProgress = (category) => {
-    const total = category.patterns.length;
-    const solved = category.patterns.filter(p => completedPatterns.has(p.name)).length;
-    return { solved, total, mastered: total > 0 && solved === total };
-  };
-
-  // A category defaults to collapsed once every pattern in it is mastered
-  // (decluttering what's done), and expanded otherwise (in-progress or not
-  // started yet both stay visible, since both invite exploration). A manual
-  // toggle from the user overrides that default for the rest of the session.
-  const isCategoryCollapsed = (catName, overridesMap = collapsedOverrides) => {
-    if (overridesMap[catName] !== undefined) return overridesMap[catName];
-    const category = patternsData.find(c => c.cat === catName);
-    return category ? getCategoryProgress(category).mastered : false;
-  };
-
   const handleTogglePatternExpand = (patternName) => {
     setExpandedPatterns(prev => ({
       ...prev,
@@ -247,27 +209,6 @@ export default function Dashboard() {
       patterns: filteredPatterns
     };
   }).filter(Boolean);
-
-  // Highlights whichever category section is currently in view in the jump
-  // rail. Re-runs whenever the visible category set changes (search/filter),
-  // since sections that no longer render can't stay observed.
-  const visibleCategoryKey = filteredPatternsData.map(c => c.cat).join('|');
-  useEffect(() => {
-    if (activeTab !== 'patterns') return undefined;
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          setActiveCategoryId(entry.target.dataset.catId);
-        }
-      });
-    }, { rootMargin: '-15% 0px -70% 0px' });
-
-    Object.values(categorySectionRefs.current).forEach(node => {
-      if (node) observer.observe(node);
-    });
-
-    return () => observer.disconnect();
-  }, [visibleCategoryKey, activeTab]);
 
   // Statistics calculation
   const totalProblemsCount = patternsData.reduce((acc, cat) => {
@@ -447,86 +388,17 @@ export default function Dashboard() {
       <main style={{ marginTop: '24px' }}>
         {activeTab === "patterns" ? (
           /* PATTERNS SECTION CATALOG GRID */
-          <div className="dashboard-shell">
-            {filteredPatternsData.length > 0 && (
-              <nav className="category-rail" aria-label="Jump to category">
-                {filteredPatternsData.map(category => {
-                  const { solved, total, mastered } = getCategoryProgress(category);
-                  const catId = slugifyCategory(category.cat);
-                  return (
-                    <button
-                      key={category.cat}
-                      className={`rail-item ${activeCategoryId === catId ? 'active' : ''} ${mastered ? 'done' : ''}`}
-                      style={{ '--rail-color': category.color }}
-                      onClick={() => jumpToCategory(category.cat)}
-                    >
-                      <span className="rail-dot"></span>
-                      <span className="rail-name">{category.cat}</span>
-                      <span className="rail-count">{mastered ? <i className="fa-solid fa-check"></i> : `${solved}/${total}`}</span>
-                    </button>
-                  );
-                })}
-              </nav>
-            )}
-
-            <div className="dashboard-main-col">
-              {filteredPatternsData.length > 0 && (
-                <div className="category-rail-mobile">
-                  <div className="category-rail-mobile-scroll">
-                    {filteredPatternsData.map(category => {
-                      const { solved, total, mastered } = getCategoryProgress(category);
-                      const catId = slugifyCategory(category.cat);
-                      return (
-                        <button
-                          key={category.cat}
-                          className={`rail-chip ${activeCategoryId === catId ? 'active' : ''}`}
-                          style={{ '--rail-color': category.color }}
-                          onClick={() => jumpToCategory(category.cat)}
-                        >
-                          <span className="rail-dot"></span>
-                          {category.cat}
-                          <span className="mono-count">{mastered ? <i className="fa-solid fa-check"></i> : `${solved}/${total}`}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {filteredPatternsData.map(category => {
-                  const { solved, total, mastered } = getCategoryProgress(category);
-                  const catId = slugifyCategory(category.cat);
-                  const collapsed = isCategoryCollapsed(category.cat);
-                  const pct = total > 0 ? Math.round((solved / total) * 100) : 0;
-                  return (
-              <div
-                key={category.cat}
-                id={`cat-${catId}`}
-                data-cat-id={catId}
-                ref={(el) => { categorySectionRefs.current[category.cat] = el; }}
-                className="category-section"
-              >
-                <div className="cat-header" onClick={() => toggleCategoryCollapse(category.cat)}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+            {filteredPatternsData.map(category => (
+              <div key={category.cat} className="category-section">
+                <div className="cat-header">
                   <span className="cat-dot-large" style={{ background: category.color }}></span>
-                  <div className="cat-title-group">
-                    <div className="cat-title-row">
-                      <h2 className="cat-title">{category.cat}</h2>
-                      {mastered && <span className="cat-mastered-tag"><i className="fa-solid fa-check"></i> Mastered</span>}
-                    </div>
-                    <div className="cat-progress-track">
-                      <div className="cat-progress-fill" style={{ width: `${pct}%`, background: category.color }}></div>
-                    </div>
-                  </div>
-                  <div className="cat-header-right">
-                    <span className="cat-count"><span className="done-n">{solved}</span>/{total} solved</span>
-                    <span className={`cat-chevron ${!collapsed ? 'expanded' : ''}`}>
-                      <i className="fa-solid fa-chevron-down"></i>
-                    </span>
-                  </div>
+                  <h2 className="cat-title">{category.cat}</h2>
+                  <span className="cat-count">
+                    {category.patterns.length} {category.patterns.length === 1 ? 'Pattern' : 'Patterns'}
+                  </span>
                 </div>
 
-                <div className={`patterns-grid-wrap ${!collapsed ? 'expanded' : ''}`}>
                 <div className="patterns-grid">
                   {category.patterns.map(pattern => {
                     const isExpanded = !!expandedPatterns[pattern.name];
@@ -657,12 +529,8 @@ export default function Dashboard() {
                     );
                   })}
                 </div>
-                </div>
               </div>
-                  );
-                })}
-              </div>
-            </div>
+            ))}
           </div>
         ) : (
           /* STUDY HANDBOOKS LIBRARY VAULT VIEW */
